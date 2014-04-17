@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AgencyApp</string>
+    <string name="main_activity_title">AgencyApp</string>
+    <string name="btn_signin">Sign in</string>
+    <string name="btn_signout">Sign out</string>
+    <string name="msg_login">Login request is being processed.\nPlease wait.</string>
+    <string name="msg_logged_in">Logged in successfully.</string>
+    <string name="msg_not_logged_in">Not logged in yet.</string>
+</resources>

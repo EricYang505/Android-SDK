@@ -1,0 +1,20 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    			android:id="@+id/mainLayout"
+				android:layout_width="fill_parent" android:layout_height="wrap_content">
+	<Button android:id="@+id/btnShow" android:text="@string/btn_show_inspections"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />	
+	<LinearLayout android:id="@+id/btnSection"
+	    android:layout_width="match_parent" android:layout_height="wrap_content"
+    	android:orientation="horizontal" android:layout_alignParentBottom="true" >	
+	    <Button android:id="@+id/btnLogin" android:text="@string/btn_login"
+	        android:layout_width="fill_parent" android:layout_height="wrap_content"
+	        android:layout_weight="1" />	
+	    <Button android:id="@+id/btnSignOut" android:text="@string/btn_signout"
+	        android:layout_width="fill_parent" android:layout_height="wrap_content"
+	        android:layout_weight="1"  />	
+    </LinearLayout>
+    <ListView android:id="@id/android:list"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_below="@id/btnShow" android:layout_above="@id/btnSection" />
+</RelativeLayout>

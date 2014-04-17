@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name -->
+    <string name="app_name">InspectionViewer</string>
+    
+    <!-- Buttons -->
+    <string name="btn_show_inspections">Show Me Inspections</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_signout">Signout</string>
+    
+    <!-- Alert messages -->    
+    <string name="msg_login">Login request is being processed.\nPlease wait.</string>
+    <string name="msg_logged_in">Logged in successfully.</string>
+    <string name="msg_logged_out">Logged out successfully.</string>
+    <string name="msg_not_logged_in">Not logged in yet.</string>
+    <string name="msg_search_inspections">Request is being processed to search inspections.</string>
+    <string name="error_unauthorized_title">Not Logged In</string>
+    <string name="error_unauthorized_message">Please login first. Use one of the above two Auth buttons.</string>
+    <string name="error_request_title">Request Failed</string>
+    <string name="error_request_message">Failed to process the reqeust due to error</string>
+    <string name="error_no_inspection_found">No inspection found.</string>
+</resources>

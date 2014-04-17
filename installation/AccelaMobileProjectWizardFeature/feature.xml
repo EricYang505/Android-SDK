@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.accela.mobile.eclipse.wizard"
+      label="Accela SDK for Android"
+      version="4.0.0.v268879"
+      provider-name="Accela Inc.">
+
+   <description>
+      This is a plug-in for developers to create Accela template projects with wizard pages.
+   </description>
+
+   <copyright>
+      Accela Privacy Policy
+The AccelaPrivacy Policy provides information and guidelines regarding how user nformation is collected, used and disclosed by Accela with respect to your access and use of Accela Media,whether through our website (located at www.Accela.com),Accela&apos;s mobile applications or SDK(collectively referred to below as &quot;AccelaMedia/SDK&quot;).
+
+Collection of Information
+Accela maycollect certain information you provide to us when using any AccelaMedia/SDK, including personal information about you, your mobile device, your use of the Accela Media/SDK,such as your name,unique identifier, associated IP address, version
+number of the software, information on SDK tool/services utilizationand
+the nature of the utilization, picture, email address and phone
+number, as well as certain non-identifying information, like
+your gender, birthday and zip code. We may also collect the contact
+information of your friends, if you choose to connect your contacts
+and address book information with Accela and your login credentials
+to your social network accounts, such as Facebook and Twitter,
+if you choose to connect those accounts with your Accela account.
+Accelaautomatically collects certain information when you use
+AccelaMedia/SDK,such as your location/GPS coordinates (if you
+enable this feature), a device identifier MAC address, Internet
+Protocol (IP) address (if using a browser), operating system,
+the browser type, the address of a referring site and your activity
+on Accela. You can enable or disable location services when usingAccela
+at anytime, through your mobile device settings but this may
+result in a reduction of functionality. This information is not
+treated as personal information unless we combine it with or
+link it to any of the personally identifiable information mentioned
+above.
+Accelamay also automatically collect certain information through
+the use of &quot;cookies”. These are small files that your browser
+places on your computer. We may use both session cookies and
+persistent cookies to better understand how you interact with
+our services, to monitor aggregate usage by our users and web
+traffic routing on our services, and to improve our services.
+Most Internet browsers automatically accept cookies. You can
+instruct your browser, by editing its options, to stop accepting
+cookies or to prompt you before accepting a cookie from the websites
+you visit.
+Use of Information
+Accelauses the information collected through your use of Accela
+Media/SDKfor the purposes described below:
+1 to provide our services or information you request, and to
+process and complete any transactions;
+2 to respond to your emails, submissions, questions, comments,
+requests, and complaints and provide customer service;
+3 to monitor and analyze usage and trends, and to personalize
+and improve Accelaproducts/servicesand your experiences when
+you use Accela, such as providing content or features that match
+your profile or interests and to increase the functionality and
+user friendliness of our services;
+4 to send you confirmations, updates, security alerts, and support
+and administrative messages and otherwise facilitate your use
+of, and our administration and operation of, our services;
+5 to allow you to add your location to your posts;
+6 to find and connect with your connections(when instructed by
+you);
+7 to let your connectionsknow about your activityon Accela, as
+instructed/authorized by you; and
+8 for any other purpose for which the information was collected.
+Information We Share with Third Parties
+Accelawill not share the personal information we have collected
+from you, except as described below:
+1 with your connectionson Accela with whom you want to share
+your activitiesusingAccela, and according to the preferences
+set in your account;
+2 with certain social networking services, if you allow such
+sharing through our services;
+3 with service providers and government agencies who are working
+with us in connection with the operation of our site or our services
+(these service providers have access to your personal information
+only to perform services on our behalf and are obligated not
+to disclose it or use it for any other purposes);
+4 we may share aggregated information and non-identifiable information
+with third parties for industry analysis, demographic profiling
+and other similar purposes;
+5 when you give us your consent to do so, including if we notify
+you that the information you provide will be shared in a particular
+manner and you provide such information;
+6 when we believe in good faith that we are lawfully authorized
+or required to do so or that doing so is reasonably necessary
+or appropriate to comply with the law or legal processes or respond
+to lawful requests or legal authorities, including responding
+to lawful subpoenas, warrants or court orders;
+7 to enforce or apply our privacy policy, our terms of use or
+our other policies or agreements; and
+8 in connection with, or during negotiations of, any merger,
+sale of company assets, financing or acquisition, or in any other
+situation where personal information may be disclosed or transferred
+as one of our business assets.
+Accela is not responsible for the actions of service providers
+or other third parties, or for any additional information you
+provide directly to any third parties.
+Links to Other Sites
+AccelaMedia/SDK may contain links to other sites. Any information
+you provide on those sites is provided directly to the owner
+of that site and is subject to that party&apos;s privacy policy. Our
+privacy policy does not apply to such sites, and we are not responsible
+for the content or privacy and security practices and policies
+of those sites.
+Information Protection
+Accelatakes reasonable measures to protect your personal information
+in an effort to prevent loss, misuse and unauthorized access,
+disclosure, alteration and destruction. Please be aware, however,
+that despite our efforts, no security measures are perfect or
+impenetrable and no method of data transmission can be guaranteed
+against any interception or other type of misuse.
+Accessing and Modifying Information
+If you have an account, you can access and modify the personal
+information you provided us that is associated with your account.
+You may &quot;opt out&quot; of receiving marketing or promotional emails
+from us by changing your account preferences or by following
+the instructions in those emails. If you opt out of these messages,
+you will still receive emails from us, about your account, our
+services and other pertinent information related to our services.
+These communications are considered part of the service and your
+account, which you cannot opt-out from receiving.
+International Users
+If you are located outside the United States and choose to provide
+information to Accela, we may transfer your information to the
+United States and process it there (or any other country where
+we operate). By using the Accela Media/SDK, you consent to the
+collection, transfer, use, storage and disclosure of your information
+as described in this privacy policy.
+Age Policy 
+Our service is not directed to children under 13 and we do not
+knowingly collect personal information from children under 13.
+If we learn that we have collected personal information of a
+child under 13, we will take steps to delete such information
+from our files as soon as possible.
+Change
+Any information that is collected is subject to the Accela Privacy Policy in effect at the time such information is collected. We
+may, however, modify and revise our privacy policy from time-to-time.
+If we make any material changes to this policy, we will notify
+you of such changes by posting them on Accela when such changes
+become effective. By continuing to access or use AccelaMedia/SDKafter
+those changes become effective, you are agreeing to be bound
+by the revised policy.
+   </copyright>
+
+   <license>
+      Accela Mobile Software Development Kit (SDK) License Agreement
+1. Introduction
+________________________________________
+1.1 The Accela Mobile Software Development Kit (referred to in this License Agreement as the &quot;SDK&quot; and specifically including Accela system files, applications,application programming interfaces (APIs),APIs, packaged APIs, add-ons, updates, revisions, substitutions, and any copies of the SDK and the various APIs made by or for you) is licensed to you subject to the terms of this License Agreement. This License Agreement forms a binding contract between you and Accela covering your use of the SDK.
+1.2 &quot;Accela&quot; means Accela, Inc., a California corporation with its principal place of business at 2633 Camino Ramon, Ste. 120, CA 94583 USA.
+2. Acceptance of License Agreement
+________________________________________
+2.1BY INSTALLING, ACCESSING OR OTHERWISE USING THE SDK, YOU ACCEPT THE TERMS OF THIS LICENSE AGREEMENT AND CONSENT TO THE TRANSMISSION OF CERTAIN COMPUTER INFORMATION DURING USE AND FOR INTERNET-BASED SERVICES. IF YOU DO NOT AGREE TO THE TERMS OF THIS LICENSE AGREEMENT, DO NOT INSTALL, ACCESS OR USE THE SDK OR THE APIS.
+2.2 You may not use the SDK if you are a person barred from receiving the SDK under the laws of the United States or other countries, including the country in which you reside or from which you use the SDK.
+2.3If you use the SDK on behalf of your employer or other entity, you represent and warrant that you have legal authority to bind your employer or such entity to this License Agreement. If you do not have the requisite authority to bind your employer/entity, you may not use the SDK on behalf of your employer or other entity.
+3. SDK License from Accela
+________________________________________
+3.1 Subject to the terms of this License Agreement, Accela grants you a limited, worldwide, royalty-free, non-assignable, non-sublicenseable and non-exclusive license to use the SDK solely to develop applications to run on the Accela platform.
+3.2 Accela owns all legal right, title and interest in and to the SDK, including any Intellectual Property Rights that subsist in the SDK (trade secret, copyright, patent and trademark laws, and any and all other proprietary rights).Accela reserves all rights not expressly granted to you. Nothing in this License Agreement gives you a right to use any of Accela&apos;s trade names, trademarks, service marks, logos, domain names, or other distinctive brand features. You agree that you will not remove, obscure, or alter any proprietary rights notices (including copyright and trademark notices) that may be affixed to or contained within the SDK.
+3.3 You may not copy (except for backup purposes), modify, adapt, redistribute, decompile, reverse engineer, disassemble, or create derivative works of the SDK or any part of the SDK. 
+3.4 Use, reproduction and distribution of components of the SDK are governed solely by the terms of this License Agreement.
+3.5 You agree that Accela may change the form and nature of the SDK it provides without prior notice to you and that future versions of the SDK may be incompatible with applications developed on previous versions of the SDK. You agree that Accela may stop (permanently or temporarily) providing the SDK (or any features within the SDK) to you or to users generally at Accela&apos;s sole discretion, without prior notice to you.
+4. Use of the SDK by You
+________________________________________
+4.1 Except to the extent that Accela pre-existing intellectual property is included in the application(s), Accela agrees that it obtains no right, title or interest from you (or your licensors) under this License Agreement in or to any software applications that you develop using the SDK, including any intellectual property rights that subsist in those applications.  Accela does not claim any ownership rights in the text, files, images, photos, video, sounds, musical works, works of authorship, applications, or any other materials (collectively, &quot;Content&quot;) that you post using the Accela APIs. By posting any Content using the Accela APIs, you hereby grant to Accela a perpetual, non-exclusive, fully paid and royalty-free, worldwide, limited license to use, modify, delete from, add to, publicly perform, publicly display, reproduce and translate such Content, including without limitation distributing part or all of the Site in any formats through any channels, except Content not shared publicly (&quot;private&quot;) will not be distributed.
+4.2 You agree to use the SDK and write applications only for purposes that are permitted by (a) this License Agreement and (b) any applicable law, regulation or generally accepted practices or guidelines in the relevant jurisdictions (including any laws regarding the export of data or software to and from the United States or other relevant countries).
+4.3 You agree that if you use the SDK to develop applications,you will protect the privacy and legal rights of users. If the users provide you with user names, passwords, or other login information or personal information, you must make the users aware that the information will be available to your application, and you must provide legally adequate privacy notice and protection for those users. If your application stores personal or sensitive information provided by users, it must do so securely. If the user provides your application with Accela Account information, your application may only use that information to access the user&apos;s Accela Account when, and for the limited purposes for which, the user has given you permission to do so.
+4.4 You agree that you will not engage in any activity with the SDK, including the development or distribution of an application, that interferes with, disrupts, damages, or accesses in an unauthorized manner the servers, networks, or other properties or services of any third party including, but not limited to, Accela or any mobile communications carrier.
+4.5 You agree that you are solely responsible for (and that Accela has no responsibility to you or to any third party for) (i) any data, content, or resources that you create, transmit or display through the Accela SDK and/or applications for the Accela platform; (ii) any breach of your obligations under this License Agreement, any applicable third party contract or Terms of Service, or any applicable law or regulation; and (iii) any consequences (including any loss or damage which Accela or any third party may suffer) of any of your activities.
+5. Your Developer Credentials
+5.1 You agree that you are responsible for maintaining the confidentiality of any developer credentials that may be issued to you by Accela or which you may choose yourself and that you will be solely responsible for all applications that are developed under your developer credentials.
+6. Privacy and Information
+________________________________________
+6.1 In order to continually innovate and improve the SDK, Accela may collect certain usage statistics from the software including but not limited to a unique identifier, associated IP address, version number of the software, and information on which tools and/or services in the SDK are being utilized and the nature of the utilization. 
+6.2 The data collected is examined in the aggregate to improve the SDK and is maintained in accordance with Accela&apos;s Privacy Policy found at https://mobile.accela.com/user/privacy.
+
+
+7. Use of APIs
+________________________________________
+7.1 Accela APIs
+7.1.1 If you use any API to retrieve data from Accela, you acknowledge that the data may be protected by Accela intellectual property rights (or those parties that provide the data).Your use of any such API may be subject to additional Terms of Service. You may not modify, rent, lease, loan, sell, distribute or create derivative works based on this data (either in whole or in part) unless authorized by Accela pursuant to a separate, written agreement.
+7.1.2 For uses of Accela APIs over a certain rate or for certain types of commercial applications, Accela reserves the right to charge fees for future use of or access to the Accela APIs.
+7.1.3 You shall NOT:
+7.1.3.1 Use Accela APIs for any application that replicates or attempts to replace any essential user experience of Accela Automation or the Accela Add-Ons.
+7.1.3.2 Use the Accela API to spam, or otherwise harass users with unwanted likes, comments or other actions.
+7.1.3.3 Use the Accela API to post automated content to Accela, including “likes” and comments that were not initiated and entered by an Accela user. 
+7.1.3.4 Attempt to cloak or conceal your identity or your application&apos;s identity when requesting authorization to use Accela APIs.
+7.1.3.5 Use an unreasonable amount of bandwidth.
+7.1.3.6 Cache or store any Accela content other than for reasonable periods in order to provide the service you are providing to Accela users
+7.1.3.7 Use Accela APIs for any application that constitutes, promotes or is used in connection with spyware, adware, other malicious programs or code.
+7.1.3.8 Use Accela APIs in any manner or for any purpose that violates any law or regulation, any right of any person, including but not limited to intellectual property rights, rights of privacy, or rights of personality.
+7.1.3.9 Use Accela APIs in a manner that adversely impacts the stability of Accela.com servers or adversely impacts the behavior of other applications using the Accela APIs. Further, we reserve the right to rate limit or block applications that make a large number of calls to the API that are not primarily in response to direct user actions.
+7.1.3.10 Sell, lease, or sublicense Accela APIs or access thereto or derive revenues from the use or provision of Accela APIs, whether for direct commercial or monetary gain or otherwise, except as set forth below
+7.1.3.11 Use &quot;Accela” in the hostname of your applicationor any variation in your product name, domain name, or images; use the Accela icon or logo unless specifically allowed in the developer documentation; use the Accela logo without specific written permission from Accela and use of the Accela logo in your application shall be less prominent than the logo or mark that primarily describes the application and your use of the Accela logo shall not imply any endorsement by Accela.
+8. Terminating this License Agreement
+________________________________________
+8.1 This License Agreement will continue to apply until terminated by either you or Accela as set out below.
+8.2 If you want to terminate this License Agreement, you may do so by ceasing your use of the SDK and any relevant developer credentials.
+8.3 Accela may at any time, terminate this License Agreement with you if:
+(A) you have breached any provision of this License Agreement; or
+(B) Accela is required to do so by law; or
+(C) the partner with whom Accela offered certain parts of SDK (such as APIs) to you has terminated its relationship with Accela or ceased to offer certain parts of the SDK to you; or
+(D) Accela decides to no longer provide the SDK or certain parts of the SDK to users in the country in which you are resident or from which you use the service, or the provision of the SDK or certain SDK services to you by Accela is, in Accela&apos;s sole discretion, no longer commercially viable.
+8.4 Termination. Accela may immediately terminate this Agreement at any time at its sole discretion with or without notice to you. Additionally, your rights under this Agreement will terminate automatically if you fail to comply with any term(s) of this Agreement. Upon termination, all legal rights and licenses granted to you hereunder shall terminate immediately and you shall cease all use of the Accela Media and destroy any copies of the Accela Media in your possession or control. Sections 3.2, 4, 8.1 and 9-14are intended to survive this Agreement.
+
+9. Disclaimer of Warranties
+________________________________________
+9.1 YOU EXPRESSLY UNDERSTAND AND AGREE THAT YOUR USE OF THE SDK IS AT YOUR SOLE RISK AND THAT THE SDK IS PROVIDED &quot;AS IS&quot; AND WITHOUT WARRANTY OF ANY KIND FROM ACCELA.
+9.2 YOUR USE OF THE SDK AND ANY MATERIAL DOWNLOADED OR OTHERWISE OBTAINED THROUGH THE USE OF THE SDK IS AT YOUR OWN RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE.
+9.3 ACCELA FURTHER EXPRESSLY DISCLAIMS ALL WARRANTIES AND CONDITIONS OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO THE IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
+10. Limitation of Liability
+________________________________________
+10.1 YOU EXPRESSLY UNDERSTAND AND AGREE THAT ACCELA, ITS SUBSIDIARIES AND AFFILIATES, AND ITS LICENSORS SHALL NOT BE LIABLE TO YOU UNDER ANY THEORY OF LIABILITY FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL CONSEQUENTIAL OR EXEMPLARY DAMAGES THAT MAY BE INCURRED BY YOU, INCLUDING ANY LOSS OF DATA, WHETHER OR NOT ACCELA OR ITS REPRESENTATIVES HAVE BEEN ADVISED OF OR SHOULD HAVE BEEN AWARE OF THE POSSIBILITY OF ANY SUCH LOSSES.
+11. Indemnification
+________________________________________
+11.1 To the maximum extent permitted by law, you agree to defend, indemnify and hold harmless Accela, its affiliates and their respective directors, officers, employees and agents from and against any and all claims, actions, suits or proceedings, as well as any and all losses, liabilities, damages, costs and expenses (including reasonable attorneys’ fees) arising out of or accruing from (a) your use of the SDK, (b) any application you develop on the SDK that infringes any copyright, trademark, trade secret, trade dress, patent or other intellectual property right of any person or defames any person or violates their rights of publicity or privacy, and (c) your non-compliance with this License Agreement.
+
+12. Changes to the License Agreement
+________________________________________
+12.1 Accela may make changes to the License Agreement as it distributes new versions of the SDK. When these changes are made, Accela will make a new version of the License Agreement available on the website where the SDK is made available.
+13. General Legal Terms
+________________________________________
+13.1 This License Agreement constitutes the entire legal agreement between you and Accela and governs your use of the SDK and completely replaces any prior agreements between you and Accelainvolving the SDK.(Accela may provide services to you under separate written agreements that are not implicated by this Agreement.)
+13.2 You agree that Accela’s failure to exercise or enforce any legal right or remedy which is contained in this License Agreement (or which Accela has the benefit of under any applicable law), will not be considered be a waiver of Accela&apos;s rights or applicable remedies.
+13.3 If any court of law, having the jurisdiction to decide on this matter, rules that any provision of this License Agreement is invalid, then that provision will be removed from this License Agreement without affecting anyother provisions. The remaining provisions of this License Agreement will continue to be valid and enforceable.
+13.4 You acknowledge and agree that each company for which Accela is the parent shall be third party beneficiaries to this License Agreement and that such other companies shall be entitled to directly enforce, and rely upon, any provision of this License Agreement. No other person or company shall be third party beneficiaries to this License Agreement.
+13.5 EXPORT RESTRICTIONS. THE SDK IS SUBJECT TO UNITED STATES EXPORT LAWS AND REGULATIONS. YOU MUST COMPLY WITH ALL DOMESTIC AND INTERNATIONAL EXPORT LAWS AND REGULATIONS THAT APPLY TO THE SDK. THESE LAWS INCLUDE RESTRICTIONS ON DESTINATIONS, END USERS AND END USE.
+13.6 The rights granted in this License Agreement may not be assigned or transferred by either you or Accela without the prior written approval of the other party and neither you nor Accela shall be permitted to delegate their responsibilities or obligations under this License Agreement without the prior written approval of the other party, except that Accela may assign its rights and obligations hereunder for purposes of financing or pursuant to corporate transactions involving the sale of all or substantially all of its stock or assets.
+13.7 This License Agreementshall be governed by the laws of the State of California without regard to its conflict of laws provisions. You and Accela agree to submit to the exclusive jurisdiction of the courts located within the county of Santa Clara, California to resolve any legal matter arising from this License Agreement. Notwithstanding this, you agree that Accela shall still be allowed to apply for injunctive remedies (or an equivalent type of urgent legal relief) in any jurisdiction.
+   </license>
+
+   <url>
+      <discovery label="Accela Developer Portal" url="https://developer.accela.com"/>
+   </url>
+
+   <plugin
+         id="com.accela.mobile.eclipse.wizard"
+         download-size="3500"
+         install-size="3500"
+         version="4.0.0.v268879"
+         unpack="false"/>
+
+</feature>
