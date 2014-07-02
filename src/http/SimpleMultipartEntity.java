@@ -230,7 +230,7 @@ class SimpleMultipartEntity implements HttpEntity {
 	 * @since 1.0
 	 */
     public long getContentLength() {
-        writeLastBoundaryIfNeeds(true);
+        //writeLastBoundaryIfNeeds(true);
         return byteArrayOutputStream.toByteArray().length;
     }
 
