@@ -1,5 +1,4 @@
-
-package com.accela.mobile.http;
+package com.accela.mobile.http;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -230,7 +229,6 @@ class SimpleMultipartEntity implements HttpEntity {
 	 * @since 1.0
 	 */
     public long getContentLength() {
-        //writeLastBoundaryIfNeeds(true);
         return byteArrayOutputStream.toByteArray().length;
     }
 
