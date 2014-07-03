@@ -136,14 +136,18 @@ public abstract class AMRequestDelegate extends JsonHttpResponseHandler {
 				authorizationManager.clearAuthorizationAndToken(true);
 			}
 			// Populate error
-			this.amError = new AMError(traceId, errorMessage,stringLoader.getString("Error_AMRequestDelegate_Unauthorized"));
+			this.amError = new AMError(AMError.ERROR_CODE_Unauthorized,
+					AMError.ERROR_CODE_TOKEN_EXPIRED,
+					traceId, errorMessage,stringLoader.getString("Error_AMRequestDelegate_Unauthorized"));
 
 		} else if (this.responseStatusCode == AMError.ERROR_CODE_Forbidden) {// HTTP error 403
 			// Populate error
-			this.amError = new AMError(traceId, errorMessage,stringLoader.getString("Error_AMRequestDelegate_Forbidden"));
+			this.amError = new AMError(AMError.ERROR_CODE_Forbidden,
+					AMError.ERROR_CODE_ACCESS_FORBIDDEN,traceId, errorMessage,stringLoader.getString("Error_AMRequestDelegate_Forbidden"));
 		} else if (this.responseStatusCode >= AMError.ERROR_CODE_HTTP_MINIMUM) {// Other HTTP errors
 			// Populate error
-			this.amError = new AMError(traceId, errorMessage,stringLoader.getString("Error_AMRequestDelegate_Forbidden"));
+			this.amError = new AMError(responseStatusCode,
+					AMError.ERROR_CODE_OTHER_ERROR,traceId, errorMessage,stringLoader.getString("Error_AMRequestDelegate_Forbidden"));
 		}
 		// Send broadcast for error
 		if (this.amError != null) {
@@ -200,7 +204,7 @@ public abstract class AMRequestDelegate extends JsonHttpResponseHandler {
 	 */
 	public void amRequestDidFailWithError(AMRequest request, AMError error) {
 		if (AMSetting.DebugMode) {
-			AMLogger.logError(stringLoader.getString("Log_AMRequestDelegate_amRequestDidFailWithError_Body"),request.getTag(), request.getHttpMethod(),error.getErrorMessage());
+			AMLogger.logError(stringLoader.getString("Log_AMRequestDelegate_amRequestDidFailWithError_Body"),request.getTag(), request.getHttpMethod(),error.getMessage());
 		}
 	}
 

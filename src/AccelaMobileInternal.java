@@ -31,7 +31,7 @@ import android.view.View;
  * </pre>
  */
 
-class AccelaMobileInternal extends AccelaMobile {	
+public class AccelaMobileInternal extends AccelaMobile {	
 	/**
 	 * The login dialog.
 	 * 
@@ -128,21 +128,21 @@ class AccelaMobileInternal extends AccelaMobile {
 	 */
 	public AMRequest authenticate(String agency, String user, String password, String[] permissions) {			
 		this.agency = agency;
-		// Initialize authorization manager if it is null
-		this.authorizationManager = (this.authorizationManager !=null) ? this.authorizationManager : new AuthorizationManager(this);
-		// Return directly if the authorization manager has access token (loaded from local store)
-		if ((authorizationManager.getAccessToken() != null) && (sessionDelegate != null))
-		{
-			sessionDelegate.amDidLogin();
-			return null;
-		}
+//		// Initialize authorization manager if it is null
+//		this.authorizationManager = (this.authorizationManager !=null) ? this.authorizationManager : new AuthorizationManager(this);
+//		// Return directly if the authorization manager has access token (loaded from local store)
+//		if ((authorizationManager.getAccessToken() != null) && (sessionDelegate != null))
+//		{
+//			sessionDelegate.amDidLogin();
+//			return null;
+//		}
 		
 		// Otherwise, start a new progress to fetch access token.		
 		this.authorizationManager.setClientInfo(this.getAppId(), this.getAppSecret(), this.getEnvironment().name(), agency, this.amAuthHost, this.amApisHost);
 		this.authorizationManager.setIsRememberToken(this.amIsRemember);
 		this.authorizationManager.setSessionDelegate(this.sessionDelegate);		
 		return authorizationManager.getAuthorizeCode4Private(this.loginDialog, agency, user, password, permissions, false);
-	}
+	}	
 	
 	/*
 	 * Authorize citizen app with the given permissions and agency. 

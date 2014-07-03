@@ -5,6 +5,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.content.Context;
+
+import com.accela.mobile.AMError;
 import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMSetting;
 
@@ -65,7 +68,7 @@ public abstract class JsonHttpResponseHandler extends AsyncHttpResponseHandler {
 	 * 
 	 * @since 1.0
 	 */
-    public abstract void onFailure(Throwable error);
+    public abstract void onFailure(AMError error);
 
 
     /**
@@ -96,7 +99,8 @@ public abstract class JsonHttpResponseHandler extends AsyncHttpResponseHandler {
             	onSuccess((JSONArray)jsonResponse);
             }
         } catch(JSONException e) {
-            onFailure(e);
+        	AMError error = new AMError(0,null,null, e.getMessage(),null);
+            onFailure(error);
         }
     }
 

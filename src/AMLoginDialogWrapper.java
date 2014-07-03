@@ -69,7 +69,7 @@ public class AMLoginDialogWrapper extends Dialog {
             spinner.dismiss();            
             contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
             // Invoke session delegate
-            AMError amError = new AMError(String.valueOf(errorCode), description, failingUrl);
+            AMError amError = new AMError(AMError.STATUS_CODE_OTHER,String.valueOf(errorCode),String.valueOf(errorCode), description, failingUrl);
             accelaMobile.sessionDelegate.amDidLoginFailure(amError);
         }        
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
@@ -78,7 +78,7 @@ public class AMLoginDialogWrapper extends Dialog {
             spinner.dismiss();            
             contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
             // Invoke session delegate
-            AMError amError = new AMError(String.valueOf(AMError.ERROR_CODE_Bad_Request), error.toString(), null);
+            AMError amError = new AMError(AMError.STATUS_CODE_OTHER,null,String.valueOf(AMError.ERROR_CODE_Bad_Request), error.toString(), null);
             accelaMobile.sessionDelegate.amDidLoginFailure(amError);
         } 
         

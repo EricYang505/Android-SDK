@@ -31,7 +31,7 @@ public class AMError {
 	 * 
 	 * @since 4.0
 	 */
-	public static final int ERROR_CODE_REQUEST_TIMEOUT = 1000;
+	public static final String ERROR_CODE_REQUEST_TIMEOUT = "request_timeout_error";
 
 	/**
 	 * A customized error code, which returned from cloud API when an
@@ -39,28 +39,42 @@ public class AMError {
 	 * 
 	 * @since 4.0
 	 */
-	public static final int ERROR_CODE_EMSE_FAILURE = 11000;
+	public static final String ERROR_CODE_EMSE_FAILURE = "emse_failure_error";
 
+	/**
+	 * A customized error code, which returned from cloud API when an
+	 * operation(e.g. result inspection) fails due to expired token or invalid token.
+	 * 
+	 * @since 4.0
+	 */
+	public static final String ERROR_CODE_TOKEN_INVALID = "invalid_token";	
+	public static final String ERROR_CODE_TOKEN_EXPIRED = "token_expired";	
+	public static final String ERROR_CODE_ACCESS_FORBIDDEN = "access_forbidden";
+	public static final String ERROR_CODE_OTHER_ERROR = "other_error";
+	public static final String ERROR_CODE_OUT_OF_MEMORY = "out_of_memory";
+	
+	public static final int STATUS_CODE_OTHER = 0;
+	
 	/**
 	 * A customized error code, which means unavaiable host in HTTP request.
 	 * 
 	 * @since 4.0
 	 */
-	public static final int ERROR_CODE_UNAVAIABLE_HOST = 11001;
+	public static final String ERROR_CODE_UNAVAIABLE_HOST = "server_unavailable_error";
 
 	/**
 	 * A customized error code, which means error in JSON parsing.
 	 * 
 	 * @since 4.0
 	 */
-	public static int ERROR_CODE_JSON_PARSING = 1008;
+	public static String ERROR_CODE_JSON_PARSING = "json_parsing_error";
 
 	/**
 	 * A customized error code, which means error in business processing.
 	 * 
 	 * @since 4.0
 	 */
-	public static int ERROR_CODE_BUSINESS = 1009;
+	public static String ERROR_CODE_BUSINESS = "business_error";
 
 	/**
 	 * A customized error code, which means unexpected error(e.g. exceptions)
@@ -116,7 +130,17 @@ public class AMError {
 	 * @since 3.0
 	 */
 	public static int ERROR_CODE_Internal_Server_Error = 500;
-
+	
+	/**
+	 * Error status.
+	 */
+	private int status;
+	
+	/**
+	 * Error code.
+	 */
+	private String code;
+	
 	/**
 	 * Trace Id for debugging the error on mobile server.
 	 */
@@ -125,7 +149,7 @@ public class AMError {
 	/**
 	 * Error message string.
 	 */
-	private String errorMessage;
+	private String message;
 
 	/**
 	 * The more detailed error message string.
@@ -135,21 +159,55 @@ public class AMError {
 	/**
 	 * Constructor with the given parameters.
 	 * 
-	 * @param traceId
-	 *            The trace Id for debugging the error on mobile server.
-	 * @param errorMessage
-	 *            The error message string.
-	 * @param more
-	 *            The more detailed error message string.
+	 * @param statuc The error status.
+	 * @param code The error code.
+	 * @param traceId The trace Id for debugging the error on mobile server.
+	 * @param message The error message string.
+	 * @param more The more detailed error message string.
 	 * 
 	 * @return An initialized AMError object.
 	 * 
 	 * @since 1.0
 	 */
-	public AMError(String traceId, String errorMessage, String more) {
+	public AMError(int status,String code,String traceId, String message, String more) {
+		this.status = status;
+		this.code = code;
 		this.traceId = traceId;
-		this.errorMessage = errorMessage;
+		this.message = message;
 		this.more = more;
+	}
+	
+	/**
+	 * Get status of the current error.
+	 * 
+	 * @return The status.
+	 * 
+	 * @since 4.0
+	 */
+	public int getStatus() {
+		return status;
+	}
+	
+	/**
+	 * Get code of the current error.
+	 * 
+	 * @return The code.
+	 * 
+	 * @since 4.0
+	 */
+	public String getCode() {
+		return code;
+	}
+	
+	/**
+	 * Get trace Id of the current error.
+	 * 
+	 * @return The trace Id.
+	 * 
+	 * @since 1.0
+	 */
+	public String getTraceId() {
+		return traceId;
 	}
 
 	/**
@@ -159,8 +217,8 @@ public class AMError {
 	 * 
 	 * @since 1.0
 	 */
-	public String getErrorMessage() {
-		return errorMessage;
+	public String getMessage() {
+		return message;
 	}
 
 	/**
@@ -174,16 +232,7 @@ public class AMError {
 		return more;
 	}
 
-	/**
-	 * Get trace Id of the current error.
-	 * 
-	 * @return The trace Id.
-	 * 
-	 * @since 1.0
-	 */
-	public String getTraceId() {
-		return traceId;
-	}
+	
 
 	/**
 	 * Convert the current error object to a string.
@@ -195,10 +244,14 @@ public class AMError {
 	 */
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
+		if (status != 0)
+			buf.append("tatus: ").append(status).append(".\n");
+		if (code != null)
+			buf.append("Code: ").append(status).append(".\n");
 		if (traceId != null)
 			buf.append("Trace ID: ").append(traceId).append(".\n");
-		if (errorMessage != null)
-			buf.append("Error Message: ").append(errorMessage).append("\n");
+		if (message != null)
+			buf.append("Error Message: ").append(message).append("\n");
 		if (more != null)
 			buf.append("More Detailed Error Message : ").append(more);
 		return buf.toString();

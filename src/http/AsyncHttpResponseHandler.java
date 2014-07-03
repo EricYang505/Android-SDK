@@ -106,6 +106,7 @@ abstract class AsyncHttpResponseHandler {
 	private static final int FAILURE_MESSAGE = 1;
 	private static final int START_MESSAGE = 2;
 	private static final int FINISH_MESSAGE = 3;
+	private static final int FILE_MESSAGE = 4;
 	private Handler handler;
 	private String contentType;
 	private boolean isTimeoutError = false;
@@ -188,7 +189,7 @@ abstract class AsyncHttpResponseHandler {
 	 * 
 	 * @since 1.0
 	 */
-	public void onFailure(Throwable error) {
+	public void onFailure(AMError error) {
 	}
 
 
@@ -208,7 +209,7 @@ abstract class AsyncHttpResponseHandler {
 	/**
 	 * Protected method, used to send timeout message.
 	 */
-	protected void sendTimeoutMessage(Throwable e) {
+	protected void sendTimeoutMessage(AMError e) {
 		sendMessage(obtainMessage(TIMEOUT_MESSAGE, e));
 	}
 
@@ -218,11 +219,15 @@ abstract class AsyncHttpResponseHandler {
 	protected void sendSuccessMessage(byte[] responseBody) {
 		sendMessage(obtainMessage(SUCCESS_MESSAGE, responseBody));
 	}
+	
+//	protected void sendFileSuccessMessage(DiskFile file){
+//		sendMessage(obtainMessage(FILE_MESSAGE, file));
+//	}
 
 	/**
 	 * Protected method, used to send failure message.
 	 */
-	protected void sendFailureMessage(Throwable e) {
+	protected void sendFailureMessage(AMError e) {
 		sendMessage(obtainMessage(FAILURE_MESSAGE, e));
 	}
 
@@ -261,6 +266,7 @@ abstract class AsyncHttpResponseHandler {
 			handleSuccessMessage(rawResponseBody);
 		}
 	}
+	
 
 	/**
 	 * Protected method, used to handle success message.
@@ -275,8 +281,8 @@ abstract class AsyncHttpResponseHandler {
 	/**
 	 * Protected method, used to handle failure message.
 	 */
-	protected void handleFailureMessage(Throwable e) {
-		onFailure(e);
+	protected void handleFailureMessage(AMError error) {
+		onFailure(error);
 	}
 
 	/**
@@ -291,7 +297,7 @@ abstract class AsyncHttpResponseHandler {
 			handleSuccessMessage((byte[]) msg.obj);
 			break;
 		case FAILURE_MESSAGE:
-			handleFailureMessage((Throwable) msg.obj);
+			handleFailureMessage((AMError) msg.obj);
 			break;
 		case START_MESSAGE:
 			onStart();
@@ -299,9 +305,11 @@ abstract class AsyncHttpResponseHandler {
 		case FINISH_MESSAGE:
 			onFinish();
 			break;
+		case FILE_MESSAGE:
+//			onSuccess((FormFile) msg.obj);
+			break;
 		}
 	}
-
 
 	/**
 	 * Protected method, used to send message.
@@ -312,8 +320,7 @@ abstract class AsyncHttpResponseHandler {
 		} else {
 			handleMessage(msg);
 		}
-	}
-	
+	}	
 
 	/**
 	 * Protected method, used to obtain message.
@@ -329,15 +336,6 @@ abstract class AsyncHttpResponseHandler {
 		}
 		return msg;
 	}
-
-
-
-
-
-
-	
-
-
 
 	/**
 	 * Protected method, used to send response message.
@@ -362,19 +360,24 @@ abstract class AsyncHttpResponseHandler {
 		// (>=300)
 		if (status.getStatusCode() >= AMError.ERROR_CODE_HTTP_MINIMUM) {
 			HttpEntity httpEntity = response.getEntity();
-			JSONObject errorJson = getContent4SpecialError(httpEntity);
-			if (errorJson != null) { // Consider this as successful case
+			AMError error = getContent4SpecialError(httpEntity);
+			if (error != null) { // Consider this as successful case
 				if (isEmseAfterError) {
-					byte[] contents = errorJson.toString().getBytes();
+					if (AMSetting.DebugMode) AMLogger.logInfo("***************** In sendResponseMessage(isEmseAfterError):%s", error.toString());
+					byte[] contents = error.getMore().getBytes();
 					sendSuccessMessage(contents);
 				} else if (isTimeoutError) {
-					sendTimeoutMessage(new Exception("Request times out."));
+					sendTimeoutMessage(error);
+					if (AMSetting.DebugMode) AMLogger.logInfo("***************** In sendResponseMessage(isTimeoutError)");
 				} else {
-					sendFailureMessage(new HttpResponseException(status.getStatusCode(), errorJson.toString()));
+					if (AMSetting.DebugMode) AMLogger.logInfo("***************** In sendResponseMessage(Other error)");
+					sendFailureMessage(error);
 				}
 			} else {
-				sendFailureMessage(new HttpResponseException(status.getStatusCode(), status.getReasonPhrase()));
-			}
+				if (AMSetting.DebugMode) AMLogger.logInfo("***************** In sendResponseMessage(Empty error)");
+				error = new AMError(0, null, null,"Failed to get response from server", null);				
+				sendFailureMessage(error);
+			}			
 		} else {
 			try {
 				HttpEntity entity = null;
@@ -382,8 +385,9 @@ abstract class AsyncHttpResponseHandler {
 				if (temp != null) {
 					entity = new BufferedHttpEntity(temp);
 				}
-
-				// Send response as a byte array and assume listener knows what
+				
+				// Send response as a byte array and assume listener knows
+				// what
 				// to expect.
 				ByteArrayInputStream stream = (ByteArrayInputStream) entity
 						.getContent();
@@ -394,11 +398,20 @@ abstract class AsyncHttpResponseHandler {
 
 				rawResponseBody = new String(contents);
 				sendSuccessMessage(contents);
-			} catch (Exception e) {
-				sendFailureMessage(e);
+			} catch (OutOfMemoryError e) {
+				AMError error = new AMError(0, AMError.ERROR_CODE_OUT_OF_MEMORY, null, e.toString(), null);
+				sendFailureMessage(error);
+			} catch (Throwable e) {
+				AMError error = new AMError(0, null, null, e.getMessage(), null);
+				sendFailureMessage(error);
 			}
 		}
 	}
+	
+	protected void handleStreamFile(InputStream stream){
+		
+	}
+	
 
 	protected Exception getException(String responseBody) {
 		JSONObject jo;
@@ -424,48 +437,40 @@ abstract class AsyncHttpResponseHandler {
 	 * Private method, used to check whether the response contains error of EMSE
 	 * After event or not.
 	 */
-	private JSONObject getContent4SpecialError(HttpEntity responseEntity) {
+	private AMError getContent4SpecialError(HttpEntity responseEntity) {		
+		AMError error = null;
 		String errorCode = null;
-		JSONObject errorJson = null;
-		String line = null;
 		try {
 			InputStream inputStream = responseEntity.getContent();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-			line = reader.readLine();
-			errorJson = new JSONObject(line);
-			reader.close();
+			String line = reader.readLine();
+			JSONObject errorJson = new JSONObject(line);
+			reader.close();			
+			
+			AMLogger.logInfo("***************** In getContent4SpecialError(1): Errorine = %s",line);
+			
 			if (errorJson.has("code")) {
-				errorCode = errorJson.getString("code");
+				errorCode = errorJson.optString("code");
+				int status = errorJson.optInt("status");	
+				String traceId = errorJson.optString("traceId");				
+				String errorMessage = errorJson.optString("message");
+				String moreMessage = errorJson.toString();
+				error = new AMError(status, errorCode, traceId, errorMessage, moreMessage);
 			}
+			AMLogger.logInfo("***************** In getContent4SpecialError(2): errorJson = %s",errorJson.toString());
 		} catch (IllegalStateException e) {
-			AMLogger.logError("IllegalStateException occured: %s.\n %s",
-					e.getMessage(), line);
+			AMLogger.logError("IllegalStateException occured: %s.",e.getMessage());
 		} catch (JSONException e) {
-			AMLogger.logError("JSONException occured: %s.\n %s",
-					e.getMessage(), line);
+			AMLogger.logError("JSONException occured: %s.",e.getMessage());
 		} catch (IOException e) {
-			AMLogger.logError("IOException occured: %s.\n %s", e.getMessage(),
-					line);
+			AMLogger.logError("IOException occured: %s.", e.getMessage());
 		}
-		isTimeoutError = ((errorCode != null) && ((Integer.parseInt(errorCode) == AMError.ERROR_CODE_REQUEST_TIMEOUT)));
-		isEmseAfterError = ((errorCode != null) && ((Integer.parseInt(errorCode) == AMError.ERROR_CODE_EMSE_FAILURE)));
-
-		// Populate a JSON object if necessary
-		if (errorJson == null) {
-			errorJson = new JSONObject();
-			try {
-				errorJson.put("Detail", "");
-				errorJson.put("Resolution","Check network connectivity to the remote server.");
-				errorJson.put("FaultID", "0");
-				errorJson.put("status", "500");
-				errorJson.put("code", AMError.ERROR_CODE_Internal_Server_Error);
-				errorJson.put("message", line);
-			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+		try {
+			isTimeoutError = ((errorCode != null) && (errorCode.equalsIgnoreCase(AMError.ERROR_CODE_REQUEST_TIMEOUT)));
+			isEmseAfterError = ((errorCode != null) && (errorCode.equalsIgnoreCase(AMError.ERROR_CODE_EMSE_FAILURE)));
+		} catch (NumberFormatException e) {
+			//Do nothing
 		}
-
-		return errorJson;
+		return error;
 	}
 }

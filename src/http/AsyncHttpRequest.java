@@ -94,7 +94,8 @@ class AsyncHttpRequest implements Runnable {
         } catch (IOException e) {
             if(responseHandler != null) {
                 responseHandler.sendFinishMessage();
-                responseHandler.sendFailureMessage(e);
+				AMError error = new AMError(0, null, null, e.getMessage(), null);
+                responseHandler.sendFailureMessage(error);
             }
         }
     }
@@ -164,7 +165,7 @@ class AsyncHttpRequest implements Runnable {
     	}
     	BasicStatusLine failedStatusLine = new BasicStatusLine(new ProtocolVersion("AM", 3, 1), 500, null); // HTTP status code 500
     	BasicHttpResponse failedResponse = new BasicHttpResponse(failedStatusLine);	
-    	String timeoutErrorStr = "{\"Detail\":\"\",\"Resolution\":\"Setting timeout interval to a larger number.\",\"FaultID\":\"0\",\"status\":\"500\",\"code\":\"" + AMError.ERROR_CODE_REQUEST_TIMEOUT + "\",\"message\":\"" + errorMsg + "\"}";
+    	String timeoutErrorStr = "{\"code\":\"request_timeout\",\"status\":\"500\",\"code\":\"" + AMError.ERROR_CODE_REQUEST_TIMEOUT + "\",\"message\":\"" + errorMsg + "\"}";
     	BasicHeader header1 = new BasicHeader("Accept","application/json");
     	BasicHeader header2 = new BasicHeader("Content-Type","application/json");
     	failedResponse.setHeaders(new BasicHeader[]{header1,header2});
@@ -185,7 +186,7 @@ class AsyncHttpRequest implements Runnable {
     private void sendFailedMessage4UnavailableHost() {
     	BasicStatusLine failedStatusLine = new BasicStatusLine(new ProtocolVersion("AM", 3, 1), 500, null); // HTTP status code 500
     	BasicHttpResponse failedResponse = new BasicHttpResponse(failedStatusLine);	
-    	String timeoutErrorStr = "{\"Detail\":\"\",\"Resolution\":\"Check network connectivity to the remote server.\",\"FaultID\":\"0\",\"status\":\"500\",\"code\":\"" + AMError.ERROR_CODE_UNAVAIABLE_HOST + "\",\"message\":\"The remote server is unreachable\"}";
+    	String timeoutErrorStr = "{\"error\":\"unavailable_server\",\"status\":\"500\",\"code\":\"" + AMError.ERROR_CODE_UNAVAIABLE_HOST + "\",\"message\":\"Failed to connect to server, please try again later.\"}";
     	BasicHeader header1 = new BasicHeader("Accept","application/json");
     	BasicHeader header2 = new BasicHeader("Content-Type","application/json");
     	failedResponse.setHeaders(new BasicHeader[]{header1,header2});

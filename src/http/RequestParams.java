@@ -119,7 +119,6 @@ public class RequestParams {
 	        try {
 	        	jsonToPost.put(rootKey, jsonContent);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}    
         } else {
@@ -162,6 +161,14 @@ public class RequestParams {
 		put(KEY_NAME_FOR_JSON, source.toString());
      
     }    
+    
+    public Map<String, String> getUrlParams(){
+    	return this.urlParams;
+    }
+    
+    public Map<String, FileWrapper> getFileParams(){
+    	return this.fileParams;
+    }
     
     /**
      * Adds a key/value string pair to the request.
@@ -318,7 +325,11 @@ public class RequestParams {
                     }
                 }
                 currentFileIndex++;
-            }       
+            } 
+
+            //For testing only
+            //multipartEntity.printStreamToFile();
+            
             entity = multipartEntity;
         } else {
             try {            	

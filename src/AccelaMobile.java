@@ -14,7 +14,11 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
+import android.text.TextUtils;
 
 import com.accela.mobile.AMBatchResponse.AMBatchRequestDelegate;
 import com.accela.mobile.AMRequest.HTTPMethod;
@@ -228,7 +232,7 @@ public class AccelaMobile {
 				List<AMRequest> requests = batchSession.getRequests();
 				
 				if(response == null || childResponses.size()!= requests.size()){
-					batchRequestDelegate1.onCompleted();
+					batchRequestDelegate1.onSuccessful();
 					return;
 				}
 				
@@ -240,12 +244,16 @@ public class AccelaMobile {
 				}
 				
 				if(batchRequestDelegate1 != null){
-					batchRequestDelegate1.onCompleted();
+					batchRequestDelegate1.onSuccessful();
 				}
 			}
 			
 			@Override
-			public void onFailure(Throwable error) {}
+			public void onFailure(AMError error) {
+				if(batchRequestDelegate1 != null){
+					batchRequestDelegate1.onFailed(error);
+				}
+			}
 		};
 		
 		session.executeAsync(requestDelegate);
@@ -269,6 +277,7 @@ public class AccelaMobile {
 		this.ownerContext = ownerContext;
 		this.appId = appId;		
 		this.appSecret = appSecret;
+		this.authorizationManager = new AuthorizationManager(this);
 		// Remember the current instance if the default instance is null.
 		if (instance == null) {
 			instance = this;		
@@ -433,13 +442,42 @@ public class AccelaMobile {
 	 * @since 1.0
 	 */
 	public String getAgency() {
-		if (agency != null) {
-			return agency;	
-		} else {
-			return authorizationManager.getAgency();
+		if (TextUtils.isEmpty(this.agency)) {
+			if (this.authorizationManager != null
+					&& !TextUtils.isEmpty(this.authorizationManager.getAgency())
+					&& !this.authorizationManager.getAgency().equalsIgnoreCase(this.agency)) {
+				this.agency = this.authorizationManager.getAgency();
+			}
 		}
+		return this.agency;
 	}
-
+	
+	/**
+	 * public method, used to get version name from AndroidManifest.xml.
+	 */	
+	public String getAppVersion(){
+		PackageInfo pkg = null;
+        String appVersion = "1.0";
+        try {
+        	pkg = ownerContext.getPackageManager().getPackageInfo(ownerContext.getPackageName(), 0);
+            appVersion = pkg.versionName;            
+        } catch (NameNotFoundException e) {
+        	AMLogger.logError("In AMRequest.getAppVersion(): NameNotFoundException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
+        }         
+        return appVersion;        
+     }	
+	/**
+	 * public method, used to get platform information from device.
+	 */	
+	public String getAppPlatform(){
+		boolean isTablet = (ownerContext.getResources().getConfiguration().screenLayout
+	            & Configuration.SCREENLAYOUT_SIZE_MASK)
+	            >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+	    String osType = (isTablet) ? "Android Tablet" : "Android Phone";
+		String osVersion = android.os.Build.VERSION.RELEASE; // e.g. osVersion = "1.6"
+		String deviceName = android.os.Build.MODEL;        
+        return osType + "|" + osVersion + "|" + deviceName;        
+     }	
 	
 	/**
 	 *
@@ -486,8 +524,15 @@ public class AccelaMobile {
 	 * @since 3.0
 	 */
 	public Environment getEnvironment() {
-		return this.environment;	
-	}	
+		if (TextUtils.isEmpty(this.agency)) {
+			if (this.authorizationManager != null
+					&& !TextUtils.isEmpty(this.authorizationManager.getEnvironment())
+					&& !this.authorizationManager.getEnvironment().equalsIgnoreCase(this.environment.name())) {
+				this.environment = Enum.valueOf(Environment.class, this.authorizationManager.getEnvironment());
+			}
+		}
+		return this.environment;
+	}
 	
 	/**
 	 *
@@ -530,6 +575,23 @@ public class AccelaMobile {
 		return (this.authorizationManager != null) && (this.authorizationManager.getAccessToken() != null);
 	}
 
+	/**
+	 * 
+	 * Refresh token.
+	 *
+	 * @param sessionDelegate The session delegate which handle the success or failure resule of token refreshing.
+	 * @return The request which processes the token refreshing.
+	 * 
+	 * @since 4.0
+	 */
+	public AMRequest refreshToken(AMSessionDelegate sessionDelegate) {			
+		AMRequest tokenRequest = null;
+		if (this.authorizationManager !=null) {
+			tokenRequest = authorizationManager.fetchAccessTokenByRefreshToken(sessionDelegate);
+		}
+		return tokenRequest;
+	}
+	
 	/**
 	 * 
 	 * Logs out the user.
@@ -739,27 +801,24 @@ public class AccelaMobile {
 		return amRequest.uploadAttachments(postData, fileInformation, requestDelegate);
 	}
 
-	/**
-	 *
-	 * Downloads a binary file as an asynchronous operation.
-	 *
-	 * @param path The path to the Accela Mobile Cloud API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param localFile The path for file.
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
-	 *
-	 * @return The AMRequest object corresponding to this Accela Mobile Cloud API endpoint call.
-	 *
-	 * @since 1.0
-	 */
-	public AMRequest downloadAttachment(String path, RequestParams urlParams,  String localFile, AMRequestDelegate requestDelegate) {
+
+	public AMRequest downloadAttachment(String path, RequestParams postParams,  String localFile, AMRequestDelegate requestDelegate) {
 		if (this.amApisHost == null) {
 			this.amApisHost = AMSetting.AM_API_HOST;
 		}
-		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, HTTPMethod.GET);	
+		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, null, HTTPMethod.POST);	
+		amRequest.setAccelaMobile(this);
+		return amRequest.downloadAttachment(localFile, postParams, requestDelegate);
+	}	
+	
+	public AMRequest downloadAttachment(String path, String localFile, AMRequestDelegate requestDelegate){
+		if (this.amApisHost == null) {
+			this.amApisHost = AMSetting.AM_API_HOST;
+		}
+		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, null, HTTPMethod.GET);	
 		amRequest.setAccelaMobile(this);
 		return amRequest.downloadAttachment(localFile, requestDelegate);
-	}	
+	}
 	
 	/**
 	 * Private constructor, called by the defaultInstance() static method.

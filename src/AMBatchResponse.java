@@ -49,7 +49,8 @@ public class AMBatchResponse {
 	 * </pre>
 	 */
 	public interface AMBatchRequestDelegate {		
-		public void onCompleted();
+		public void onSuccessful();
+		public void onFailed(AMError e);
 	}
 
 	/**

@@ -18,6 +18,7 @@ import com.accela.mobile.AMRequest.RequestType;
 import com.accela.mobile.AccelaMobile.AuthorizationStatus;
 import com.accela.mobile.http.RequestParams;
 
+
 /**
  * <pre>
  * 
@@ -71,6 +72,13 @@ class AuthorizationManager {
 	 * @since 3.0
 	 */
 	private static final String TOKEN_KEY_IN_PREF_FILE = "access_token";
+	
+	/**
+	 * The key of refresh token stored in local SharedPreferences file.
+	 * 
+	 * @since 4.0
+	 */
+	private static final String REFRESH_TOKEN_KEY_IN_PREF_FILE = "refresh_token";
 
 	/**
 	 * The SharedPreferences instance used to save login information.
@@ -99,6 +107,13 @@ class AuthorizationManager {
 	 * @since 3.0
 	 */
 	private String accessToken;
+	
+	/**
+	 * The refresh token got from server.
+	 * 
+	 * @since 3.0
+	 */
+	private String refreshToken;
 
 	/**
 	 * The URL of authorization server.
@@ -244,7 +259,7 @@ class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	private String redirectUrl;
+	private String redirectUrl;	
 
 	/**
 	 * The string loader which loads localized text.
@@ -271,6 +286,10 @@ class AuthorizationManager {
 		sessionStorePrefs = this.ownerContext.getSharedPreferences(SESSION_STORE_PREF_FILE, 0);
 		// Load access token stored locally.
 		this.accessToken = sessionStorePrefs.getString(TOKEN_KEY_IN_PREF_FILE,null);
+		this.refreshToken = sessionStorePrefs.getString(REFRESH_TOKEN_KEY_IN_PREF_FILE,null);
+		this.agency = sessionStorePrefs.getString(AGENCY_KEY_IN_PREF_FILE, null);
+		this.user = sessionStorePrefs.getString(USER_KEY_IN_PREF_FILE, null);
+		this.environment = sessionStorePrefs.getString(ENVIRONMENT_KEY_IN_PREF_FILE, null);
 	}
 
 	/**
@@ -289,11 +308,13 @@ class AuthorizationManager {
 		// Clear the values of authorization code and access token.
 		this.authorizationCode = null;
 		this.accessToken = null;
+		this.refreshToken = null;
 		accelaMobile.authorizationStatus = AuthorizationStatus.NONE;
 		// Clear the values in local session store.
 		if (clearSessionStore) {
 			SharedPreferences.Editor prefsWriter = sessionStorePrefs.edit();
 			prefsWriter.remove(TOKEN_KEY_IN_PREF_FILE);
+			prefsWriter.remove(REFRESH_TOKEN_KEY_IN_PREF_FILE);
 			prefsWriter.commit();
 		}
 	}
@@ -357,6 +378,18 @@ class AuthorizationManager {
 	 */
 	String getAccessToken() {
 		return this.accessToken;
+	}
+	
+	/**
+	 * 
+	 * Get the value of property refreshToken.
+	 * 
+	 * @return The value of property accessToken.
+	 * 
+	 * @since 4.0
+	 */
+	String getRefreshToken() {
+		return this.refreshToken;
 	}
 
 	/**
@@ -641,16 +674,53 @@ class AuthorizationManager {
 		if (this.accessToken != null) {
 			prefsWriter.putString(TOKEN_KEY_IN_PREF_FILE, this.accessToken);
 		}
+		if (this.refreshToken != null) {
+			prefsWriter.putString(REFRESH_TOKEN_KEY_IN_PREF_FILE, this.refreshToken);
+		}
 		prefsWriter.commit();
 	}
 
+	/**
+	 * 
+	 * Get new access token by refresh token.
+	 * 
+	 * @return The request object which get token.
+	 * 
+	 * @since 4.0
+	 */	
+	AMRequest fetchAccessTokenByRefreshToken(AMSessionDelegate sessionDelegate) {
+		if (sessionDelegate != null) {
+			this.sessionDelegate = sessionDelegate;
+		}
+		String hostUrl = this.apisServer + AMSetting.ACCESS_TOKEN_URI;
+		RequestParams urlParams = new RequestParams();
+		RequestParams postParams = new RequestParams();
+		postParams.put("client_id", this.clientId);
+		postParams.put("client_secret", this.clientSecret);
+		postParams.put("refresh_token", this.refreshToken);
+
+		if (isNativeAuthorization) {
+			postParams.put("grant_type", "password");			
+		} else { // For authorization done through web view
+			postParams.put("grant_type", "authorization_code");			
+		}
+		if (AMSetting.DebugMode) {
+			AMLogger.logVerbose("In AuthorizationManager.fetchAccessTokenByRefreshToken(): postParams = %s.",postParams.toString());
+		}
+		//Clear the stored token
+		clearAuthorizationAndToken(false);
+		//Send request to get refreshed token.
+		AMRequest amRequest = new AMRequest(this.accelaMobile, hostUrl,urlParams, HTTPMethod.POST);
+		amRequest.setRequestType(RequestType.AUTHENTICATION);
+		this.currentRequest = amRequest;
+		return amRequest.sendRequest(postParams, this.tokenRequestDelegate);
+	}
 
 	/**
 	 * Private method, used to get access token for native authorization or web
 	 * authorization.
 	 */
 	private AMRequest fetchAccessToken() {
-
 		String hostUrl = this.apisServer + AMSetting.ACCESS_TOKEN_URI;
 		RequestParams urlParams = new RequestParams();
 		RequestParams postParams = new RequestParams();
@@ -662,9 +732,7 @@ class AuthorizationManager {
 			postParams.put("username", this.user);
 			postParams.put("password", this.password);
 			if (this.permissions != null) { // Optional
-				postParams
-						.put("scope",
-								convertStringArray2StringWithSpaceSeparator(this.permissions));
+				postParams.put("scope", convertStringArray2StringWithSpaceSeparator(this.permissions));
 			}
 			postParams.put("client_id", this.clientId);
 			postParams.put("client_secret", this.clientSecret);
@@ -691,8 +759,7 @@ class AuthorizationManager {
 		// this.ownerContext).findViewById(android.R.id.content).getRootView();
 		return amRequest.sendRequest(postParams, this.tokenRequestDelegate);
 	}
-
-
+	
 	/**
 	 * Private method, used to convert a string array to a string separated by
 	 * space char.
@@ -720,7 +787,8 @@ class AuthorizationManager {
 		@Override
 		public void onTimeout() {
 			if ((sessionDelegate != null) && (!isLoginErrorHandled)) {
-				AMError exceptionError = new AMError(null, "Request times out.", null);
+				AMError exceptionError = new AMError(AMError.ERROR_CODE_Unauthorized,
+						AMError.ERROR_CODE_TOKEN_EXPIRED,null, "Request times out.", null);
 				sessionDelegate.amDidLoginFailure(exceptionError);
 			}
 		};
@@ -729,7 +797,8 @@ class AuthorizationManager {
 		public void amRequestDidReceiveResponse(AMRequest request) {
 			super.amRequestDidReceiveResponse(currentRequest);
 			if (errorMessage != null) {
-				AMError error = new AMError(traceId, errorMessage, null);
+				AMError error = new AMError(AMError.ERROR_CODE_Unauthorized,
+						AMError.ERROR_CODE_TOKEN_EXPIRED,traceId, errorMessage, null);
 				if (sessionDelegate != null) {
 					sessionDelegate.amDidLoginFailure(error);
 					isLoginErrorHandled = true;
@@ -745,7 +814,8 @@ class AuthorizationManager {
 			if ((progressDialog != null) && (progressDialog.isShowing())) {
 				progressDialog.dismiss();
 			}
-			AMError error = new AMError(traceId, errorMessage, null);
+			AMError error = new AMError(AMError.ERROR_CODE_Unauthorized,
+					AMError.ERROR_CODE_TOKEN_EXPIRED,traceId, errorMessage, null);
 			if (sessionDelegate != null) {
 				sessionDelegate.amDidLoginFailure(error);
 				isLoginErrorHandled = true;
@@ -753,7 +823,7 @@ class AuthorizationManager {
 		}
 
 		@Override
-		public void onFailure(Throwable error) {
+		public void onFailure(AMError error) {
 			amRequestDidReceiveResponse(currentRequest);
 			// Dismiss the process waiting view
 			ProgressDialog progressDialog = currentRequest
@@ -762,13 +832,8 @@ class AuthorizationManager {
 				progressDialog.dismiss();
 			}
 			// Invoke session delegate
-			if ((sessionDelegate != null) && (!isLoginErrorHandled)) {
-				AMError exceptionError;
-				if (traceId != null && errorMessage != null)
-					exceptionError = new AMError(traceId, errorMessage, null);
-				else
-					exceptionError = new AMError(null, error.getMessage(), null);
-				sessionDelegate.amDidLoginFailure(exceptionError);
+			if ((sessionDelegate != null) && (!isLoginErrorHandled)) {				
+				sessionDelegate.amDidLoginFailure(error);
 			}
 		}
 
@@ -778,6 +843,7 @@ class AuthorizationManager {
 			amRequestStarted(currentRequest);
 			// Reset the previous token data.
 			accessToken = null;
+			refreshToken = null;
 			// Show progress waiting view
 			// currentRequest.setOwnerView(processIndicatorHolderView,
 			// stringLoader.getString("Msg_Request_AccessToken"));
@@ -797,6 +863,7 @@ class AuthorizationManager {
 				// Get access token
 				try {
 					accessToken = response.getString("access_token");
+					refreshToken = response.getString("refresh_token");
 					accelaMobile.authorizationStatus = AuthorizationStatus.LOGGEDIN;
 					if (AMSetting.DebugMode) {
 						AMLogger.logVerbose(
@@ -804,7 +871,9 @@ class AuthorizationManager {
 								accessToken);
 					}
 				} catch (JSONException e) {
-					onFailure(e);
+					AMError error = new AMError(AMError.ERROR_CODE_Unauthorized,
+							AMError.ERROR_CODE_TOKEN_EXPIRED,null, e.getMessage(),null);
+					onFailure(error);
 				}
 
 				// Save user profile including access token to local storage

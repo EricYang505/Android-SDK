@@ -7,17 +7,12 @@ import java.lang.ref.WeakReference;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.Header;
@@ -54,10 +49,10 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 
+import android.content.Context;
+
 import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMSetting;
-
-import android.content.Context;
 
 /**
  * <pre>
@@ -84,7 +79,7 @@ import android.content.Context;
 
 public class AsyncHttpClient {	
 	private static final int HTTP_MAX_CONNECTIONS = 10;
-	private static final int HTTP_MAX_RETRIES = 5;
+	private static final int HTTP_MAX_RETRIES = 1;
 	private static final int HTTP_SOCKET_BUFFER_SIZE = 8192;
 	private static final String HTTP_HEADER_ACCEPT_ENCODING = "Accept-Encoding";
 	private static final String HTTP_ENCODING_GZIP = "gzip";	
@@ -98,17 +93,6 @@ public class AsyncHttpClient {
 	private Boolean isCancelled = false;
 
 	private ResourceBundle stringLoader = AMSetting.getStringResourceBundle();
-	private static final ThreadFactory sThreadFactory = new ThreadFactory() {
-		private final AtomicInteger mCount = new AtomicInteger(1);
-
-		public Thread newThread(Runnable r) {
-			Thread thread = new Thread(r, "Accela SDK #" + mCount.getAndIncrement());
-			thread.setPriority(Thread.NORM_PRIORITY);
-			return thread;
-		}
-	};
-	private final ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool(sThreadFactory);
-	
 	/**
 	 * Constructor without parameters.
 	 * 
@@ -702,34 +686,37 @@ public class AsyncHttpClient {
 	 */	
 	private void sendRequest(DefaultHttpClient client, HttpContext httpContext, HttpUriRequest uriRequest, String contentType, AsyncHttpResponseHandler responseHandler, Context context) {
 		if (contentType != null) {
-			uriRequest.addHeader("Content-Type", contentType);
-		}	
-		
-		Future<?> request = threadPool.submit(new AsyncHttpRequest(client, httpContext, uriRequest, responseHandler));
-
-		if (context != null) {
-			// Add request to request map
-			List<WeakReference<Future<?>>> requestList = requestMap.get(context);
-			if (requestList == null) {
-				requestList = new LinkedList<WeakReference<Future<?>>>();
-				requestMap.put(context, requestList);
-			}			
-			requestList.add(new WeakReference<Future<?>>(request));			
+			 uriRequest.addHeader("Content-Type", contentType);
+		} 
+		if (AMSetting.DebugMode) {
+			AMLogger.logInfo("In AsyncHttpClient.sendRequest(): uriRequest = %s",uriRequest.getURI());
 		}
+		new Thread(new AsyncHttpRequest(client, httpContext, uriRequest, responseHandler)).start();
 	}	
 	
 	/**
 	 * Private method, used to assemble URL with query string.
 	 */
-	private String assembleUrlWithParams(String url, RequestParams params) {
-		String languageCode = String.format("%s_%s", Locale.getDefault().getLanguage(),Locale.getDefault().getCountry());
-    	if ((params != null) && (!params.hasKey("lang"))) {			
-    		params.put("lang", languageCode);
-		} else if (params == null) {
-			params = new RequestParams("lang", languageCode);
-		}    	
-    	String paramString = params.getParamString();
-		url += "?" + paramString;	
+
+	private String assembleUrlWithParams(String url, RequestParams urlParams) {
+		boolean urlContainsLanguage = (url != null) && (url.contains("lang=")); 
+		boolean paramsContainsLanguage = (urlParams != null) && (urlParams.hasKey("lang"));
+		if ((!urlContainsLanguage) && (!paramsContainsLanguage)) {	
+			String languageCode = String.format("%s_%s", Locale.getDefault().getLanguage(),Locale.getDefault().getCountry());
+			if (urlParams == null) {
+				urlParams = new RequestParams("lang", languageCode);
+			} else { 			
+				urlParams.put("lang", languageCode);
+			}
+		}
+		if (urlParams != null) {
+	    	String paramString = urlParams.getParamString();
+	    	if (!url.contains("?")) {			
+	    		url += "?" + paramString;
+	    	} else {
+	    		url += "&" + paramString;
+	    	}	
+		}
 		return url;
 	}
 	

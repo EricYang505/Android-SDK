@@ -12,9 +12,7 @@ import org.json.JSONObject;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.accela.mobile.http.AsyncHttpClient;
@@ -339,12 +337,12 @@ public class AMRequest {
 		}
 		
 		// Add app version and app id to HTTP header
-		syncHttpClient.addHeader(HEADER_X_ACCELA_APPVERSION, getAppVersion());
+		syncHttpClient.addHeader(HEADER_X_ACCELA_APPVERSION, accelaMobile.getAppVersion());
 		syncHttpClient.addHeader(HEADER_X_ACCELA_APPID, accelaMobile.getAppId());	
 		syncHttpClient.addHeader(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
 		syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
 		syncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());	
-		syncHttpClient.addHeader(HEADER_X_ACCELA_APPPLATFORM, getAppPlatform());
+		syncHttpClient.addHeader(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());
 		// Add access token or app secret to HTTP header
 		AuthorizationManager authorizationManager = accelaMobile.authorizationManager;		
 		if ((authorizationManager != null) && (authorizationManager.getAccessToken() != null)) {
@@ -428,12 +426,12 @@ public class AMRequest {
 			asyncHttpClient = createAsyncHttpClient();
 		}
 		// Add app version and app id to HTTP header
-		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPVERSION, getAppVersion());
+		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPVERSION, accelaMobile.getAppVersion());
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());	
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPID, accelaMobile.getAppId());
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
-		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPPLATFORM, getAppPlatform());
+		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());
 		// Add access token or app secret to HTTP header
 		AuthorizationManager authorizationManager = accelaMobile.authorizationManager;		
 		if ((authorizationManager != null) && (authorizationManager.getAccessToken() != null)) {
@@ -624,7 +622,7 @@ public class AMRequest {
 	 * 
 	 * @since 1.0
 	 */
-	public AMRequest downloadAttachment(String localFile,RequestParams paramData,AMRequestDelegate requestDelegate) {		
+	public AMRequest downloadAttachment(String localFile,RequestParams paramData, AMRequestDelegate requestDelegate) {		
 		this.amDownloadDestinationPath = localFile;		
 		this.requestType = RequestType.DOWNLOAD;
 		if (this.isSynchronous) {
@@ -980,46 +978,35 @@ public class AMRequest {
 		}	 
 		return syncHttpClient;
 	}
-	/**
-	 * Private method, used to get version name from AndroidManifest.xml.
-	 */	
-	private String getAppVersion(){
-		PackageInfo pkg = null;
-        String appVersion = "1.0";
-        try {
-        	pkg = ownerContext.getPackageManager().getPackageInfo(ownerContext.getPackageName(), 0);
-            appVersion = pkg.versionName;            
-        } catch (NameNotFoundException e) {
-        	AMLogger.logError("In AMRequest.getAppVersion(): NameNotFoundException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
-        }         
-        return appVersion;        
-     }	
-	/**
-	 * Private method, used to get platform information from device.
-	 */	
-	private String getAppPlatform(){
-		boolean isTablet = (ownerContext.getResources().getConfiguration().screenLayout
-	            & Configuration.SCREENLAYOUT_SIZE_MASK)
-	            >= Configuration.SCREENLAYOUT_SIZE_LARGE;
-	    String osType = (isTablet) ? "Android Tablet" : "Android Phone";
-		String osVersion = android.os.Build.VERSION.RELEASE; // e.g. osVersion = "1.6"
-		String deviceName = android.os.Build.MODEL;        
-        return osType + "|" + osVersion + "|" + deviceName;        
-     }	
 	
 	/**
 	 * Private method, used to assemble URL with query string..
 	 */	
 	private String assembleUrlWithParams(String url, RequestParams urlParams) {
-		String languageCode = String.format("%s_%s", Locale.getDefault().getLanguage(),Locale.getDefault().getCountry());
-    	if ((urlParams != null) && (!urlParams.hasKey("lang"))) {			
-    		urlParams.put("lang", languageCode);
-		} else if (urlParams == null) {
-			urlParams = new RequestParams("lang", languageCode);
-		}    	
-    	this.urlParams = urlParams;
-    	String paramString = urlParams.getParamString();
-		url += "?" + paramString;	
+		AMLogger.logError("In AMRequest.assembleUrlWithParams()");
+		boolean urlContainsLanguage = (url != null) && (url.contains("lang=")); 
+		boolean paramsContainsLanguage = (urlParams != null) && (urlParams.hasKey("lang"));
+		if ((!urlContainsLanguage) && (!paramsContainsLanguage)) {	
+			String languageCode = String.format("%s_%s", Locale.getDefault().getLanguage(),Locale.getDefault().getCountry());
+			if (urlParams == null) {
+				urlParams = new RequestParams("lang", languageCode);
+			} else { 			
+				urlParams.put("lang", languageCode);
+			}
+		}
+		Log.d("DEBUG", "************* In AMRequest.assembleUrlWithParams(): url = " + url);
+		if (urlParams != null) {
+	    	this.urlParams = urlParams;
+	    	String paramString = urlParams.getParamString();
+	    	Log.d("DEBUG", "************* In AMRequest.assembleUrlWithParams(): paramString = " + paramString);
+	    	if (!url.contains("?")) {
+	    		Log.d("DEBUG", "		==> Add: url.contains(\"?\") == false ");
+	    		url += "?" + paramString;
+	    	} else {
+	    		Log.d("DEBUG", "		==> Skip: url.contains(\"?\") == true ");
+	    		url += "&" + paramString;
+	    	}	
+		}
 		return url;
 	}
 
@@ -1038,10 +1025,9 @@ public class AMRequest {
 			this.amRequestDidLoad(AMRequest.this, responseJson);	
 		}		
 		@Override
-		public void onFailure(Throwable error) {
+		public void onFailure(AMError error) {
 			amRequestDidReceiveResponse(AMRequest.this);
-			AMError amError = new AMError(String.valueOf(AMError.ERROR_CODE_Internal_Server_Error), error.getMessage(), null);
-			this.amRequestDidFailWithError(AMRequest.this, amError);
+			this.amRequestDidFailWithError(AMRequest.this, error);
 		}
 	};	
 }
