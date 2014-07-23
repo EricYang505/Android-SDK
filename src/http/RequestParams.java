@@ -22,6 +22,8 @@ import org.json.JSONObject;
 
 import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMSetting;
+import com.accela.mobile.http.mime.AccelaMultipartEntityBuilder;
+import com.accela.mobile.http.mime.AccelaMultipartFormEntity;
 
 
 /**
@@ -197,56 +199,15 @@ public class RequestParams {
 	 * 
 	 * @since 1.0
 	 */
-    public void put(String key, File file) throws FileNotFoundException {
-        put(key, new FileInputStream(file), file.getName());
-    }
+	public void put(String key, File file) throws FileNotFoundException {
+		// put(key, new FileInputStream(file), file.getName());
+		if (key != null && file != null) {
+			fileParams.put(key, new FileWrapper(file, null));
+		}
+	}
+   
     
-   /**
- 	* Adds an input stream to the request.
- 	* 
- 	* @param key The key name for the new parameter.
- 	* @param stream The input stream to add.
- 	* 
- 	* @return Void.
- 	* 
- 	* @since 1.0
- 	*/
-	public void put(String key, InputStream stream) {
-    	put(key, stream, null);
-	}    
-    
-    /**
-     * Adds an input stream to the request.
-     * 
-     * @param key The key name for the new parameter.
-     * @param stream The input stream to add.
-     * @param fileName The name of the file.
-     * 
-     * @return Void.
-	 * 
-	 * @since 1.0
-	 */
-    public void put(String key, InputStream stream, String fileName) {
-        put(key, stream, fileName, null);
-    }
 
-    /**
-     * Adds an input stream to the request.
-     * 
-     * @param key The key name for the new parameter.
-     * @param stream The input stream to add.
-     * @param fileName The name of the file.
-     * @param contentType The content type of the file, eg. application/json.
-     * 
-     * @return Void.
-	 * 
-	 * @since 1.0
-	 */
-    public void put(String key, InputStream stream, String fileName, String contentType) {
-        if(key != null && stream != null) {
-        	  fileParams.put(key, new FileWrapper(stream, fileName, contentType));
-        }
-    }
 
     /**
      * Removes a parameter from the request.
@@ -305,32 +266,21 @@ public class RequestParams {
     	HttpEntity entity = null;
 
         if(!fileParams.isEmpty()) {
-            SimpleMultipartEntity multipartEntity = new SimpleMultipartEntity();
+        	AccelaMultipartEntityBuilder multipartBuilder = AccelaMultipartEntityBuilder.create();
+        	multipartBuilder.setBoundary(AccelaMultipartFormEntity.MULTIPART_SEPARATOR_LINE);
             // Add string parameters
              for(ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {
-                multipartEntity.addPart(entry.getKey(), entry.getValue());
+            	 multipartBuilder.addTextBody(entry.getKey(), entry.getValue());
             }
 
             // Add file parameters
-            int currentFileIndex = 0;
-            int lastFileIndex = fileParams.entrySet().size() - 1;
             for(ConcurrentHashMap.Entry<String, FileWrapper> entry : fileParams.entrySet()) {
-                FileWrapper file = entry.getValue();
-                if(file.inputStream != null) {
-                	boolean isLastFile = currentFileIndex == lastFileIndex;                	
-                    if(file.contentType != null) {
-                        multipartEntity.addPart(SimpleMultipartEntity.MULTIPART_File_KEY, file.getFileName(), file.inputStream, file.contentType, isLastFile);
-                    } else {
-                        multipartEntity.addPart(SimpleMultipartEntity.MULTIPART_File_KEY, file.getFileName(), file.inputStream, isLastFile);
-                    }
+                FileWrapper fileWrapper = entry.getValue();
+                if(fileWrapper.mfile != null) {
+                    multipartBuilder.addBinaryBody(AccelaMultipartFormEntity.MULTIPART_File_KEY, fileWrapper.mfile);
                 }
-                currentFileIndex++;
-            } 
-
-            //For testing only
-            //multipartEntity.printStreamToFile();
-            
-            entity = multipartEntity;
+            }
+            entity = multipartBuilder.build();
         } else {
             try {            	
                 entity = new UrlEncodedFormEntity(getParamsList(), ENCODING);   
@@ -503,22 +453,12 @@ public class RequestParams {
 	 * Private inner static class, used to wrap parameters related for file uploading.
 	 */	
     private static class FileWrapper {
-        public InputStream inputStream;
-        public String fileName;
+        public File mfile;
         public String contentType;
 
-        public FileWrapper(InputStream inputStream, String fileName, String contentType) {
-            this.inputStream = inputStream;
-            this.fileName = fileName;
+        public FileWrapper(File file, String contentType) {
+            this.mfile = file;
             this.contentType = contentType;
-        }
-
-        public String getFileName() {
-            if(fileName != null) {
-                return fileName;
-            } else {
-                return "nofilename";
-            }
         }
     }
   

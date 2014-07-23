@@ -52,6 +52,7 @@ import android.os.StrictMode;
 import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMRequest.HTTPMethod;
 import com.accela.mobile.AMSetting;
+import com.accela.mobile.http.mime.AccelaMultipartFormEntity;
 
 
 
@@ -354,7 +355,7 @@ public class SyncHttpClient {
 	 * @since 4.0
 	 */
 	public String getMultipartSeparatorLine() {        
-        return SimpleMultipartEntity.MULTIPART_SEPARATOR_LINE;
+        return AccelaMultipartFormEntity.MULTIPART_SEPARATOR_LINE;
     }
 	
 	/**

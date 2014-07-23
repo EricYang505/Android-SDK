@@ -53,6 +53,7 @@ import android.content.Context;
 
 import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMSetting;
+import com.accela.mobile.http.mime.AccelaMultipartFormEntity;
 
 /**
  * <pre>
@@ -190,7 +191,7 @@ public class AsyncHttpClient {
 	 * @since 4.0
 	 */
 	public String getMultipartSeparatorLine() {        
-        return SimpleMultipartEntity.MULTIPART_SEPARATOR_LINE;
+        return AccelaMultipartFormEntity.MULTIPART_SEPARATOR_LINE;
     }
 
 	/**
