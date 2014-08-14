@@ -192,6 +192,7 @@ class CivicLoginDialog extends AMLoginView  {
 		contentViewLayout.setOnTouchListener(new OnTouchListener() {
 			public boolean onTouch(View v, MotionEvent event) {
 				hideKeyboard();
+				v.performClick();
 				return true;
 			}	       
 	    });
