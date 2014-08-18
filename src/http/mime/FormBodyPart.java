@@ -27,14 +27,21 @@
 
 package com.accela.mobile.http.mime;
 
-
-/**
- * FormBodyPart class represents a content body that can be used as a part of multipart encoded
- * entities. This class automatically populates the header with standard fields based on
- * the content description of the enclosed body.
- *
- * @since 4.0
+/*
+ *  Description:
+ *  FormBodyPart class represents a content body that can be used as a part of multipart encoded
+ * 	entities. This class automatically populates the header with standard fields based on
+ * 	the content description of the enclosed body.
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 public class FormBodyPart {
 
     private final String name;

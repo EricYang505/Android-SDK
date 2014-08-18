@@ -27,8 +27,17 @@
 
 package com.accela.mobile.http.mime;
 
-/**
- * Represents common content properties.
+/*
+ *  Description:
+ *  Represents common content properties.
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
 public interface ContentDescriptor {
 

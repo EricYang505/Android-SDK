@@ -30,9 +30,16 @@ package com.accela.mobile.http.mime;
 
 import java.nio.charset.Charset;
 
-/**
- *
- * @since 4.0
+/*
+ *  Description:
+ *  
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
 public final class MIME {
 

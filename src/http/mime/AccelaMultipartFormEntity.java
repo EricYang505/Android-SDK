@@ -35,6 +35,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/*
+ *  Description:
+ * AccelaMultipartFormEntity generates multiple part form entity for request body.
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
+ */
+
 public class AccelaMultipartFormEntity implements HttpEntity {
 	public static final String MULTIPART_File_KEY = "uploadedFile";
 	public static final String MULTIPART_SEPARATOR_LINE = "---------------------------7de1a0c22082";

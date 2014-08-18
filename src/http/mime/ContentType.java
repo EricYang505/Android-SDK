@@ -42,15 +42,22 @@ import org.apache.http.message.BasicHeaderValueParser;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.util.CharArrayBuffer;
 
-/**
+/*
+ *  Description:
  * Content type information consisting of a MIME type and an optional charset.
- * <p/>
  * This class makes no attempts to verify validity of the MIME type.
  * The input parameters of the {@link #create(String, String)} method, however, may not
  * contain characters <">, <;>, <,> reserved by the HTTP specification.
- *
- * @since 4.2
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 @Immutable
 public final class ContentType implements Serializable {
 

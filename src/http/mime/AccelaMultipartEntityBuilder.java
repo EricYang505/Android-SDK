@@ -37,10 +37,17 @@ import java.util.Random;
 
 import org.apache.http.HttpEntity;
 
-/**
- * Builder for multipart {@link HttpEntity}s.
- *
- * @since 4.3
+/*
+ *  Description:
+ * AccelaMultipartEntityBuilder generates the MIME multipart encoded content bodies.
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
 public class AccelaMultipartEntityBuilder {
 

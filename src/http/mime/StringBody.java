@@ -36,13 +36,19 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-/**
- * Text body part backed by a byte array.
- *
- * @see org.apache.http.entity.mime.MultipartEntityBuilder
- *
- * @since 4.0
+/*
+ *  Description:
+ *  Text body part backed by a byte array.
+ *  
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 public class StringBody extends AbstractContentBody {
 
     private final byte[] content;

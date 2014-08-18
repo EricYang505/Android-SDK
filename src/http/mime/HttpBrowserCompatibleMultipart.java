@@ -32,13 +32,20 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 
-
-/**
- * HttpBrowserCompatibleMultipart represents a collection of MIME multipart encoded
- * content bodies. This class is emulates browser compatibility, e.g. IE 5 or earlier.
- *
- * @since 4.3
+/*
+ *  Description:
+ *  HttpBrowserCompatibleMultipart represents a collection of MIME multipart encoded
+ *  content bodies.
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 class HttpBrowserCompatibleMultipart extends AbstractMultipartForm {
 
     private final List<FormBodyPart> parts;

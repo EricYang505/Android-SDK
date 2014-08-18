@@ -30,10 +30,19 @@ package com.accela.mobile.http.mime;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/**
- *
- * @since 4.0
+/*
+ *  Description:
+ * Content Body part
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 public interface ContentBody extends ContentDescriptor {
 
     String getFilename();

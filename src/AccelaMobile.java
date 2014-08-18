@@ -820,6 +820,10 @@ public class AccelaMobile {
 		return amRequest.downloadAttachment(localFile, requestDelegate);
 	}
 	
+	public String getToken(){
+		return authorizationManager.getAccessToken();
+	}
+	
 	/**
 	 * Private constructor, called by the defaultInstance() static method.
 	 */	 

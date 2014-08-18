@@ -37,13 +37,19 @@ import java.util.List;
 
 import org.apache.http.util.ByteArrayBuffer;
 
-/**
- * HttpMultipart represents a collection of MIME multipart encoded content bodies. This class is
- * capable of operating either in the strict (RFC 822, RFC 2045, RFC 2046 compliant) or
- * the browser compatible modes.
- *
- * @since 4.3
+/*
+ *  Description:
+ * Basic functions for a collection of MIME multipart encoded content bodies.
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 abstract class AbstractMultipartForm {
 
     private static ByteArrayBuffer encode(

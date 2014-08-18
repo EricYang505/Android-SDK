@@ -28,12 +28,21 @@
 package com.accela.mobile.http.mime;
 
 import java.nio.charset.Charset;
-
-
-/**
- *
- * @since 4.0
+/*
+ *  Description:
+ *  Abstract class, used to store HTTP request body
+ * 
+ *  Notes:
+ * 
+ * 
+ *  Revision History
+ *  
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 public abstract class AbstractContentBody implements ContentBody {
 
     private final ContentType contentType;

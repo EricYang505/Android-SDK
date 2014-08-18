@@ -31,14 +31,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
-/**
- * Binary body part backed by an input stream.
- *
- * @see org.apache.http.entity.mime.MultipartEntityBuilder
- *
- * @since 4.0
+/*
+ *  Description:
+ *  Binary body part backed by an input stream.
+ *  
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 public class InputStreamBody extends AbstractContentBody {
 
     private final InputStream in;

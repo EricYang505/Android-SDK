@@ -36,9 +36,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * The header of an entity (see RFC 2045).
+/*
+ *  Description:
+ *  The header of an entity (see RFC 2045).
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 public class Header implements Iterable<MinimalField> {
 
     private final List<MinimalField> fields;

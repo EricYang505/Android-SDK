@@ -27,9 +27,16 @@
 
 package com.accela.mobile.http.mime;
 
-/**
- *
- * @since 4.0
+/*
+ *  Description:
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
 public enum HttpMultipartMode {
 

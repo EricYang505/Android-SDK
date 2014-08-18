@@ -27,11 +27,19 @@
 
 package com.accela.mobile.http.mime;
 
-/**
- * Minimal MIME field.
- *
- * @since 4.0
+/*
+ *  Description:
+ *  Minimal MIME field.
+ *  
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 public class MinimalField {
 
     private final String name;

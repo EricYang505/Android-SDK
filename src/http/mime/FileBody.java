@@ -33,14 +33,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
-/**
- * Binary body part backed by a file.
- *
- * @see org.apache.http.entity.mime.MultipartEntityBuilder
- *
- * @since 4.0
+/*
+ *  Description:
+ *  Binary body part backed by a file.
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 public class FileBody extends AbstractContentBody {
 
     private final File file;

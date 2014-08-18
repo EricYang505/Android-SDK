@@ -29,14 +29,19 @@ package com.accela.mobile.http.mime;
 import java.io.IOException;
 import java.io.OutputStream;
 
-
-/**
- * Binary body part backed by a byte array.
- *
- * @see org.apache.http.entity.mime.MultipartEntityBuilder
- *
- * @since 4.1
+/*
+ *  Description:
+ * ByteArrayBody part backed by a byte array.
+ * 
+ *  Notes:
+ * 
+ *  Revision History
+ * 
+ * 	@since 4.0
+ * 
+ * </pre>
  */
+
 public class ByteArrayBody extends AbstractContentBody {
 
     /**
