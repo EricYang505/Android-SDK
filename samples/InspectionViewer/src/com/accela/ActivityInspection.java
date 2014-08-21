@@ -1,12 +1,18 @@
 package com.accela;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -24,7 +30,7 @@ import com.accela.mobile.AccelaMobile.AuthorizationStatus;
 import com.accela.mobile.http.RequestParams;
 
 public class ActivityInspection extends ListActivity implements OnClickListener {
-	private static String SERVICE_URI_INSPECTION_LIST = "/v4/records/{recordId}/inspections/";
+	private static String SERVICE_URI_INSPECTION_LIST = "/v4/inspections";
 	private AppContext appContext;
 	private Button btnSignIn, btnSignOut, btnShow;
 	private RelativeLayout mainLayout;
@@ -64,8 +70,7 @@ public class ActivityInspection extends ListActivity implements OnClickListener 
 		switch (view.getId()) {
 			case R.id.btnLogin:
 				createAccelaMobileInstance();
-				String[] permissions4Authorization  = new String[] {"get_record_inspections"};
-				//String[] permissions4Authorization  = new String[] {"search_records", "get_records", "get_record", "get_record_inspections", "get_inspections", "get_inspection", "get_record_documents", "get_document", "create_record","create_record_document", "get_gis_settings" };
+				String[] permissions4Authorization  = new String[] {"search_records", "get_records", "get_record", "get_record_inspections", "get_inspections", "get_inspection", "get_record_documents", "get_document", "create_record","create_record_document", "get_gis_settings" };
 				appContext.accelaMobile.authorize(permissions4Authorization);
 				break;
 				
@@ -76,12 +81,27 @@ public class ActivityInspection extends ListActivity implements OnClickListener 
 				this.setListAdapter(null);							
 				break;
 				
-			case R.id.btnShow:				
-				String servicePath = SERVICE_URI_INSPECTION_LIST.replace("{recordId}", "14CAP-00000-0003E");	
+			case R.id.btnShow:
+				String servicePath = SERVICE_URI_INSPECTION_LIST;
 				RequestParams requestParams = new RequestParams();
-				requestParams.put("limit", "10");		
-				requestParams.put("offset", "0");		
-				currentRequest = appContext.accelaMobile.request(servicePath, requestParams, requestDelegate);			
+				
+				Date dateToday = new Date();
+				Date scheduledDateTo = dateToday;
+
+				Calendar now = Calendar.getInstance();
+				now.setTime(dateToday);
+				now.set(Calendar.DATE, now.get(Calendar.DATE) - 600);
+				Date scheduledDateFrom = now.getTime();
+				
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				//search inspections of 600 days before till now
+				requestParams.put("scheduledDateFrom", dateFormat.format(scheduledDateFrom));
+				requestParams.put("scheduledDateTo", dateFormat.format(scheduledDateTo));
+				//requestParams.put("inspectorIds", inspectorId);
+				requestParams.put("limit", "10");
+				requestParams.put("offset", "0");
+				//asynchronous request, put requestDelegate for handling results
+				currentRequest = appContext.accelaMobile.request(servicePath, requestParams, requestDelegate);
 			}
 	}
 	
@@ -107,10 +127,10 @@ public class ActivityInspection extends ListActivity implements OnClickListener 
 	// Create the AccelaMobile instance in app context.
 	private void createAccelaMobileInstance() {			
 		//Override the URLs of default authorization server and api server defined in Accela SDK package.
-      	String authServer = "https://apps-auth.dev.accela.com";
-      	String apiServer = "https://apps-apis.dev.accela.com";
+      	String authServer = AMSetting.AM_OAUTH_HOST;
+      	String apiServer = AMSetting.AM_API_HOST;
 		// Create an AccelaMobile instance with the App ID and App Secret of the registered app.
-	   appContext.accelaMobile = new AccelaMobile(this, "com.accela.inspector", "2012122222212102", sessionDelegate,authServer,apiServer);         
+	   appContext.accelaMobile = new AccelaMobile(this, "635439815877444193", "133bb8d3991a4d8483cf55e3ccf25070", sessionDelegate,authServer,apiServer);         
 	   // Set the environment.
 	   appContext.accelaMobile.setEnvironment(AccelaMobile.Environment.PROD);
 	   // Set the URL schema.
@@ -178,7 +198,7 @@ public class ActivityInspection extends ListActivity implements OnClickListener 
 		}
 
 		@Override
-		public void onFailure(Throwable error) {
+		public void onFailure(AMError error) {
 			amRequestDidReceiveResponse(currentRequest);
 			// Dismiss the process waiting view
 			ProgressDialog progressDialog = currentRequest.getRequestWaitingView();
@@ -186,7 +206,7 @@ public class ActivityInspection extends ListActivity implements OnClickListener 
 				progressDialog.dismiss();
 			}
 			// Show dialog with the returned error
-			createAlertDialog(ActivityInspection.this.getResources().getString(R.string.error_request_title), ActivityInspection.this.getResources().getString(R.string.error_request_message) + ": \n" + error.getLocalizedMessage());
+			createAlertDialog(ActivityInspection.this.getResources().getString(R.string.error_request_title), ActivityInspection.this.getResources().getString(R.string.error_request_message) + ": \n" + error.getMessage());
 		}
 	};
 	
