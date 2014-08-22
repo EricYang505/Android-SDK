@@ -51,49 +51,11 @@ public class FileBody extends AbstractContentBody {
     private final File file;
     private final String filename;
 
-    /**
-     * @since 4.1
-     *
-     * @deprecated (4.3) use {@link FileBody#FileBody(File, ContentType, String)}
-     *   or {@link org.apache.http.entity.mime.MultipartEntityBuilder}
-     */
-    @Deprecated
-    public FileBody(final File file,
-                    final String filename,
-                    final String mimeType,
-                    final String charset) {
-        this(file, ContentType.create(mimeType, charset), filename);
-    }
-
-    /**
-     * @since 4.1
-     *
-     * @deprecated (4.3) use {@link FileBody#FileBody(File, ContentType)}
-     *   or {@link org.apache.http.entity.mime.MultipartEntityBuilder}
-     */
-    @Deprecated
-    public FileBody(final File file,
-                    final String mimeType,
-                    final String charset) {
-        this(file, null, mimeType, charset);
-    }
-
-    /**
-     * @deprecated (4.3) use {@link FileBody#FileBody(File, ContentType)}
-     *   or {@link org.apache.http.entity.mime.MultipartEntityBuilder}
-     */
-    @Deprecated
-    public FileBody(final File file, final String mimeType) {
-        this(file, ContentType.create(mimeType), null);
-    }
 
     public FileBody(final File file) {
         this(file, ContentType.DEFAULT_BINARY, file != null ? file.getName() : null);
     }
 
-    /**
-     * @since 4.3
-     */
     public FileBody(final File file, final ContentType contentType, final String filename) {
         super(contentType);
         ContentType.notNull(file, "File");
@@ -101,9 +63,6 @@ public class FileBody extends AbstractContentBody {
         this.filename = filename;
     }
 
-    /**
-     * @since 4.3
-     */
     public FileBody(final File file, final ContentType contentType) {
         this(file, contentType, null);
     }

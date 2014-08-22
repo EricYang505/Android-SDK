@@ -462,10 +462,7 @@ public class SyncHttpClient {
 		// Return directly if exception occurs in above process
 		if (httpResponse == null) {
 			return null;
-		}		
-	
-//		int responseCode = httpResponse.getStatusLine().getStatusCode();
-//		String responseMessage = httpResponse.getStatusLine().getReasonPhrase();	
+		}
 		
 		HttpEntity entity = httpResponse.getEntity();
 		String responseContent = null;

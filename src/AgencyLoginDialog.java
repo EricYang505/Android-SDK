@@ -189,7 +189,6 @@ class AgencyLoginDialog extends AMLoginView  {
 		etAgency.setSingleLine(true);		
 		etAgency.setGravity(Gravity.CENTER_VERTICAL);		
 		etAgency.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-//		etAgency.setInputType( ~(InputType.TYPE_TEXT_FLAG_AUTO_CORRECT) );
 		agencyFieldLayout.addView(agencyFieldLabel, labelLayoutParams);
 		agencyFieldLayout.addView(etAgency, fieldLayoutParams);
 		
@@ -251,7 +250,6 @@ class AgencyLoginDialog extends AMLoginView  {
 		etEnvironment.setTextSize(14);
 		etEnvironment.setTypeface(Typeface.SANS_SERIF);
 		etEnvironment.setBackgroundColor(Color.TRANSPARENT);
-//		etEnvironment.setHint(stringLoader.getString("AgencyLogin_FieldHint_Environment"));			
 		etEnvironment.setFocusable(false);		
 		
 		envArrowImage = new ImageView(ownerContext);
@@ -459,6 +457,7 @@ class AgencyLoginDialog extends AMLoginView  {
 		this.getContentView().setOnTouchListener(new OnTouchListener() {
 			public boolean onTouch(View v, MotionEvent event) {	
 				hideKeyboard();
+				v.performClick();
 				return true;
 			}	       
 	    });

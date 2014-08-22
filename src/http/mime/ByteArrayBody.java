@@ -69,9 +69,6 @@ public class ByteArrayBody extends AbstractContentBody {
         this(data, ContentType.create(mimeType), filename);
     }
 
-    /**
-     * @since 4.3
-     */
     public ByteArrayBody(final byte[] data, final ContentType contentType, final String filename) {
         super(contentType);
         ContentType.notNull(data, "byte[]");

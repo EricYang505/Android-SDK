@@ -178,10 +178,6 @@ public final class ContentType implements Serializable {
 		return true;
 	}
 		
-    
-    /**
-     * @since 4.3
-     */
     public String getParameter(final String name) {
         this.notEmpty(name, "Parameter name");
         if (this.params == null) {

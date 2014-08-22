@@ -154,7 +154,7 @@ public class AMLoginDialogWrapper extends Dialog {
 				bytes[i] += 256;
 			}
 		}				
-		return new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+		return new BitmapDrawable(accelaMobile.ownerContext.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
 	}
 
     public void dismiss() {
@@ -195,7 +195,7 @@ public class AMLoginDialogWrapper extends Dialog {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         webView.setVisibility(View.INVISIBLE);
-        webView.getSettings().setSavePassword(false);       
+        webView.getSettings().setSavePassword(false);
         webViewContainer.setPadding(margin, margin, margin, margin);
         webViewContainer.addView(webView);
         contentFrameLayout.addView(webViewContainer);

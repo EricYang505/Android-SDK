@@ -87,11 +87,11 @@ public class CitizenTestActivity extends Activity implements OnClickListener {
 		switch (view.getId()) {
 		case R.id.btnCivicWebLogin:
 			appContext.accelaMobile4Citizen.authorize(
-					permissions4Authorization, "BIGBUCKET");
+					permissions4Authorization, "ISLANDTON");
 			break;
 		case R.id.btnCivicEmbeddedWebLogin:
 			appContext.accelaMobile4Citizen.authorize2(
-					permissions4Authorization, "BIGBUCKET");
+					permissions4Authorization, "ISLANDTON");
 			break;
 		case R.id.btnCivicGetRecords:
 			if (isSessionValid()) {
@@ -172,7 +172,7 @@ public class CitizenTestActivity extends Activity implements OnClickListener {
 		// Create an AccelaMobile instance with the App ID and App Secret of the
 		// registered app.
 		appContext.accelaMobile4Citizen = new AccelaMobile(this,
-				"635410466195097879", "f09c6401bccf43929c31adea5174da32",
+				"635442545965802935", "e7b22310882f4e5185c9ca339aa1a67c",
 				sessionDelegate, authServer, apiServer);
 		// Set the environment.
 		appContext.accelaMobile4Citizen

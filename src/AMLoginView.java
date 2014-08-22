@@ -97,7 +97,7 @@ public class AMLoginView extends PopupWindow {
 				bytes[i] += 256;
 			}
 		}				
-		return new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+		return new BitmapDrawable(accelaMobileInternal.ownerContext.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
 	}
 	
 	/**

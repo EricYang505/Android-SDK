@@ -129,7 +129,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 		String servicePath = null;
 		RequestParams requestParams = new RequestParams();
 		// Define record Id for a specific record
-		String recordId = "14BLD-00000-00075";
+		String recordId = "14CAP-00000-000CT";
 		switch (view.getId()) {
 		case R.id.btnAgencyNativeLogin:
 			createAccelaMobile(true);
@@ -381,7 +381,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 			// Create an AccelaMobile instance with the App ID and App Secret of
 			// the registered app.
 			appContext.accelaMobile4Agency = new AccelaMobile(this,
-					"635439815877444193", "133bb8d3991a4d8483cf55e3ccf25070",
+					"635442545792218073", "28c6edc56e714078a23a50a4193f348f",
 					sessionDelegate, authServer, apiServer);
 			// Set the environment.
 			appContext.accelaMobile4Agency
@@ -1182,8 +1182,8 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 		JSONObject recordJson = new JSONObject();
 		JSONObject recordTypeJson = new JSONObject();
 		try {
-			recordTypeJson.put("id", "Building-Building-Residential-Plan.cCheck");
-			recordTypeJson.put("value", "Building/Building/Residential/Plan Check");
+			recordTypeJson.put("id", "ServiceRequest-Graffiti-Graffiti-NA");
+			recordTypeJson.put("value", "ServiceRequest/Graffiti/Graffiti/NA");
 			recordJson.put("type", recordTypeJson);
 			recordJson.put("text", "Create from Catch Report");
 			// recordJson.put("contacts", new JSONArray().put(contactJson));

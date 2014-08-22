@@ -47,26 +47,12 @@ public abstract class AbstractContentBody implements ContentBody {
 
     private final ContentType contentType;
 
-    /**
-     * @since 4.3
-     */
     public AbstractContentBody(final ContentType contentType) {
         super();
         ContentType.notNull(contentType, "Content type");
         this.contentType = contentType;
     }
 
-    /**
-     * @deprecated (4.3) use {@link AbstractContentBody#AbstractContentBody(ContentType)}
-     */
-    @Deprecated
-    public AbstractContentBody(final String mimeType) {
-        this(ContentType.parse(mimeType));
-    }
-
-    /**
-     * @since 4.3
-     */
     public ContentType getContentType() {
         return this.contentType;
     }

@@ -95,9 +95,6 @@ public class AccelaMultipartEntityBuilder {
         return this;
     }
 
-    /**
-     * @since 4.4
-     */
     public AccelaMultipartEntityBuilder setMimeSubtype(final String subType) {
         ContentType.notBlank(subType, "MIME subtype");
         this.subType = subType;
@@ -109,9 +106,6 @@ public class AccelaMultipartEntityBuilder {
         return this;
     }
 
-    /**
-     * @since 4.4
-     */
     public AccelaMultipartEntityBuilder addPart(final FormBodyPart bodyPart) {
         if (bodyPart == null) {
             return this;

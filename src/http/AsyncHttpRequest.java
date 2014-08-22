@@ -122,7 +122,6 @@ class AsyncHttpRequest implements Runnable {
 				sendFailedMessage4UnavailableHost();
 			}
 		}
-
     }
 
     /**
