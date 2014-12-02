@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +24,13 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.accela.mobile.*;
+import com.accela.mobile.AMError;
+import com.accela.mobile.AMLogger;
+import com.accela.mobile.AMRequest;
+import com.accela.mobile.AMRequestDelegate;
+import com.accela.mobile.AMSessionDelegate;
+import com.accela.mobile.AMSetting;
+import com.accela.mobile.AccelaMobile;
 import com.accela.mobile.AccelaMobile.AuthorizationStatus;
 import com.accela.mobile.http.RequestParams;
 
