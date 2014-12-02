@@ -5,8 +5,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import android.content.Context;
-
 import com.accela.mobile.AMError;
 import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMSetting;

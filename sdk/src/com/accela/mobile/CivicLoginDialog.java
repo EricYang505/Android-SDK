@@ -6,11 +6,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-
 import android.net.Uri;
 import android.text.Editable;
 import android.text.InputType;
-
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.MotionEvent;

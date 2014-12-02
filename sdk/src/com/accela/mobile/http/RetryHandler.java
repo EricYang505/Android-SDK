@@ -10,8 +10,8 @@ import java.util.HashSet;
 import javax.net.ssl.SSLHandshakeException;
 
 import org.apache.http.NoHttpResponseException;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 
