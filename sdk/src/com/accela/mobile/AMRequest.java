@@ -982,7 +982,7 @@ public class AMRequest {
 	/**
 	 * Private method, used to assemble URL with query string..
 	 */	
-	private String assembleUrlWithParams(String url, RequestParams urlParams) {
+	public String assembleUrlWithParams(String url, RequestParams urlParams) {
 		AMLogger.logError("In AMRequest.assembleUrlWithParams()");
 		boolean urlContainsLanguage = (url != null) && (url.contains("lang=")); 
 		boolean paramsContainsLanguage = (urlParams != null) && (urlParams.hasKey("lang"));
