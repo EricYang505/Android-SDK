@@ -1,0 +1,30 @@
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal"
+        android:layout_marginLeft = "15dp"
+        android:layout_marginRight = "15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/itemContainer"
+        >
+     	<TextView
+     	android:id="@+id/textFieldName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:layout_weight="1"
+        android:textStyle="bold"
+        android:text="ID:" 
+        
+        />
+     	<TextView
+        android:id="@+id/textFieldValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="ID-2324-232-24" 
+        
+        />
+    </LinearLayout>

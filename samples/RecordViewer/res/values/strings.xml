@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Record Viewer</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="action_mapview">Map View</string>
+    <string name="action_listview">List View</string>
+    <string name="login">Login</string>
+    <string name="logout">Sign out</string>
+	<string name="login_failed">Login Failed</string>
+	<string name="load_record_failed">Load record list failed</string>
+	<string name="record_empty">Record is empty</string>
+	<string name="record_id">Record ID:</string>
+	<string name="record_name">Record Name:</string>
+	<string name="status">Status:</string>
+	<string name="open_date">Open Date:</string>
+	<string name="description">Description:</string>
+	<string name="address">Address:</string>
+	<string name="loading_record">Loading records...</string>
+	
+</resources>
