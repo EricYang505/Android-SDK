@@ -193,6 +193,10 @@ public class AccelaMobile {
     	return instance;
     }	
 	
+	public AuthorizationManager getAuthorizationManager() {
+		return this.authorizationManager;
+	}
+	
 	/**
 	 * 
 	 * Start a batch request.

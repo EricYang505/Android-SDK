@@ -94,9 +94,9 @@ public class AMBatchSession {
 			if ((httpMethod == HTTPMethod.POST || httpMethod == HTTPMethod.PUT)
 					&& request.getPostParams() != null) {
 				model.setBody(request.getPostParams());
-			} else if(httpMethod == HTTPMethod.GET) {
-				model.setUrl(request.assembleUrlWithParams(url, request.getUrlParams()));
-			}
+			} else if(httpMethod == HTTPMethod.GET) {		
+				model.setUrl(request.assembleUrlWithParams(url, request.getUrlParams()));		
+ 			}
 
 			models.add(model);
 		}
@@ -131,7 +131,7 @@ public class AMBatchSession {
 			if ((httpMethod == HTTPMethod.POST || httpMethod == HTTPMethod.PUT)
 				&& request.getPostParams() != null) {
 				model.setBody(request.getPostParams());
-			} else if(httpMethod == HTTPMethod.GET) {
+			}else if(httpMethod == HTTPMethod.GET) {		
 				model.setUrl(request.assembleUrlWithParams(url, request.getUrlParams()));
 			}
 
