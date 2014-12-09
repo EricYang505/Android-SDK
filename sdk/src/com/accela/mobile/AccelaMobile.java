@@ -630,7 +630,7 @@ public class AccelaMobile {
 	}
 	
 	public AMRequest request(AMBatchSession batchSession, String path, RequestParams urlParams, AMRequestDelegate requestDelegate) {
-		AMRequest request = new AMRequest(this, path, null,HTTPMethod.GET, requestDelegate);
+		AMRequest request = new AMRequest(this, path, urlParams,HTTPMethod.GET, requestDelegate);
 		batchSession.add(request);
 		return request;
 	}
