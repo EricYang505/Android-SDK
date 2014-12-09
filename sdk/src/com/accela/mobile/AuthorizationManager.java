@@ -42,7 +42,7 @@ import com.accela.mobile.http.RequestParams;
  * 	@since 3.0
  */
 
-class AuthorizationManager {
+public class AuthorizationManager {
 	static final String SESSION_STORE_PREF_FILE = "SessionStorePrefsFile";
 
 	/**
@@ -304,7 +304,7 @@ class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	void clearAuthorizationAndToken(Boolean clearSessionStore) {
+	public void clearAuthorizationAndToken(Boolean clearSessionStore) {
 		// Clear the values of authorization code and access token.
 		this.authorizationCode = null;
 		this.accessToken = null;
@@ -327,7 +327,7 @@ class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	String getEnvironment() {
+	public String getEnvironment() {
 		return this.environment;
 	}
 
@@ -339,7 +339,7 @@ class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	String getAgency() {
+	public String getAgency() {
 		return this.agency;
 	}
 
@@ -351,7 +351,7 @@ class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	String getUser() {
+	public String getUser() {
 		return this.user;
 	}
 
@@ -376,7 +376,7 @@ class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	String getAccessToken() {
+	public String getAccessToken() {
 		return this.accessToken;
 	}
 	
@@ -388,7 +388,7 @@ class AuthorizationManager {
 	 * 
 	 * @since 4.0
 	 */
-	String getRefreshToken() {
+	public String getRefreshToken() {
 		return this.refreshToken;
 	}
 
@@ -649,7 +649,17 @@ class AuthorizationManager {
 		}
 	}
 
+	public void setAccessToken(String accessToken){
+		this.accessToken = accessToken;
+	}
 	
+	public void setRefreshToken(String refreshToken){
+		this.refreshToken = refreshToken;
+	}
+	
+	public void setUser(String user){
+		this.user = user;
+	}
 
 	/**
 	 * 
@@ -659,7 +669,7 @@ class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	void saveUserProfile2LocalStore() {
+	public void saveUserProfile2LocalStore() {
 		SharedPreferences.Editor prefsWriter = sessionStorePrefs.edit();
 		if (this.environment != null) {
 			prefsWriter.putString(ENVIRONMENT_KEY_IN_PREF_FILE,

@@ -60,7 +60,7 @@ public class AMRequest {
 	 * 
 	 * @since 1.0
 	 */
-	protected enum RequestType
+	public enum RequestType
 	{
 		NORMAL, AUTHENTICATION, DOWNLOAD, MULTIPART, POST_JSON
 	}	
@@ -982,7 +982,7 @@ public class AMRequest {
 	/**
 	 * Private method, used to assemble URL with query string..
 	 */	
-	public String assembleUrlWithParams(String url, RequestParams urlParams) {
+	private String assembleUrlWithParams(String url, RequestParams urlParams) {
 		AMLogger.logError("In AMRequest.assembleUrlWithParams()");
 		boolean urlContainsLanguage = (url != null) && (url.contains("lang=")); 
 		boolean paramsContainsLanguage = (urlParams != null) && (urlParams.hasKey("lang"));
