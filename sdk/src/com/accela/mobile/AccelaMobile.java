@@ -88,14 +88,14 @@ public class AccelaMobile {
 	 * 
 	 * @since 3.0
 	 */
-	protected String amAuthHost;
+	protected String amAuthHost = AMSetting.AM_OAUTH_HOST;
 	
 	/**
 	 * The URL of cloud API host. For examle: https://apis.accela.com
 	 * 
 	 * @since 3.0
 	 */
-	protected String amApisHost;
+	protected String amApisHost = AMSetting.AM_API_HOST;
 	
 	/**
 	 * The AuthorizationManager instance which manages session state.
@@ -323,8 +323,22 @@ public class AccelaMobile {
 	 */				
 	public AccelaMobile(Context ownerContext, String appId, String appSecret, AMSessionDelegate sessionDelegate, String authHost, String apisHost) {
 		this(ownerContext, appId, appSecret, sessionDelegate);
-		this.amAuthHost = (authHost !=null) ? authHost : AMSetting.AM_OAUTH_HOST;
-		this.amApisHost = (apisHost !=null) ? apisHost : AMSetting.AM_API_HOST;
+		this.amAuthHost = (authHost !=null) ? authHost : this.amAuthHost;
+		this.amApisHost = (apisHost !=null) ? apisHost : this.amApisHost;
+	}
+	
+	
+	public void setHostUrl(String amAuthHost, String amApisHost) {
+		this.amAuthHost = amAuthHost;
+		this.amApisHost = amApisHost;
+	}
+	
+	public String getAuthHost() {
+		return this.amAuthHost;
+	}
+	
+	public String getApisHost() {
+		return this.amApisHost;
 	}
 	
 	/**
@@ -426,9 +440,6 @@ public class AccelaMobile {
 	 * @since 1.0
 	 */
 	public JSONObject fetch(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData) {	
-		if (this.amApisHost == null) {
-			this.amApisHost = AMSetting.AM_API_HOST;
-		}
 		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, httpMethod);
 		amRequest.setAccelaMobile(this);
 		amRequest.setHttpHeader(customHttpHeader);
@@ -649,9 +660,6 @@ public class AccelaMobile {
 	 * @since 1.0
 	 */
 	public AMRequest request(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData, AMRequestDelegate requestDelegate) {
-		if (this.amApisHost == null) {
-			this.amApisHost = AMSetting.AM_API_HOST;
-		}
 		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, httpMethod);
 		amRequest.setAccelaMobile(this);
 		return amRequest.sendRequest(postData, requestDelegate);
@@ -693,10 +701,6 @@ public class AccelaMobile {
 	 */
 	 
 	public AMRequest request(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData, Map<String, String> attachments, AMRequestDelegate requestDelegate) {
-		if (this.amApisHost == null) {
-			this.amApisHost = AMSetting.AM_API_HOST;
-		}
-		
 		AMRequest amRequest = new AMRequest(this, this.amApisHost  + path, urlParams, httpMethod);
 		amRequest.setAccelaMobile(this);
 		return amRequest.sendRequest(postData, attachments, requestDelegate);
@@ -795,10 +799,6 @@ public class AccelaMobile {
 	 * @since 1.0
 	 */
 	public AMRequest uploadAttachments(String path, RequestParams postData, Map<String, String> fileInformation,  AMRequestDelegate requestDelegate) {
-		if (this.amApisHost == null) {
-			this.amApisHost = AMSetting.AM_API_HOST;
-		}
-		
 		AMRequest amRequest = new AMRequest(this, this.amApisHost + path,  null, HTTPMethod.POST);	
 		amRequest.setAccelaMobile(this);
 		return amRequest.uploadAttachments(postData, fileInformation, requestDelegate);
@@ -806,18 +806,12 @@ public class AccelaMobile {
 
 
 	public AMRequest downloadAttachment(String path, RequestParams postParams,  String localFile, AMRequestDelegate requestDelegate) {
-		if (this.amApisHost == null) {
-			this.amApisHost = AMSetting.AM_API_HOST;
-		}
 		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, null, HTTPMethod.POST);	
 		amRequest.setAccelaMobile(this);
 		return amRequest.downloadAttachment(localFile, postParams, requestDelegate);
 	}	
 	
 	public AMRequest downloadAttachment(String path, String localFile, AMRequestDelegate requestDelegate){
-		if (this.amApisHost == null) {
-			this.amApisHost = AMSetting.AM_API_HOST;
-		}
 		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, null, HTTPMethod.GET);	
 		amRequest.setAccelaMobile(this);
 		return amRequest.downloadAttachment(localFile, requestDelegate);
@@ -858,8 +852,6 @@ public class AccelaMobile {
 		}
 			
 		// Otherwise, show the login dialog which embeds the HTML login view.		
-		this.amAuthHost = (this.amAuthHost !=null) ? this.amAuthHost : AMSetting.AM_OAUTH_HOST;
-		this.amApisHost = (this.amApisHost !=null) ? this.amApisHost : AMSetting.AM_API_HOST;
 		this.authorizationManager.setClientInfo(this.appId, this.appSecret, this.environment.name(), agency, this.amAuthHost, this.amApisHost);	
 		this.authorizationManager.setIsRememberToken(this.amIsRemember);
 		this.authorizationManager.setSessionDelegate(this.sessionDelegate);		
