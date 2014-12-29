@@ -855,7 +855,6 @@ public class AccelaMobile {
 		this.authorizationManager.setClientInfo(this.appId, this.appSecret, this.environment.name(), agency, this.amAuthHost, this.amApisHost);	
 		this.authorizationManager.setIsRememberToken(this.amIsRemember);
 		this.authorizationManager.setSessionDelegate(this.sessionDelegate);		
-		this.authorizationManager.setSessionDelegate(this.sessionDelegate);	
 		
 		if (isWrappedWebView) {  // Login through a dialog which wraps HTML login web view.
 			String redirectUrl = urlSchema + "://authorize";		

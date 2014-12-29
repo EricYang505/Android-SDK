@@ -415,7 +415,7 @@ public class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	void setIsRememberToken(Boolean isRemember) {
+	public void setIsRememberToken(Boolean isRemember) {
 		this.isRememberToken = isRemember;
 	}
 
@@ -430,7 +430,7 @@ public class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	void setSessionDelegate(AMSessionDelegate sessionDelegate) {
+	public void setSessionDelegate(AMSessionDelegate sessionDelegate) {
 		this.sessionDelegate = sessionDelegate;
 	}
 
@@ -449,7 +449,7 @@ public class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	void setClientInfo(String clientId, String clientSecret,
+	public void setClientInfo(String clientId, String clientSecret,
 			String environment, String agency, String authServer,
 			String apisServer) {
 		this.clientId = clientId;
@@ -621,7 +621,7 @@ public class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	void handleOpenURL(Intent webIntent) {
+	public void handleOpenURL(Intent webIntent) {
 		// Parse the intent passed from civic user authorization web view.
 		Uri uri = webIntent.getData();
 		String action = uri.getHost();
@@ -648,17 +648,21 @@ public class AuthorizationManager {
 			fetchAccessToken();
 		}
 	}
-
-	public void setAccessToken(String accessToken){
-		this.accessToken = accessToken;
-	}
-	
-	public void setRefreshToken(String refreshToken){
-		this.refreshToken = refreshToken;
-	}
 	
 	public void setUser(String user){
 		this.user = user;
+	}
+	
+	public void setRedirectUrl(String url){
+		this.redirectUrl = url;
+	}
+	
+	public void setAuthorizationCode(String code){
+		this.authorizationCode = code;
+	}
+	
+	public void setAuthorizationState(String state){
+		this.authorizationState = state;
 	}
 
 	/**
@@ -727,10 +731,10 @@ public class AuthorizationManager {
 	}
 
 	/**
-	 * Private method, used to get access token for native authorization or web
+	 * public method, used to get access token for native authorization or web
 	 * authorization.
 	 */
-	private AMRequest fetchAccessToken() {
+	public AMRequest fetchAccessToken() {
 		String hostUrl = this.apisServer + AMSetting.ACCESS_TOKEN_URI;
 		RequestParams urlParams = new RequestParams();
 		RequestParams postParams = new RequestParams();
