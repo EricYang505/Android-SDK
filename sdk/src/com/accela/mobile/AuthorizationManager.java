@@ -626,6 +626,8 @@ public class AuthorizationManager {
 		Uri uri = webIntent.getData();
 		String action = uri.getHost();
 		this.authorizationCode = uri.getQueryParameter("code");
+		this.agency = uri.getQueryParameter("agency_name");
+		this.environment = uri.getQueryParameter("environment");
 		// Send request to get access token.
 		if (("authorize".equalsIgnoreCase(action)) && (this.authorizationCode != null)) {
 			accelaMobile.authorizationStatus = AuthorizationStatus.AUTHORIZED;
@@ -690,6 +692,16 @@ public class AuthorizationManager {
 		}
 		if (this.refreshToken != null) {
 			prefsWriter.putString(REFRESH_TOKEN_KEY_IN_PREF_FILE, this.refreshToken);
+		}
+		prefsWriter.commit();
+	}
+	
+	//save the username from webview login
+	public void saveUserName(String user){
+		this.user = user;
+		SharedPreferences.Editor prefsWriter = sessionStorePrefs.edit();
+		if (this.user != null) {
+			prefsWriter.putString(USER_KEY_IN_PREF_FILE, this.user);
 		}
 		prefsWriter.commit();
 	}
