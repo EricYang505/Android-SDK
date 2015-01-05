@@ -49,6 +49,7 @@ import android.widget.LinearLayout;
  */
 
 public class AMLoginDialogWrapper extends Dialog {
+	private int colorBackground = 0x88000000;
 	/**
 	 * Private WebViewClient class, used by the web view control.
 	 */	
@@ -56,7 +57,7 @@ public class AMLoginDialogWrapper extends Dialog {
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);          
             spinner.dismiss();            
-            contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
+        //    contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
             webView.setVisibility(View.VISIBLE);
             crossImageView.setVisibility(View.VISIBLE);		
         }        
@@ -68,7 +69,7 @@ public class AMLoginDialogWrapper extends Dialog {
         	super.onReceivedError(view, errorCode, description, failingUrl);  
         	// Dismiss spinner
             spinner.dismiss();            
-            contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
+        //    contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
             // Invoke session delegate
             AMError amError = new AMError(AMError.STATUS_CODE_OTHER,String.valueOf(errorCode),String.valueOf(errorCode), description, failingUrl);
             accelaMobile.sessionDelegate.amDidLoginFailure(amError);
@@ -77,7 +78,7 @@ public class AMLoginDialogWrapper extends Dialog {
             super.onReceivedSslError(view, handler, error);
             // Dismiss spinner
             spinner.dismiss();            
-            contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
+         //   contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
             // Invoke session delegate
             AMError amError = new AMError(AMError.STATUS_CODE_OTHER,null,String.valueOf(AMError.ERROR_CODE_Bad_Request), error.toString(), null);
             accelaMobile.sessionDelegate.amDidLoginFailure(amError);
@@ -88,7 +89,7 @@ public class AMLoginDialogWrapper extends Dialog {
             if (url.startsWith(authorizeSchemaUrl)) { // Redirect to the predefined authorization schema.  
             	// Dismiss spinner
             	spinner.dismiss();            
-	            contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
+	       //     contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
 	            // Handle the redirected URL
             	Uri data = Uri.parse(url); 
 	            Intent currentIntent = new Intent(Intent.ACTION_VIEW);		           
@@ -105,6 +106,7 @@ public class AMLoginDialogWrapper extends Dialog {
     private WebView webView;
     private ProgressDialog spinner;
     private ImageView crossImageView; 
+    private DisplayMetrics displayMetrics;
 
     private FrameLayout contentFrameLayout;       
     
@@ -136,8 +138,7 @@ public class AMLoginDialogWrapper extends Dialog {
                 AMLoginDialogWrapper.this.dismiss();
             }
         });      
-	    DisplayMetrics displayMetrics = new DisplayMetrics();   
-	    ((Activity) accelaMobile.ownerContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+	    
 	    String closeImageStr = (displayMetrics.widthPixels > 540) ? CivicLoginDialogImageResource.close2xImageForWebView : CivicLoginDialogImageResource.closeImageForWebView;
         crossImageView.setImageDrawable((createDrawableFromBase64String(closeImageStr)));
         crossImageView.setVisibility(View.INVISIBLE);
@@ -168,19 +169,28 @@ public class AMLoginDialogWrapper extends Dialog {
         super.dismiss();
     }
     
+    private int convertDptoPixel(int dp) {
+    	return displayMetrics.densityDpi * dp /160;
+    }
+    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        displayMetrics = new DisplayMetrics();   
+	    ((Activity) accelaMobile.ownerContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         spinner = new ProgressDialog(getContext());
         spinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
         spinner.setMessage("Loading ...");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         contentFrameLayout = new FrameLayout(getContext());
         createCrossImage();
-        int crossWidth = crossImageView.getDrawable().getIntrinsicWidth();
+        int crossWidth = convertDptoPixel(48);
         setUpWebView(crossWidth / 2);         
-        webView.loadUrl(url);           
-        contentFrameLayout.addView(crossImageView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        webView.loadUrl(url); 
+        
+        contentFrameLayout.addView(crossImageView, new ViewGroup.LayoutParams(crossWidth, crossWidth));
         addContentView(contentFrameLayout,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        contentFrameLayout.setBackgroundColor(colorBackground);
+        
     }    
     
     /**
@@ -189,16 +199,21 @@ public class AMLoginDialogWrapper extends Dialog {
     @SuppressLint("SetJavaScriptEnabled")
     private void setUpWebView(int margin) {
     	LinearLayout webViewContainer = new LinearLayout(getContext());
+    	webViewContainer.setBackgroundColor(Color.LTGRAY);
     	webView = new WebView(getContext());
         webView.setVerticalScrollBarEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);
         webView.setWebViewClient(new DialogWebViewClient());        
         webView.getSettings().setJavaScriptEnabled(true);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.setMargins(margin, margin, margin, margin);
         webView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        webView.setVisibility(View.INVISIBLE);
+        //webView.setVisibility(View.INVISIBLE);
         webView.getSettings().setSavePassword(false);
-        webViewContainer.setPadding(margin, margin, margin, margin);
+        webViewContainer.setPadding(convertDptoPixel(1), convertDptoPixel(1), convertDptoPixel(1), convertDptoPixel(1));
         webViewContainer.addView(webView);
-        contentFrameLayout.addView(webViewContainer);
+        layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.setMargins(margin, margin, margin, margin);
+        contentFrameLayout.addView(webViewContainer, layoutParams);
     }
 }

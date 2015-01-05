@@ -327,16 +327,42 @@ public class AccelaMobile {
 		this.amApisHost = (apisHost !=null) ? apisHost : this.amApisHost;
 	}
 	
-	
-	public void setHostUrl(String amAuthHost, String amApisHost) {
-		this.amAuthHost = amAuthHost;
-		this.amApisHost = amApisHost;
+	/**
+	 * 
+	 * Set the URL of cloud server for user authorization and service API 
+	 * 
+	 * @param amAuthHost The URL of cloud server for user authorization.
+	 * @param amApisHost The URL of cloud server for service API calling.
+	 * 
+	 * @return Void.
+	 * 
+	 * @since 4.0
+	 */		
+	public void setHostUrl(String authHost, String apisHost) {
+		this.amAuthHost = authHost;
+		this.amApisHost = apisHost;
 	}
 	
+	/**
+	 * 
+	 * Get the URL of cloud server for user authorization
+	 * 
+	 * @return The URL of cloud server for user authorization.
+	 * 
+	 * @since 4.0
+	 */	
 	public String getAuthHost() {
 		return this.amAuthHost;
 	}
 	
+	/**
+	 * 
+	 * Get the URL of cloud server for service API calling.
+	 * 
+	 * @return The URL of cloud server for service API calling.
+	 * 
+	 * @since 4.0
+	 */	
 	public String getApisHost() {
 		return this.amApisHost;
 	}
@@ -573,7 +599,7 @@ public class AccelaMobile {
 		return this.urlSchema;	
 	}	
 	
-	public HashMap<String, String> getCustomHttpHeader(){
+	private HashMap<String, String> getCustomHttpHeader(){
 		return this.customHttpHeader;
 	}
 	
