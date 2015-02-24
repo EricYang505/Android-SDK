@@ -747,7 +747,8 @@ public class AuthorizationManager {
 	 * authorization.
 	 */
 	public AMRequest fetchAccessToken() {
-		String hostUrl = this.apisServer + AMSetting.ACCESS_TOKEN_URI;
+//		String hostUrl = this.apisServer + AMSetting.ACCESS_TOKEN_URI;
+		String hostUrl = "https://testconstructauth.cloudapp.net" + AMSetting.ACCESS_TOKEN_URI;
 		RequestParams urlParams = new RequestParams();
 		RequestParams postParams = new RequestParams();
 		postParams.put("client_id", this.clientId);
