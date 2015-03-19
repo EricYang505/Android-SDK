@@ -123,6 +123,13 @@ public class AMRequest {
 	private static final String HEADER_X_ACCELA_AGENCY = "x-accela-agency";
 	
 	/**
+	 * Agencies header name in HTTP/HTTPS request headers.
+	 * 
+	 * @since 3.0
+	 */
+	private static final String HEADER_X_ACCELA_AGENCIES = "x-accela-agencies";
+	
+	/**
 	 * The context which processes the request.
 	 * 
 	 * @since 1.0
@@ -340,7 +347,11 @@ public class AMRequest {
 		syncHttpClient.addHeader(HEADER_X_ACCELA_APPVERSION, accelaMobile.getAppVersion());
 		syncHttpClient.addHeader(HEADER_X_ACCELA_APPID, accelaMobile.getAppId());	
 		syncHttpClient.addHeader(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
-		syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
+		if(accelaMobile.isMultipleAgencies){
+			syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCIES, "All");
+			accelaMobile.isMultipleAgencies = false; //each request need to specify
+		}else
+			syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
 		syncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());	
 		syncHttpClient.addHeader(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());
 		// Add access token or app secret to HTTP header
@@ -430,7 +441,11 @@ public class AMRequest {
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());	
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPID, accelaMobile.getAppId());
-		asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
+		if(accelaMobile.isMultipleAgencies){
+			asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCIES, "All");
+			accelaMobile.isMultipleAgencies = false;//each request need to specify
+		}else
+			asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());		
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());
 		// Add access token or app secret to HTTP header
 		AuthorizationManager authorizationManager = accelaMobile.authorizationManager;		

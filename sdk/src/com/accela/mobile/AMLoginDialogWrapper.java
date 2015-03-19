@@ -178,6 +178,7 @@ public class AMLoginDialogWrapper extends Dialog {
         displayMetrics = new DisplayMetrics();   
 	    ((Activity) accelaMobile.ownerContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         spinner = new ProgressDialog(getContext());
+        spinner.setCancelable(false);
         spinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
         spinner.setMessage("Loading ...");
         requestWindowFeature(Window.FEATURE_NO_TITLE);

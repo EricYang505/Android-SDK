@@ -97,6 +97,8 @@ public class AccelaMobile {
 	 */
 	protected String amApisHost = AMSetting.AM_API_HOST;
 	
+	protected boolean isMultipleAgencies = false;
+	
 	/**
 	 * The AuthorizationManager instance which manages session state.
 	 * 
@@ -195,6 +197,11 @@ public class AccelaMobile {
 	
 	public AuthorizationManager getAuthorizationManager() {
 		return this.authorizationManager;
+	}
+	
+	//Used for contractor for data aggregation with multiple agencies
+	public void setMultipleAgencies(boolean isMultiple){
+		this.isMultipleAgencies = isMultiple;
 	}
 	
 	/**
