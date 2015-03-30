@@ -19,6 +19,7 @@ package com.accela.mobile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -80,7 +81,7 @@ public class AMBatchSession {
 	 * 
 	 * @since 4.0
 	 */
-	public JSONObject execute() {
+	public JSONObject execute(Map<String, String> customParams) {
 		RequestParams params = new RequestParams();
 		List<AMBatchRequestModel> models = new ArrayList<AMBatchRequestModel>();
 		for (AMRequest request : requests) {
@@ -104,7 +105,7 @@ public class AMBatchSession {
 		String json = toJsonArray(models);
 		params.put("json", json);
 		AccelaMobile accelaMobile = AccelaMobileInternal.defaultInstance();
-		JSONObject result = accelaMobile.fetch(path, null, HTTPMethod.POST,
+		JSONObject result = accelaMobile.fetch(path, null, customParams, HTTPMethod.POST,
 				params);
 		return result;
 	}
@@ -118,7 +119,7 @@ public class AMBatchSession {
 	 * 
 	 * @since 4.0
 	 */
-	public void executeAsync(AMRequestDelegate requestDelegate) {
+	public void executeAsync(Map<String, String> customParams, AMRequestDelegate requestDelegate) {
 		RequestParams params = new RequestParams();
 		List<AMBatchRequestModel> models = new ArrayList<AMBatchRequestModel>();
 		for (AMRequest request : requests) {
@@ -141,7 +142,7 @@ public class AMBatchSession {
 		String json = toJsonArray(models);
 		params.put("json", json);
 		AccelaMobile accelaMobile = AccelaMobileInternal.defaultInstance();
-		accelaMobile.request(path, null, HTTPMethod.POST, params,requestDelegate);
+		accelaMobile.request(path, null, customParams, HTTPMethod.POST, params,requestDelegate);
 	}
 	
 	/**

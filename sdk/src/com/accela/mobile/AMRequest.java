@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
 
@@ -128,7 +129,7 @@ public class AMRequest {
 	 * @since 3.0
 	 */
 	private static final String HEADER_X_ACCELA_AGENCIES = "x-accela-agencies";
-	
+
 	/**
 	 * The context which processes the request.
 	 * 
@@ -257,7 +258,7 @@ public class AMRequest {
 	 */
 	private ResourceBundle stringLoader = AMSetting.getStringResourceBundle();
 	
-	
+	private Map<String, String> customParams;
 	/**
 	 * Constructor with the given parameters.
 	 * 
@@ -270,11 +271,12 @@ public class AMRequest {
 	 * 
 	 * @since 1.0
 	 */	
-	public AMRequest(AccelaMobile accelaMobile, String serviceURL, RequestParams params, HTTPMethod httpMethod) {				
+	public AMRequest(AccelaMobile accelaMobile, String serviceURL, RequestParams params, Map<String, String> customParams, HTTPMethod httpMethod) {				
 		this.accelaMobile = accelaMobile;
 		this.ownerContext = accelaMobile.ownerContext;
 		this.serviceURL = serviceURL;	
 		this.urlParams = params;	
+		this.customParams = customParams;
 		this.httpMethod = httpMethod;	
 		this.tag = String.valueOf(new Random().nextInt(100));			
 	}	
@@ -292,8 +294,8 @@ public class AMRequest {
 	 * 
 	 * @since 4.0
 	 */	
-	public AMRequest(AccelaMobile accelaMobile, String serviceURL, RequestParams params, HTTPMethod httpMethod, AMRequestDelegate requestDelegate) {				
-		this(accelaMobile, serviceURL, params, httpMethod);
+	public AMRequest(AccelaMobile accelaMobile, String serviceURL, RequestParams params, Map<String, String> customParams, HTTPMethod httpMethod, AMRequestDelegate requestDelegate) {				
+		this(accelaMobile, serviceURL, params, customParams, httpMethod);
 		this.requestDelegate = requestDelegate;			
 	}
 	
@@ -347,12 +349,21 @@ public class AMRequest {
 		syncHttpClient.addHeader(HEADER_X_ACCELA_APPVERSION, accelaMobile.getAppVersion());
 		syncHttpClient.addHeader(HEADER_X_ACCELA_APPID, accelaMobile.getAppId());	
 		syncHttpClient.addHeader(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
-		if(accelaMobile.isMultipleAgencies){
-			syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCIES, "All");
-			accelaMobile.isMultipleAgencies = false; //each request need to specify
-		}else
-			syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
-		syncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());	
+		
+		syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
+
+		if(customParams!=null && customParams.get(AccelaMobile.IS_ALL_AGENCIES)!=null){
+			syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCIES, customParams.get(AccelaMobile.IS_ALL_AGENCIES));
+		}else if(customParams!=null && customParams.get(AccelaMobile.AGENCY_NAME)!=null){
+			syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, customParams.get(AccelaMobile.AGENCY_NAME));
+		}
+		
+		if(customParams!=null && customParams.get(AccelaMobile.ENVIRONMENT_NAME)!=null){
+			syncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, customParams.get(AccelaMobile.ENVIRONMENT_NAME));
+		}else{
+			syncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());	
+		}
+
 		syncHttpClient.addHeader(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());
 		// Add access token or app secret to HTTP header
 		AuthorizationManager authorizationManager = accelaMobile.authorizationManager;		
@@ -441,11 +452,21 @@ public class AMRequest {
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());	
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPID, accelaMobile.getAppId());
-		if(accelaMobile.isMultipleAgencies){
-			asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCIES, "All");
-			accelaMobile.isMultipleAgencies = false;//each request need to specify
-		}else
-			asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());		
+
+		asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
+
+		if(customParams!=null && customParams.get(AccelaMobile.IS_ALL_AGENCIES)!=null){
+			asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCIES, customParams.get(AccelaMobile.IS_ALL_AGENCIES));
+		}else if(customParams!=null && customParams.get(AccelaMobile.AGENCY_NAME)!=null){
+			asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, customParams.get(AccelaMobile.AGENCY_NAME));
+		}
+		
+		if(customParams!=null && customParams.get(AccelaMobile.ENVIRONMENT_NAME)!=null){
+			asyncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, customParams.get(AccelaMobile.ENVIRONMENT_NAME));
+		}else{
+			asyncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());
+		}
+		
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());
 		// Add access token or app secret to HTTP header
 		AuthorizationManager authorizationManager = accelaMobile.authorizationManager;		

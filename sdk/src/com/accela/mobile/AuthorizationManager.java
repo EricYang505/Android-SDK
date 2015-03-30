@@ -736,7 +736,7 @@ public class AuthorizationManager {
 		//Clear the stored token
 		clearAuthorizationAndToken(false);
 		//Send request to get refreshed token.
-		AMRequest amRequest = new AMRequest(this.accelaMobile, hostUrl,urlParams, HTTPMethod.POST);
+		AMRequest amRequest = new AMRequest(this.accelaMobile, hostUrl,urlParams, null, HTTPMethod.POST);
 		amRequest.setRequestType(RequestType.AUTHENTICATION);
 		this.currentRequest = amRequest;
 		return amRequest.sendRequest(postParams, this.tokenRequestDelegate);
@@ -778,7 +778,7 @@ public class AuthorizationManager {
 					postParams.toString());
 		}
 		AMRequest amRequest = new AMRequest(this.accelaMobile, hostUrl,
-				urlParams, HTTPMethod.POST);
+				urlParams, null, HTTPMethod.POST);
 		amRequest.setRequestType(RequestType.AUTHENTICATION);
 		this.currentRequest = amRequest;
 		// this.processIndicatorHolderView = (ViewGroup)((Activity)

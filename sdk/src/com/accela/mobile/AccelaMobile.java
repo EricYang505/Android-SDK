@@ -97,8 +97,7 @@ public class AccelaMobile {
 	 */
 	protected String amApisHost = AMSetting.AM_API_HOST;
 	
-	protected boolean isMultipleAgencies = false;
-	
+
 	/**
 	 * The AuthorizationManager instance which manages session state.
 	 * 
@@ -179,6 +178,9 @@ public class AccelaMobile {
 	
 	protected HashMap<String, String> customHttpHeader = new HashMap<String, String>();
 
+	public static final String IS_ALL_AGENCIES = "is_all_agencies";
+	public static final String AGENCY_NAME = "agency_name";
+	public static final String ENVIRONMENT_NAME = "environment_name";
 	
 	/**
 	 * 
@@ -199,10 +201,6 @@ public class AccelaMobile {
 		return this.authorizationManager;
 	}
 	
-	//Used for contractor for data aggregation with multiple agencies
-	public void setMultipleAgencies(boolean isMultiple){
-		this.isMultipleAgencies = isMultiple;
-	}
 	
 	/**
 	 * 
@@ -228,7 +226,7 @@ public class AccelaMobile {
 	 * 
 	 * @since 4.0
 	 */
-	public static void batchCommit(AMBatchSession session, AMBatchRequestDelegate batchRequestDelegate){
+	public static void batchCommit(AMBatchSession session, Map<String, String> customParams, AMBatchRequestDelegate batchRequestDelegate){
 		final AMBatchSession batchSession = session;
 		final AMBatchRequestDelegate batchRequestDelegate1 = batchRequestDelegate;
 		AMRequestDelegate requestDelegate = new AMRequestDelegate() {			
@@ -266,7 +264,7 @@ public class AccelaMobile {
 			}
 		};
 		
-		session.executeAsync(requestDelegate);
+		session.executeAsync(customParams, requestDelegate);
 	}
 
 		
@@ -456,8 +454,8 @@ public class AccelaMobile {
 	 *
 	 * @since 1.0
 	 */
-	public JSONObject fetch(String path, RequestParams urlParams) {
-		return this.fetch(path, urlParams, HTTPMethod.GET, null);
+	public JSONObject fetch(String path, RequestParams urlParams, Map<String, String> customParams) {
+		return this.fetch(path, urlParams, customParams, HTTPMethod.GET, null);
 	}
 	
 	/**
@@ -472,8 +470,8 @@ public class AccelaMobile {
 	 *
 	 * @since 1.0
 	 */
-	public JSONObject fetch(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData) {	
-		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, httpMethod);
+	public JSONObject fetch(String path, RequestParams urlParams, Map<String, String> customParams, HTTPMethod httpMethod, RequestParams postData) {	
+		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, customParams, httpMethod);
 		amRequest.setAccelaMobile(this);
 		amRequest.setHttpHeader(customHttpHeader);
 					
@@ -669,12 +667,12 @@ public class AccelaMobile {
 	 *
 	 * @since 1.0
 	 */
-	public AMRequest request(String path, RequestParams urlParams, AMRequestDelegate requestDelegate) {
-		return this.request(path, urlParams, HTTPMethod.GET, null, requestDelegate);
+	public AMRequest request(String path, RequestParams urlParams, Map<String, String> customParams, AMRequestDelegate requestDelegate) {
+		return this.request(path, urlParams, customParams, HTTPMethod.GET, null, requestDelegate);
 	}
 	
-	public AMRequest request(AMBatchSession batchSession, String path, RequestParams urlParams, AMRequestDelegate requestDelegate) {
-		AMRequest request = new AMRequest(this, path, urlParams,HTTPMethod.GET, requestDelegate);
+	public AMRequest request(AMBatchSession batchSession, String path, RequestParams urlParams, Map<String, String> customParams, AMRequestDelegate requestDelegate) {
+		AMRequest request = new AMRequest(this, path, urlParams, customParams, HTTPMethod.GET, requestDelegate);
 		batchSession.add(request);
 		return request;
 	}
@@ -692,8 +690,8 @@ public class AccelaMobile {
 	 *
 	 * @since 1.0
 	 */
-	public AMRequest request(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData, AMRequestDelegate requestDelegate) {
-		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, httpMethod);
+	public AMRequest request(String path, RequestParams urlParams, Map<String, String> customParams, HTTPMethod httpMethod, RequestParams postData, AMRequestDelegate requestDelegate) {
+		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, customParams, httpMethod);
 		amRequest.setAccelaMobile(this);
 		return amRequest.sendRequest(postData, requestDelegate);
 	}
@@ -711,8 +709,8 @@ public class AccelaMobile {
 	 *
 	 * @since 1.0
 	 */
-	public AMRequest request(AMBatchSession batchSession,String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData, AMRequestDelegate requestDelegate) {
-		AMRequest request = new AMRequest(this, path, urlParams, HTTPMethod.POST, requestDelegate);
+	public AMRequest request(AMBatchSession batchSession,String path, RequestParams urlParams, Map<String, String> customParams, HTTPMethod httpMethod, RequestParams postData, AMRequestDelegate requestDelegate) {
+		AMRequest request = new AMRequest(this, path, urlParams, customParams, HTTPMethod.POST, requestDelegate);
 		batchSession.add(request);
 		return request;
 	}
@@ -733,8 +731,8 @@ public class AccelaMobile {
 	 * @since 3.0
 	 */
 	 
-	public AMRequest request(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData, Map<String, String> attachments, AMRequestDelegate requestDelegate) {
-		AMRequest amRequest = new AMRequest(this, this.amApisHost  + path, urlParams, httpMethod);
+	public AMRequest request(String path, RequestParams urlParams, Map<String, String> customParams, HTTPMethod httpMethod, RequestParams postData, Map<String, String> attachments, AMRequestDelegate requestDelegate) {
+		AMRequest amRequest = new AMRequest(this, this.amApisHost  + path, urlParams, customParams, httpMethod);
 		amRequest.setAccelaMobile(this);
 		return amRequest.sendRequest(postData, attachments, requestDelegate);
 	}
@@ -831,21 +829,21 @@ public class AccelaMobile {
 	 *
 	 * @since 1.0
 	 */
-	public AMRequest uploadAttachments(String path, RequestParams postData, Map<String, String> fileInformation,  AMRequestDelegate requestDelegate) {
-		AMRequest amRequest = new AMRequest(this, this.amApisHost + path,  null, HTTPMethod.POST);	
+	public AMRequest uploadAttachments(String path, RequestParams postData, Map<String, String> fileInformation,  Map<String, String> customParams, AMRequestDelegate requestDelegate) {
+		AMRequest amRequest = new AMRequest(this, this.amApisHost + path,  null, customParams, HTTPMethod.POST);	
 		amRequest.setAccelaMobile(this);
 		return amRequest.uploadAttachments(postData, fileInformation, requestDelegate);
 	}
 
 
-	public AMRequest downloadAttachment(String path, RequestParams postParams,  String localFile, AMRequestDelegate requestDelegate) {
-		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, null, HTTPMethod.POST);	
+	public AMRequest downloadAttachment(String path, RequestParams postParams,  String localFile, Map<String, String> customParams, AMRequestDelegate requestDelegate) {
+		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, null, customParams, HTTPMethod.POST);	
 		amRequest.setAccelaMobile(this);
 		return amRequest.downloadAttachment(localFile, postParams, requestDelegate);
 	}	
 	
-	public AMRequest downloadAttachment(String path, String localFile, AMRequestDelegate requestDelegate){
-		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, null, HTTPMethod.GET);	
+	public AMRequest downloadAttachment(String path, String localFile, Map<String, String> customParams, AMRequestDelegate requestDelegate){
+		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, null, customParams, HTTPMethod.GET);	
 		amRequest.setAccelaMobile(this);
 		return amRequest.downloadAttachment(localFile, requestDelegate);
 	}
