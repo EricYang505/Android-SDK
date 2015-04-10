@@ -1,4 +1,21 @@
-package com.accela.testcase;
+/**
+  * Copyright 2015 Accela, Inc.
+  *
+  * You are hereby granted a non-exclusive, worldwide, royalty-free license to
+  * use, copy, modify, and distribute this software in source code or binary
+  * form for use in connection with the web services and APIs provided by
+  * Accela.
+  *
+  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+  * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  * DEALINGS IN THE SOFTWARE.
+  *
+  */
+package com.accela.constructdemo;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,14 +69,17 @@ import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMRequest;
 import com.accela.mobile.AMRequest.HTTPMethod;
 import com.accela.mobile.AccelaMobile.AuthorizationStatus;
-import com.accela.mobile.AccelaMobileInternal;
 import com.accela.mobile.http.RequestParams;
 import com.accela.mobile.AMError;
 import com.accela.mobile.AMRequestDelegate;
 import com.accela.mobile.AMSessionDelegate;
 import com.accela.mobile.AMSetting;
+import com.accela.testcase.R;
 
 public class AgencyTestActivity extends Activity implements OnClickListener {
+	private static final String APP_ID= "635442545792218073";
+	private static final String APP_SECRET = "28c6edc56e714078a23a50a4193f348f";
+
 	private static String SERVICE_URI_RECORD_LIST = "/v4/records/";
 	private static String SERVICE_URI_RECORD_SEARCH = "/v4/records/{recordIds}/";
 	private static String SERVICE_URI_RECORD_CREATE = "/v4/records/";
@@ -67,7 +87,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 	private static String SERVICE_URI_RECORD_AttachmentUpload = "/v4/records/{recordId}/documents/";
 	private static String SERVICE_URI_RECORD_AttachmentDownload = "/v4/documents/{documentId}/download/";
 	private static String SERVICE_URI_INSPECTION_LIST = "/v4/inspections/";
-	private static String SERVICE_URI_GIS_SETTINGS = "/v4/appsettings/";
+	private static String SERVICE_URI_APP_SETTINGS = "/v4/appsettings/";
 
 	private Button btnAgencyNativeLogin, btnAgencyEmbeddedWebLogin,
 			btnAgencyWebLogin, btnGetRecords, btnGetRecordsSync,
@@ -80,14 +100,16 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 	private LinearLayout mainLayout;
 	private AMRequest currentRequest;
 	private ArrayList<String> attachmentIds = new ArrayList<String>();
-	private AccelaMobile currentAccelaMobile;
+	private AccelaMobile accelaMobile;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		// Initialize UI.
 		setContentView(R.layout.agency_test_view);
 		initContentView();
+		initAccelaMobile();
 		// Register receiver for the broadcast message which will be sent out
 		// from AuthorizationManager when user logs in successfully.
 		LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -105,8 +127,8 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 		super.onWindowFocusChanged(hasFocus);
 
 		if ((hasFocus)
-				&& (currentAccelaMobile != null)
-				&& (currentAccelaMobile.getAuthorizationStatus() == AuthorizationStatus.AUTHORIZED)) {
+				&& (accelaMobile != null)
+				&& (accelaMobile.getAuthorizationStatus() == AuthorizationStatus.AUTHORIZED)) {
 			accessTokenProgressDialog = ProgressDialog.show(this, null,
 					this.getString(R.string.msg_login), true, true);
 		}
@@ -132,18 +154,14 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 		String recordId = "14CAP-00000-000CT";
 		switch (view.getId()) {
 		case R.id.btnAgencyNativeLogin:
-			createAccelaMobile(true);
-			((AccelaMobileInternal) currentAccelaMobile).authorizeAgencyApp(
-					permissions4Authorization, loginDialogDelegate);
+			accelaMobile.getAuthorizationManager().authorizeAgent(permissions4Authorization, this.loginDialogDelegate);
 			break;
 
 		case R.id.btnAgencyEmbeddedWebLogin:
-			createAccelaMobile(false);
-			currentAccelaMobile.authorize2(permissions4Authorization);
+			accelaMobile.authorize2(permissions4Authorization);
 			break;
 		case R.id.btnAgencyWebLogin:
-			createAccelaMobile(false);
-			currentAccelaMobile.authorize(permissions4Authorization);
+			accelaMobile.authorize(permissions4Authorization);
 			break;
 		case R.id.btnAgencyGetRecords:
 			if (isSessionValid()) {
@@ -153,7 +171,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 				requestParams.put("openedDateRange",
 						getDateRangeBeforeAndAfter(7, 7)); // From 7 days before
 															// to 7 days after
-				currentRequest = currentAccelaMobile.request(servicePath,
+				currentRequest = accelaMobile.request(servicePath,
 						requestParams, recordListRequestDelegate);
 			}
 			break;
@@ -166,7 +184,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 				servicePath = SERVICE_URI_RECORD_LIST;
 				requestParams.put("limit", "10");
 				requestParams.put("offset", "0");
-				JSONObject responseJson = currentAccelaMobile.fetch(
+				JSONObject responseJson = accelaMobile.fetch(
 						servicePath, requestParams, HTTPMethod.GET, null);
 				String alertMessage;
 				if (responseJson == null) {
@@ -188,7 +206,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 			if (isSessionValid()) {
 				servicePath = SERVICE_URI_RECORD_SEARCH.replace("{recordIds}",
 						recordId);
-				currentRequest = currentAccelaMobile.request(servicePath, null,
+				currentRequest = accelaMobile.request(servicePath, null,
 						requestDelegate);
 			}
 			break;
@@ -198,7 +216,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 
 				JSONObject recordJson = populateRecordJson();
 				RequestParams postData = new RequestParams(recordJson);
-				currentRequest = currentAccelaMobile.request(servicePath, null,
+				currentRequest = accelaMobile.request(servicePath, null,
 						HTTPMethod.POST, postData, requestDelegate);
 			}
 			break;
@@ -223,7 +241,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 				requestParams.put("offset", "0");
 				// asynchronous request, put requestDelegate for handling
 				// results
-				currentRequest = currentAccelaMobile.request(servicePath,
+				currentRequest = accelaMobile.request(servicePath,
 						requestParams, requestDelegate);
 			}
 			break;
@@ -248,7 +266,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 				RequestParams postParams = new RequestParams("fileInfo",
 						fileInfoJsonArrayStr);
 				// Invoke cloud API to upload the files.
-				currentRequest = currentAccelaMobile.uploadAttachments(
+				currentRequest = accelaMobile.uploadAttachments(
 						servicePath, postParams, fileInformationMap,
 						uploadDocumentRequestDelegate);
 			}
@@ -265,7 +283,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 						this.getResources().getString(
 								R.string.msg_request_being_processed), true,
 						true);
-				currentRequest = currentAccelaMobile.request(servicePath,
+				currentRequest = accelaMobile.request(servicePath,
 						requestParams, HTTPMethod.GET, null,
 						attachmentListRequestDelegate);
 				waitingView.dismiss();
@@ -282,8 +300,8 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 					String downloadFilePath = this.getApplicationContext()
 							.getFilesDir().getAbsolutePath()
 							+ "/AccelaAnalytics.png";
-					currentRequest = currentAccelaMobile.downloadAttachment(
-							servicePath, downloadFilePath,
+					currentRequest = accelaMobile.downloadAttachment(
+							servicePath, null, downloadFilePath,
 							downloadDocumentRequestDelegate);
 				} else {
 					Toast toast = Toast.makeText(this,
@@ -295,19 +313,18 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 			}
 			break;
 		case R.id.btnAppSettings:
-			if (isSessionValid()) {
-				servicePath = SERVICE_URI_GIS_SETTINGS;
-				requestParams = new RequestParams();
-//				requestParams
-//						.put("keys",
-//								"InspAppSetting_JobList_DaysBefore,InspAppSetting_JobList_DaysAfter");
-				currentRequest = currentAccelaMobile.request(servicePath,
-						requestParams, requestDelegate);
-			}
+			servicePath = SERVICE_URI_APP_SETTINGS;
+			HashMap<String, String> customHttpHeader = new HashMap<String, String>();
+			customHttpHeader.put("x-accela-appid", APP_ID);
+			customHttpHeader.put("x-accela-appsecret", APP_SECRET);
+			
+			requestParams = new RequestParams();
+			currentRequest = accelaMobile.request(servicePath,
+					requestParams, customHttpHeader, HTTPMethod.GET, null, requestDelegate);
 			break;
 		case R.id.btnAgencyLogout:
 			if (isSessionValid()) {
-				currentAccelaMobile.logout();
+				accelaMobile.logout();
 			}
 			break;
 		case R.id.btnAgencyBack:
@@ -367,7 +384,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 
 	}
 
-	private void createAccelaMobile(boolean isNativeAuthorization) {
+	private void initAccelaMobile() {
 		// Initialize app context.
 		appContext = (AppContext) this.getApplicationContext();
 		// Clear the AccelaMobile instance created for citizen.
@@ -376,45 +393,30 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 		// defined in Accela SDK package.
 		String authServer = AMSetting.AM_OAUTH_HOST;
 		String apiServer = AMSetting.AM_API_HOST;
-		// Initialize an AccelaMobile instance for agency.
-		if (!isNativeAuthorization) {
-			// Create an AccelaMobile instance with the App ID and App Secret of
-			// the registered app.
-			appContext.accelaMobile4Agency = new AccelaMobile(this,
-					"635442545792218073", "28c6edc56e714078a23a50a4193f348f",
-					sessionDelegate, authServer, apiServer);
-			// Set the environment.
-			appContext.accelaMobile4Agency
-					.setEnvironment(AccelaMobile.Environment.PROD);
-			// Set the URL schema.
-			// NOTE: The assigned value should be same as the value of
-			// "android:scheme" under "AuthorizationActivity" in the project's
-			// AndroidManifest.xml.
-			appContext.accelaMobile4Agency.setUrlSchema("amtest");
-			// Enable debugging
-			// appContext.accelaMobile4Agency.setDebug(true);
-			currentAccelaMobile = appContext.accelaMobile4Agency;
-		} else { // Native authorization
-			appContext.accelaMobileInternal4Agency = new AccelaMobileInternal(
-					this, "635439815877444193",
-					"133bb8d3991a4d8483cf55e3ccf25070", sessionDelegate,
-					authServer, apiServer);
-			// Set the environment.
-			appContext.accelaMobileInternal4Agency
-					.setEnvironment(AccelaMobile.Environment.PROD);
-			// Enable debugging
-			// appContext.accelaMobileInternal4Agency.setDebug(true);
-			currentAccelaMobile = appContext.accelaMobileInternal4Agency;
-			currentAccelaMobile.setSessionDelegate(sessionDelegate);
-		}
+		// Initialize an AccelaMobile instance
+		// Create an AccelaMobile instance with the App ID and App Secret of
+		// the registered app.
+		accelaMobile = new AccelaMobile(this,
+				APP_ID, APP_SECRET,
+				sessionDelegate, authServer, apiServer);
+		
+		// Set the URL schema.
+		// NOTE: The assigned value should be same as the value of
+		// "android:scheme" under "AuthorizationActivity" in the project's
+		// AndroidManifest.xml.
+		accelaMobile.setUrlSchema("amtest");
+		// Set the environment.
+		appContext.accelaMobile4Agency = accelaMobile;
+		// Enable debugging
+		// appContext.accelaMobile4Agency.setDebug(true);
 	}
 
 	private Dialog createImagePreviewDialog(Bundle bundle) {
 		String localPath = bundle.getString("localPath");
 		LayoutParams mainLayoutParams = mainLayout.getLayoutParams();
 		FrameLayout.LayoutParams viewLayoutParams = new FrameLayout.LayoutParams(
-				FrameLayout.LayoutParams.FILL_PARENT,
-				FrameLayout.LayoutParams.FILL_PARENT);
+				FrameLayout.LayoutParams.MATCH_PARENT,
+				FrameLayout.LayoutParams.MATCH_PARENT);
 		LinearLayout photoLayout = new LinearLayout(this);
 		photoLayout.setOrientation(LinearLayout.VERTICAL);
 		photoLayout.setLayoutParams(viewLayoutParams);
@@ -463,8 +465,8 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 
 	// Check whether the current user session is valid or not.
 	private boolean isSessionValid() {
-		Boolean isValid = (currentAccelaMobile != null)
-				&& (currentAccelaMobile.isSessionValid());
+		Boolean isValid = (accelaMobile != null)
+				&& (accelaMobile.isSessionValid());
 		if (!isValid) {
 			Toast toast = Toast.makeText(this,
 					this.getResources().getString(R.string.msg_not_logged_in),
@@ -490,7 +492,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 		JSONObject fileInfoJson = new JSONObject();
 		try {
 			fileInfoJson.put("serviceProviderCode",
-					currentAccelaMobile.getAgency());
+					accelaMobile.getAgency());
 			fileInfoJson.put("fileName", fileName);
 			fileInfoJson.put("type", fileType);
 			fileInfoJson.put("description", "Upload document for testing.");
@@ -594,6 +596,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 	private AMLoginViewDelegate loginDialogDelegate = new AMLoginViewDelegate() {
 		@Override
 		public void amDialogFetch(AMLoginView loginView) {
+			Log.e("login", "fetcing");
 			accessTokenProgressDialog = ProgressDialog.show(
 					AgencyTestActivity.this, null,
 					AgencyTestActivity.this.getString(R.string.msg_login),
@@ -602,6 +605,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void amDialogLogin(AMLoginView loginView) {
+			Log.e("login", "login");
 			if ((accessTokenProgressDialog != null)
 					&& (accessTokenProgressDialog.isShowing())) {
 				accessTokenProgressDialog.dismiss();
@@ -610,6 +614,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void amDialogNotLogin(boolean cancelled) {
+			Log.e("login", "not login");
 			if ((accessTokenProgressDialog != null)
 					&& (accessTokenProgressDialog.isShowing())) {
 				accessTokenProgressDialog.dismiss();
@@ -629,6 +634,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 	// Session delegate for Accela Mobile
 	private AMSessionDelegate sessionDelegate = new AMSessionDelegate() {
 		public void amDidLogin() {
+			Log.e("login", "session amDidLogin");
 			// Dismiss progress dialog.
 			if ((accessTokenProgressDialog != null)
 					&& (accessTokenProgressDialog.isShowing())) {
@@ -643,6 +649,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 		}
 
 		public void amDidLoginFailure(AMError error) {
+			Log.e("login", "session amDidLoginFailure");
 			// Dismiss progress dialog.
 			if ((accessTokenProgressDialog != null)
 					&& (accessTokenProgressDialog.isShowing())) {
@@ -660,16 +667,19 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 		}
 
 		public void amDidCancelLogin() {
+			Log.e("login", "session amDidCancelLogin");
 			AMLogger.logInfo("In AgencyTestActivity: Session Delegate.amDidCancelLogin() invoked...");
 		}
 
 		public void amDidSessionInvalid(AMError error) {
+			Log.e("login", "session amDidSessionInvalid");
 			AMLogger.logInfo(
 					"In AgencyTestActivity: Session Delegate.amDidSessionInvalid() invoked: %s",
 					error.toString());
 		}
 
 		public void amDidLogout() {
+			Log.e("login", "session amDidLogout");
 			Toast.makeText(
 					AgencyTestActivity.this,
 					AgencyTestActivity.this.getResources().getString(

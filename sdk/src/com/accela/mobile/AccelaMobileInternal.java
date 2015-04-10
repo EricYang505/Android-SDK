@@ -126,7 +126,8 @@ public class AccelaMobileInternal extends AccelaMobile {
 		// Otherwise, create the native Agency Login view.
 		this.authorizationManager.setClientInfo(null, null, null, null, this.amAuthHost, this.amApisHost);
 		this.authorizationManager.setIsRememberToken(this.amIsRemember);
-		this.loginDialog = (this.loginDialog != null) ? this.loginDialog : new AgencyLoginDialog(this, permissions, sessionDelegate);
+		this.authorizationManager.setSessionDelegate(sessionDelegate);
+		this.loginDialog = (this.loginDialog != null) ? this.loginDialog : new AgencyLoginDialog(this, permissions);
 		this.loginDialog.amLoginViewDelegate = defaultLoginViewDelegate;
 					
 		// Show the login view

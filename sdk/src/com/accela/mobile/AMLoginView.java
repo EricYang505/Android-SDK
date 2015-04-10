@@ -38,12 +38,11 @@ import android.widget.PopupWindow;
 
 public class AMLoginView extends PopupWindow {		
 	
-	protected AMLoginViewDelegate amLoginViewDelegate;	
-	protected AMSessionDelegate sessionDelegate;		
+	protected AMLoginViewDelegate amLoginViewDelegate;
 	protected String[] permissions;	
 	protected String agency;	
 	protected String environment;	
-	protected AccelaMobileInternal accelaMobileInternal;   
+	protected AccelaMobile accelaMobileInternal;   
 	
 	protected Boolean isUserProfileRemebered = false;
 	protected AMRequest currentRequest;
@@ -60,16 +59,19 @@ public class AMLoginView extends PopupWindow {
 	 * 
 	 * @since 3.0
 	 */	
-	AMLoginView(AccelaMobileInternal accelaMobileInternal) {		
+	AMLoginView(AccelaMobile accelaMobileInternal) {		
 		this(accelaMobileInternal.ownerContext);
-		this.accelaMobileInternal = accelaMobileInternal;				
+		this.accelaMobileInternal = accelaMobileInternal;
+		// init data
+		this.agency = this.accelaMobileInternal.agency;
+		this.environment = this.accelaMobileInternal.environment.name();
 		// Get screen height and width
 		DisplayMetrics displayMetrics = new DisplayMetrics();   
 		((Activity) accelaMobileInternal.ownerContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		screenWidth = displayMetrics.widthPixels;
 		screenHeight = displayMetrics.heightPixels;	
 		// Check whether the current device is Pad or not (Phone)
-		isDevicePad = isRunningOnTabletDevice();			
+		isDevicePad = isRunningOnTabletDevice();
 		
 		this.isUserProfileRemebered = accelaMobileInternal.amIsRemember;
 	}
@@ -126,7 +128,7 @@ public class AMLoginView extends PopupWindow {
 	 * 
 	 * @since 3.0
 	 */
-	AccelaMobileInternal getAccelaMobileInternal() {
+	AccelaMobile getAccelaMobileInternal() {
 		return this.accelaMobileInternal;
 	}	
 	

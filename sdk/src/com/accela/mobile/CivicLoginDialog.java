@@ -74,7 +74,7 @@ class CivicLoginDialog extends AMLoginView  {
 	 * 
 	 * @since 3.0
 	 */	
-	CivicLoginDialog(AccelaMobileInternal accelaMobileInternal) {
+	CivicLoginDialog(AccelaMobile accelaMobileInternal) {
 		super(accelaMobileInternal);		
 		
 		// Set view content.		
@@ -107,10 +107,9 @@ class CivicLoginDialog extends AMLoginView  {
 	 * 
 	 * @since 3.0
 	 */	
-	CivicLoginDialog(AccelaMobileInternal accelaMobileInternal, String[] permissions, AMSessionDelegate sessionDelegate) {		
+	CivicLoginDialog(AccelaMobile accelaMobileInternal, String[] permissions) {		
 		this(accelaMobileInternal);			
 		this.permissions = permissions;
-		this.sessionDelegate = sessionDelegate;
 	}
 		
 	/**
@@ -128,7 +127,7 @@ class CivicLoginDialog extends AMLoginView  {
 		final Context ownerContext = accelaMobileInternal.ownerContext;
 		final String token = accelaMobileInternal.authorizationManager.getAccessToken();
 		
-		// Facebook login button	
+		// Facebook login button
 		btnFacebook.setOnClickListener(new Button.OnClickListener() {			
 			public void onClick(View v) {		
 				String facebookLoginWebUrl = FACEBOOK_LOGIN_URL +   
@@ -155,13 +154,8 @@ class CivicLoginDialog extends AMLoginView  {
 				if (isLoginInfoFilled()) {	
 					hideKeyboard();				
 					// Progress authorization request.
-					if (accelaMobileInternal.authorizationManager == null) {
-						AuthorizationManager authorizationManager = new AuthorizationManager(accelaMobileInternal);					
-						authorizationManager.setSessionDelegate(sessionDelegate);					
-						authorizationManager.setClientInfo(accelaMobileInternal.getAppId(), accelaMobileInternal.getAppSecret(), accelaMobileInternal.authorizationManager.getEnvironment(), accelaMobileInternal.authorizationManager.getAgency(), accelaMobileInternal.amAuthHost, accelaMobileInternal.amApisHost);
-						accelaMobileInternal.setAuthorizationManager(authorizationManager);
-						authorizationManager.getAuthorizeCode4Private(CivicLoginDialog.this, agency, valEmail, valPassword, permissions, true);
-					}
+					accelaMobileInternal.authorizationManager.setClientInfo(accelaMobileInternal.getAppId(), accelaMobileInternal.getAppSecret(), accelaMobileInternal.authorizationManager.getEnvironment(), accelaMobileInternal.authorizationManager.getAgency(), accelaMobileInternal.amAuthHost, accelaMobileInternal.amApisHost);
+					accelaMobileInternal.authorizationManager.getAuthorizeCode4Private(CivicLoginDialog.this, agency, valEmail, valPassword, permissions, true);
 				} 					
 			}			
 		});
@@ -218,10 +212,10 @@ class CivicLoginDialog extends AMLoginView  {
 		LinearLayout.LayoutParams socialButtonLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, 102);
 		socialButtonLayoutParams.setMargins(0, 10, 0, 0);
 		btnFacebook = new Button(ownerContext);			
-		btnFacebook.setBackgroundDrawable(createDrawableFromBase64String(CivicLoginDialogImageResource.facebookButtonImageBase64EncodedtStr4Phone));	
+		btnFacebook.setBackground(createDrawableFromBase64String(CivicLoginDialogImageResource.facebookButtonImageBase64EncodedtStr4Phone));	
 		
 		btnTwitter = new Button(ownerContext);		
-		btnTwitter.setBackgroundDrawable(createDrawableFromBase64String(CivicLoginDialogImageResource.twitterButtonImageBase64EncodedtStr4Phone));	
+		btnTwitter.setBackground(createDrawableFromBase64String(CivicLoginDialogImageResource.twitterButtonImageBase64EncodedtStr4Phone));	
 		contentViewLayout.addView(btnFacebook, socialButtonLayoutParams);	
 		contentViewLayout.addView(btnTwitter, socialButtonLayoutParams);
 		
@@ -229,7 +223,7 @@ class CivicLoginDialog extends AMLoginView  {
 		LinearLayout.LayoutParams orSeparatorLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, LinearLayout.LayoutParams.WRAP_CONTENT);	
 		orSeparatorLayoutParams.setMargins(0, 10, 0, 10);
 		ImageView orSeparatorImage = new ImageView(ownerContext);
-		orSeparatorImage.setBackgroundDrawable(createDrawableFromBase64String(CivicLoginDialogImageResource.orSeparatorLineImageBase64EncodedtStr4Phone));	
+		orSeparatorImage.setBackground(createDrawableFromBase64String(CivicLoginDialogImageResource.orSeparatorLineImageBase64EncodedtStr4Phone));	
 		contentViewLayout.addView(orSeparatorImage, orSeparatorLayoutParams);
 		
 		// Input fields
@@ -237,7 +231,7 @@ class CivicLoginDialog extends AMLoginView  {
 		loginSectionLayout.setOrientation(LinearLayout.VERTICAL);				
 		LinearLayout.LayoutParams loginSectionLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, LinearLayout.LayoutParams.WRAP_CONTENT);	
 		loginSectionLayoutParams.setMargins(0, 10, 0, 0);		
-		loginSectionLayout.setBackgroundDrawable(geRoundCornerRowShape(loginSectionLayoutParams.width, 50, Color.WHITE));
+		loginSectionLayout.setBackground(geRoundCornerRowShape(loginSectionLayoutParams.width, 50, Color.WHITE));
 		// Email field
 		etEmail = new EditText(ownerContext);	
 		etEmail.setTextSize(16);	
@@ -265,14 +259,14 @@ class CivicLoginDialog extends AMLoginView  {
 		LinearLayout.LayoutParams fieldSeparatorLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, 2);	
 		ImageView fieldSeparatorImage = new ImageView(ownerContext);
 		Drawable fieldSeparatorImageeDrawable = createDrawableFromBase64String(CivicLoginDialogImageResource.fieldSeparatorLineImageBase64EncodedtStr4Phone);
-		fieldSeparatorImage.setBackgroundDrawable(fieldSeparatorImageeDrawable);		
+		fieldSeparatorImage.setBackground(fieldSeparatorImageeDrawable);		
 		
 		// Add fields into layout
 		LinearLayout.LayoutParams inputFieldLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, LinearLayout.LayoutParams.MATCH_PARENT);
 		loginSectionLayout.addView(etEmail, inputFieldLayoutParams);
 		loginSectionLayout.addView(fieldSeparatorImage, fieldSeparatorLayoutParams);
 		loginSectionLayout.addView(etPassword, inputFieldLayoutParams);		
-		loginSectionLayout.setBackgroundDrawable(geRoundCornerRowShape(loginSectionLayoutParams.width, loginSectionLayoutParams.height, Color.WHITE));		
+		loginSectionLayout.setBackground(geRoundCornerRowShape(loginSectionLayoutParams.width, loginSectionLayoutParams.height, Color.WHITE));		
 		contentViewLayout.addView(loginSectionLayout, loginSectionLayoutParams);
 		
 		// Login button		
@@ -280,7 +274,7 @@ class CivicLoginDialog extends AMLoginView  {
 		loginButtonLayoutParams.setMargins(5, 10, 10, 0);
 		btnSignin = new Button(ownerContext);	
 		btnSignin.setFocusable(true);
-		btnSignin.setBackgroundDrawable(createDrawableFromBase64String(CivicLoginDialogImageResource.loginButtonImageBase64EncodedtStr4Phone));	
+		btnSignin.setBackground(createDrawableFromBase64String(CivicLoginDialogImageResource.loginButtonImageBase64EncodedtStr4Phone));	
 
 		contentViewLayout.addView(btnSignin, loginButtonLayoutParams);		
 		
@@ -321,7 +315,7 @@ class CivicLoginDialog extends AMLoginView  {
 		headerLogoLayout.setOrientation(LinearLayout.VERTICAL);
 		LinearLayout.LayoutParams headerLogoLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 90);
 		Drawable headerImageeDrawable = createDrawableFromBase64String(CivicLoginDialogImageResource.logoHeaderImageBase64EncodedtStr4Phone);
-		headerLogoLayout.setBackgroundDrawable(headerImageeDrawable);
+		headerLogoLayout.setBackground(headerImageeDrawable);
 		TextView tvTitle = new TextView(ownerContext);
 		tvTitle.setText("Accela Gov Platform");
 		tvTitle.setTextSize(20);
@@ -393,9 +387,9 @@ class CivicLoginDialog extends AMLoginView  {
 		socialButtonLayoutParams.weight = 1;
 		
 		btnFacebook = new Button(ownerContext);			
-		btnFacebook.setBackgroundDrawable(createDrawableFromBase64String(CivicLoginDialogImageResource.facebookButtonImageBase64EncodedtStr4Pad));	
+		btnFacebook.setBackground(createDrawableFromBase64String(CivicLoginDialogImageResource.facebookButtonImageBase64EncodedtStr4Pad));	
 		btnTwitter = new Button(ownerContext);		
-		btnTwitter.setBackgroundDrawable(createDrawableFromBase64String(CivicLoginDialogImageResource.twitterButtonImageBase64EncodedtStr4Pad));	
+		btnTwitter.setBackground(createDrawableFromBase64String(CivicLoginDialogImageResource.twitterButtonImageBase64EncodedtStr4Pad));	
 				
 		socialButtonSectionLayout.addView(btnFacebook, socialButtonLayoutParams);	
 		socialButtonSectionLayout.addView(btnTwitter, socialButtonLayoutParams);
@@ -406,7 +400,7 @@ class CivicLoginDialog extends AMLoginView  {
 		orSeparatorLayoutParams.setMargins(0, 10, 0, 10);
 		ImageView orSeparatorImage = new ImageView(ownerContext);
 		Drawable orSeparatorImageDrawable = createDrawableFromBase64String(CivicLoginDialogImageResource.orSeparatorLineImageBase64EncodedtStr4Pad);
-		orSeparatorImage.setBackgroundDrawable(orSeparatorImageDrawable);	
+		orSeparatorImage.setBackground(orSeparatorImageDrawable);	
 		contentViewLayout.addView(orSeparatorImage, orSeparatorLayoutParams);
 		
 		// Input fields
@@ -415,7 +409,7 @@ class CivicLoginDialog extends AMLoginView  {
 		LinearLayout.LayoutParams loginSectionLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, LinearLayout.LayoutParams.WRAP_CONTENT);	
 		loginSectionLayoutParams.setMargins(0, 10, 0, 0);
 		loginSectionLayoutParams.weight = 1;
-		loginSectionLayout.setBackgroundDrawable(geRoundCornerRowShape(loginSectionLayoutParams.width, 50, Color.WHITE));
+		loginSectionLayout.setBackground(geRoundCornerRowShape(loginSectionLayoutParams.width, 50, Color.WHITE));
 		
 		etEmail = new EditText(ownerContext);	
 		etEmail.setBackgroundColor(Color.TRANSPARENT);
@@ -438,7 +432,7 @@ class CivicLoginDialog extends AMLoginView  {
 		LinearLayout.LayoutParams fieldSeparatorLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, 2);	
 		ImageView fieldSeparatorImage = new ImageView(ownerContext);
 		Drawable fieldSeparatorImageeDrawable = createDrawableFromBase64String(CivicLoginDialogImageResource.fieldSeparatorLineImageBase64EncodedtStr4Pad);
-		fieldSeparatorImage.setBackgroundDrawable(fieldSeparatorImageeDrawable);		
+		fieldSeparatorImage.setBackground(fieldSeparatorImageeDrawable);		
 		
 		// Add fields into layout
 		LinearLayout.LayoutParams inputFieldLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -446,14 +440,14 @@ class CivicLoginDialog extends AMLoginView  {
 		loginSectionLayout.addView(etEmail, inputFieldLayoutParams);
 		loginSectionLayout.addView(fieldSeparatorImage, fieldSeparatorLayoutParams);
 		loginSectionLayout.addView(etPassword, inputFieldLayoutParams);		
-		loginSectionLayout.setBackgroundDrawable(geRoundCornerRowShape(loginSectionLayoutParams.width, loginSectionLayoutParams.height, Color.WHITE));		
+		loginSectionLayout.setBackground(geRoundCornerRowShape(loginSectionLayoutParams.width, loginSectionLayoutParams.height, Color.WHITE));		
 		contentViewLayout.addView(loginSectionLayout, loginSectionLayoutParams);
 		
 		// Sign in button		
 		LinearLayout.LayoutParams loginButtonLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, 52);
 		loginButtonLayoutParams.setMargins(0, 10, 0, 20);
 		btnSignin = new Button(ownerContext);		
-		btnSignin.setBackgroundDrawable(createDrawableFromBase64String(CivicLoginDialogImageResource.loginButtonImageBase64EncodedtStr4Pad));
+		btnSignin.setBackground(createDrawableFromBase64String(CivicLoginDialogImageResource.loginButtonImageBase64EncodedtStr4Pad));
 		btnSignin.setText("Sign In");
 		btnSignin.setTextSize(20);
 		btnSignin.setTextColor(Color.WHITE);	
@@ -500,7 +494,7 @@ class CivicLoginDialog extends AMLoginView  {
 		headerLogoLayoutParams.gravity = Gravity.CENTER;
 		headerLogoLayoutParams.setMargins(0, 10, 0, 0);		
 		Drawable headerrImageDrawable = createDrawableFromBase64String(CivicLoginDialogImageResource.logoHeaderImageBase64EncodedtStr4Pad);
-		headerLogoLayout.setBackgroundDrawable(headerrImageDrawable);
+		headerLogoLayout.setBackground(headerrImageDrawable);
 		TextView tvTitle = new TextView(ownerContext);
 		tvTitle.setText("Accela Gov Platform");
 		tvTitle.setTextSize(20);

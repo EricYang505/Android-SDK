@@ -74,7 +74,7 @@ class AgencyLoginDialog extends AMLoginView  {
 	 * 
 	 * @since 2.1
 	 */	
-	AgencyLoginDialog(AccelaMobileInternal accelaMobileInternal) {
+	AgencyLoginDialog(AccelaMobile accelaMobileInternal) {
 		super(accelaMobileInternal);	
 		// Initialize login information
 		loadSavedLoginInfo();
@@ -100,10 +100,9 @@ class AgencyLoginDialog extends AMLoginView  {
 	 * 
 	 * @since 2.1
 	 */	
-	AgencyLoginDialog(AccelaMobileInternal accelaMobileInternal, String[] permissions, AMSessionDelegate sessionDelegate) {
+	AgencyLoginDialog(AccelaMobile accelaMobileInternal, String[] permissions) {
 		this(accelaMobileInternal);				
 		this.permissions = permissions;
-		this.sessionDelegate = sessionDelegate;
 	}
 	
 	/**
@@ -119,8 +118,8 @@ class AgencyLoginDialog extends AMLoginView  {
 	 * 
 	 * @since 4.0
 	 */	
-	AgencyLoginDialog(AccelaMobileInternal accelaMobileInternal, String[] permissions, AMSessionDelegate sessionDelegate, AMLoginViewDelegate loginViewDelegate) {
-		this(accelaMobileInternal,permissions,sessionDelegate);				
+	AgencyLoginDialog(AccelaMobileInternal accelaMobileInternal, String[] permissions, AMLoginViewDelegate loginViewDelegate) {
+		this(accelaMobileInternal,permissions);				
 		this.amLoginViewDelegate = loginViewDelegate;		
 	}
 	
@@ -154,7 +153,7 @@ class AgencyLoginDialog extends AMLoginView  {
 		String logoImageStr = (isTablet) ? AgencyLoginDialogImageResource.logo2xImageBase64EncodedtStr : AgencyLoginDialogImageResource.logoImageBase64EncodedtStr;
 		ImageView logoImage = new ImageView(ownerContext);
 		Drawable logoDrawable = createDrawableFromBase64String(logoImageStr);
-		logoImage.setBackgroundDrawable(logoDrawable);	
+		logoImage.setBackground(logoDrawable);
 		LinearLayout.LayoutParams logoLayoutParams = new LinearLayout.LayoutParams(265, 71);
 		logoLayoutParams.setMargins(0, 80, 0, 30);					
 		logoLayoutParams.gravity = Gravity.CENTER;
@@ -235,7 +234,7 @@ class AgencyLoginDialog extends AMLoginView  {
 		passwordFieldLayout.addView(passwordFieldLabel, labelLayoutParams);
 		passwordFieldLayout.addView(etPassword, fieldLayoutParams);			
 		
-		loginSectionLayout.setBackgroundDrawable(geRoundCornerRowShape(loginSectionLayoutParams.width, loginSectionLayoutParams.height, Color.WHITE));
+		loginSectionLayout.setBackground(geRoundCornerRowShape(loginSectionLayoutParams.width, loginSectionLayoutParams.height, Color.WHITE));
 				
 		TextView  environmentFieldLabel = new TextView(ownerContext);
 		environmentFieldLabel.setTextSize(14);
@@ -254,7 +253,7 @@ class AgencyLoginDialog extends AMLoginView  {
 		
 		envArrowImage = new ImageView(ownerContext);
 		envArrowImage.setId(1004);
-		envArrowImage.setBackgroundDrawable(createDrawableFromBase64String(AgencyLoginDialogImageResource.environmentArrowImageBase64EncodedtStr));
+		envArrowImage.setBackground(createDrawableFromBase64String(AgencyLoginDialogImageResource.environmentArrowImageBase64EncodedtStr));
 
 		RelativeLayout envFieldLayout = new RelativeLayout(ownerContext);
 		RelativeLayout.LayoutParams envFieldLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -282,12 +281,12 @@ class AgencyLoginDialog extends AMLoginView  {
 		LinearLayout.LayoutParams fieldSeparatorLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, 2);
 		Drawable fieldSeparatorImageeDrawable = createDrawableFromBase64String(AgencyLoginDialogImageResource.fieldSeparatorLineImageBase64EncodedtStr);
 		ImageView field1SeparatorImage = new ImageView(ownerContext);
-		field1SeparatorImage.setBackgroundDrawable(fieldSeparatorImageeDrawable);	
+		field1SeparatorImage.setBackground(fieldSeparatorImageeDrawable);	
 		ImageView field2SeparatorImage = new ImageView(ownerContext);
-		field2SeparatorImage.setBackgroundDrawable(fieldSeparatorImageeDrawable);
+		field2SeparatorImage.setBackground(fieldSeparatorImageeDrawable);
 		// Hide the field separator line by default
 		envSeparatorImage = new ImageView(ownerContext);
-		envSeparatorImage.setBackgroundDrawable(fieldSeparatorImageeDrawable);
+		envSeparatorImage.setBackground(fieldSeparatorImageeDrawable);
 		envSeparatorImage.setVisibility(View.GONE);
 		// Add fields into layout
 		LinearLayout.LayoutParams inputFieldLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -298,7 +297,7 @@ class AgencyLoginDialog extends AMLoginView  {
 		loginSectionLayout.addView(passwordFieldLayout, inputFieldLayoutParams);		
 		loginSectionLayout.addView(envSeparatorImage, fieldSeparatorLayoutParams);
 		loginSectionLayout.addView(environmentRowLayout, inputFieldLayoutParams);		
-		loginSectionLayout.setBackgroundDrawable(geRoundCornerRowShape(loginSectionLayoutParams.width, loginSectionLayoutParams.height, Color.WHITE));		
+		loginSectionLayout.setBackground(geRoundCornerRowShape(loginSectionLayoutParams.width, loginSectionLayoutParams.height, Color.WHITE));		
 		contentViewLayout.addView(loginSectionLayout, loginSectionLayoutParams);
 		// Additional Setting link		
 		addtlSettingLinkViewLayout = new RelativeLayout(ownerContext);
@@ -337,7 +336,7 @@ class AgencyLoginDialog extends AMLoginView  {
 		LinearLayout.LayoutParams loginButtonLayoutParams = new LinearLayout.LayoutParams(contentViewFrameWidth, 70);
 		loginButtonLayoutParams.setMargins(0, 20, 0, 20);
 		btnSignin = new Button(ownerContext);	
-		btnSignin.setBackgroundDrawable(createDrawableFromBase64String(AgencyLoginDialogImageResource.loginButtonImageBase64EncodedtStr));
+		btnSignin.setBackground(createDrawableFromBase64String(AgencyLoginDialogImageResource.loginButtonImageBase64EncodedtStr));
 		contentViewLayout.addView(btnSignin, loginButtonLayoutParams);	
 		// Frame view
 		LinearLayout contentViewFrameLayout = new LinearLayout(ownerContext); 
@@ -347,7 +346,7 @@ class AgencyLoginDialog extends AMLoginView  {
 		ScrollView mainView = new ScrollView(ownerContext);	
 		mainView.setFillViewport(true);	
 		mainView.addView(contentViewFrameLayout, contentViewFrameLayoutParams);		
-		mainView.setBackgroundDrawable(createDrawableFromBase64String(AgencyLoginDialogImageResource.bgImageBase64EncodedtStr));
+		mainView.setBackground(createDrawableFromBase64String(AgencyLoginDialogImageResource.bgImageBase64EncodedtStr));
 		mainView.pageScroll(View.FOCUS_UP);		
 		// Return the main layout		
 		return mainView;		
@@ -432,13 +431,14 @@ class AgencyLoginDialog extends AMLoginView  {
 				if (isLoginInfoFilled()) {			
 					// Hide keyboard.
 					hideKeyboard();
-					// Progress authorization request.						
-					accelaMobileInternal.authenticate(valAgency, valUsername, valPassword, permissions);
+					
+					accelaMobileInternal.authorizationManager.setClientInfo(accelaMobileInternal.getAppId(), accelaMobileInternal.getAppSecret(), accelaMobileInternal.authorizationManager.getEnvironment(), accelaMobileInternal.authorizationManager.getAgency(), accelaMobileInternal.amAuthHost, accelaMobileInternal.amApisHost);
+					accelaMobileInternal.authorizationManager.getAuthorizeCode4Private(AgencyLoginDialog.this, valAgency, valUsername, valPassword, permissions, true);
+					
 					// Invoke login dialog delegate.
 					if (amLoginViewDelegate != null) {
 						amLoginViewDelegate.amDialogFetch(AgencyLoginDialog.this);
 					}
-					
 				} 						
 			}			
 		});
