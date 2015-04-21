@@ -318,11 +318,6 @@ public class AuthorizationManager {
 			prefsWriter.commit();
 		}
 	}
-	
-	public void setToken(String token){
-		this.accessToken = token;
-	}
-	
 	/**
 	 * 
 	 * Get the value of property environment.
