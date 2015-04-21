@@ -388,7 +388,7 @@ public class RequestParams {
 	/**
 	 * Convert the parameters to JSON.
 	 *
-     * @return A JSON string which presents the RequestParams objectt.
+     * @return A JSON string which presents the RequestParams object.
 	 * 
 	 * @since 4.0
 	 */

@@ -121,18 +121,6 @@ public class AMLoginView extends PopupWindow {
 	}
 	
 	/**
-	 * 
-	 * Get value of the property accelaMobileInternal
-	 * 
-	 * @return The value of property accelaMobileInternal  .
-	 * 
-	 * @since 3.0
-	 */
-	AccelaMobile getAccelaMobileInternal() {
-		return this.accelaMobileInternal;
-	}	
-	
-	/**
 	 * Private method, used to detect whether the running device is a Tablet or not.
 	 */	
 	private Boolean isRunningOnTabletDevice() {

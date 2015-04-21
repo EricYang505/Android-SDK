@@ -105,23 +105,6 @@ class AgencyLoginDialog extends AMLoginView  {
 		this.permissions = permissions;
 	}
 	
-	/**
-	 * 
-	 * Constructor with the given parameters.
-	 * 
-	 * @param accelaMobileInternal The AccelaMobile which creates the login dialog.
-	 * @param permissions The array of access permissions. For example, search_records get_single_record  create_record, and etc.
-	 * @param sessionDelegate The delegate which manager session lifecycle.
-	 * @param loginViewDelegate The delegate which manager login dialog's lifecycle.
-	 * 
-	 * @return An initialized AgencyLoginDialog instance.
-	 * 
-	 * @since 4.0
-	 */	
-	AgencyLoginDialog(AccelaMobileInternal accelaMobileInternal, String[] permissions, AMLoginViewDelegate loginViewDelegate) {
-		this(accelaMobileInternal,permissions);				
-		this.amLoginViewDelegate = loginViewDelegate;		
-	}
 	
 	/**
 	 * Private constructor, for Android use internally.

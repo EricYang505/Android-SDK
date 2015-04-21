@@ -30,7 +30,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 
@@ -523,7 +522,6 @@ public class AuthorizationManager {
 	 */
 	AMRequest getAuthorizeCode4Private(AMLoginView loginDialog, String agency,
 			String user, String password, String[] permissions, Boolean is4Civic) {
-		Log.e("login", "auth " + agency);
 		this.loginDialog = loginDialog;
 		this.agency = agency;
 		this.user = user;
@@ -821,14 +819,12 @@ public class AuthorizationManager {
 					"In AuthorizationManager.fetchAccessTokenWithCode(): postParams = %s.",
 					postParams.toString());
 		}
-		Log.e("login", "AMRequest " + hostUrl);
 		AMRequest amRequest = new AMRequest(this.accelaMobile, hostUrl,
 				urlParams, HTTPMethod.POST);
 		amRequest.setRequestType(RequestType.AUTHENTICATION);
 		this.currentRequest = amRequest;
 		// this.processIndicatorHolderView = (ViewGroup)((Activity)
 		// this.ownerContext).findViewById(android.R.id.content).getRootView();
-		Log.e("login", "sendRequest ");
 		return amRequest.sendRequest(postParams, this.tokenRequestDelegate);
 	}
 	
@@ -858,7 +854,6 @@ public class AuthorizationManager {
 
 		@Override
 		public void onTimeout() {
-			Log.e("login", "tmeout");
 			if ((sessionDelegate != null) && (!isLoginErrorHandled)) {
 				AMError exceptionError = new AMError(AMError.ERROR_CODE_Unauthorized,
 						AMError.ERROR_CODE_TOKEN_EXPIRED,null, "Request times out.", null);
@@ -869,8 +864,6 @@ public class AuthorizationManager {
 		@Override
 		public void amRequestDidReceiveResponse(AMRequest request) {
 			super.amRequestDidReceiveResponse(currentRequest);
-			Log.e("login", "amRequestDidReceiveResponse");
-			Log.e("login", "error: " + errorMessage);
 			if (errorMessage != null) {
 				AMError error = new AMError(AMError.ERROR_CODE_Unauthorized,
 						AMError.ERROR_CODE_TOKEN_EXPIRED,traceId, errorMessage, null);
@@ -883,7 +876,6 @@ public class AuthorizationManager {
 
 		public void amRequestDidTimeout(AMRequest request) {
 			super.amRequestDidReceiveResponse(currentRequest);
-			Log.e("login", "amRequestDidTimeout");
 			// Dismiss the process waiting view
 			ProgressDialog progressDialog = currentRequest
 					.getRequestWaitingView();
@@ -900,7 +892,6 @@ public class AuthorizationManager {
 
 		@Override
 		public void onFailure(AMError error) {
-			Log.e("login", "onFailure");
 			amRequestDidReceiveResponse(currentRequest);
 			// Dismiss the process waiting view
 			ProgressDialog progressDialog = currentRequest
@@ -916,7 +907,6 @@ public class AuthorizationManager {
 
 		@Override
 		public void onStart() {
-			Log.e("login", "onStart");
 			// Invoke request delegate
 			amRequestStarted(currentRequest);
 			// Reset the previous token data.
@@ -929,7 +919,6 @@ public class AuthorizationManager {
 
 		@Override
 		public void onSuccess(JSONObject response) {
-			Log.e("login", "onSuccess");
 			amRequestDidLoad(currentRequest, response);
 			// Dismiss the process waiting view
 			ProgressDialog progressDialog = currentRequest
