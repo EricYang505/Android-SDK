@@ -319,6 +319,10 @@ public class AuthorizationManager {
 		}
 	}
 	
+	public void setToken(String token){
+		this.accessToken = token;
+	}
+	
 	/**
 	 * 
 	 * Get the value of property environment.
@@ -726,9 +730,9 @@ public class AuthorizationManager {
 		postParams.put("refresh_token", this.refreshToken);
 
 		if (isNativeAuthorization) {
-			postParams.put("grant_type", "password");			
+			postParams.put("grant_type", "refresh_token");
 		} else { // For authorization done through web view
-			postParams.put("grant_type", "authorization_code");			
+			postParams.put("grant_type", "refresh_token");
 		}
 		if (AMSetting.DebugMode) {
 			AMLogger.logVerbose("In AuthorizationManager.fetchAccessTokenByRefreshToken(): postParams = %s.",postParams.toString());
