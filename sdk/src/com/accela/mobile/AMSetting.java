@@ -34,7 +34,7 @@ public final class AMSetting {
 	 * @since 1.0
 	 */
 	public static final String AM_SDK_NAME = "Accela-Mobile-SDK";
-	public static final String AM_SDK_VERSION = "v4.0 2014-03-31";	
+	public static final String AM_SDK_VERSION = "v4.1 2015-03-31";	
 	
 	/**
 	 * The URL of AccelaMobile OAuth server and APIs cloud server.

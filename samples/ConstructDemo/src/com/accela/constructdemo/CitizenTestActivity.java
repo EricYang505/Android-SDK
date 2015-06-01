@@ -1,12 +1,21 @@
-package com.accela.testcase;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
+/**
+  * Copyright 2015 Accela, Inc.
+  *
+  * You are hereby granted a non-exclusive, worldwide, royalty-free license to
+  * use, copy, modify, and distribute this software in source code or binary
+  * form for use in connection with the web services and APIs provided by
+  * Accela.
+  *
+  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+  * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  * DEALINGS IN THE SOFTWARE.
+  *
+  */
+package com.accela.constructdemo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +43,7 @@ import com.accela.mobile.AMRequest.HTTPMethod;
 import com.accela.mobile.http.RequestParams;
 import com.accela.mobile.AMRequestDelegate;
 import com.accela.mobile.AccelaMobile;
+import com.accela.testcase.R;
 
 public class CitizenTestActivity extends Activity implements OnClickListener {
 	private static String SERVICE_URI_RECORD_LIST = "/v4/records/";
@@ -163,7 +173,6 @@ public class CitizenTestActivity extends Activity implements OnClickListener {
 		appContext = (AppContext) this.getApplicationContext();
 		// Clear the AccelaMobile instance created for agency.
 		appContext.accelaMobile4Agency = null;
-		appContext.accelaMobileInternal4Agency = null;
 
 		// Override the URLs of default authorization server and api server
 		// defined in Accela SDK package.
@@ -444,34 +453,4 @@ public class CitizenTestActivity extends Activity implements OnClickListener {
 		return recordJson;
 	}
 
-	// Copy image file from resource folder to application folder.
-	private void copyImageFile2App(String localImagePath,
-			String applicationImagePath) {
-		// Create the image file under application's directory before uploading
-		// it
-		InputStream inputStream = this.getClass().getResourceAsStream(
-				localImagePath);
-		// Get the size of the resource image file.
-		int imageFileSize = 0;
-		try {
-			imageFileSize = inputStream.available();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		// Create the image file in application directory.
-		int read = 0;
-		byte[] bytes = new byte[imageFileSize];
-		OutputStream outputStream = null;
-		try {
-			outputStream = new FileOutputStream(new File(applicationImagePath));
-			while ((read = inputStream.read(bytes)) != -1) {
-				outputStream.write(bytes, 0, read);
-			}
-			outputStream.flush();
-			inputStream.close();
-			outputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 }

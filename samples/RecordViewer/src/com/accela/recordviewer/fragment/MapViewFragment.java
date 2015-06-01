@@ -1,3 +1,20 @@
+/**
+  * Copyright 2015 Accela, Inc.
+  *
+  * You are hereby granted a non-exclusive, worldwide, royalty-free license to
+  * use, copy, modify, and distribute this software in source code or binary
+  * form for use in connection with the web services and APIs provided by
+  * Accela.
+  *
+  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+  * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  * DEALINGS IN THE SOFTWARE.
+  *
+  */
 package com.accela.recordviewer.fragment;
 
 
@@ -32,13 +49,13 @@ import android.view.ViewGroup;
 
 
 
-public class MapViewFragment extends Fragment implements 
+public class MapViewFragment extends Fragment implements
 OnMarkerClickListener, OnInfoWindowClickListener {
 
 	private MapView mapView;
 	private GoogleMap map;
 	private RecordService recordService;
-	
+
 	OnMakerClickListener makerClickListener;
 	private ArrayList<Marker> markerList = new ArrayList<Marker>();
 
@@ -49,16 +66,16 @@ OnMarkerClickListener, OnInfoWindowClickListener {
 	        public void onRecordSelected(int id);
 	 }
 
-	
+
 	Handler handler = new Handler() {
-		
+
 	};
-	
-	
+
+
     public MapViewFragment() {
-    	
+
     }
-    
+
     public void setOnMakerClickListener(OnMakerClickListener l) {
     	makerClickListener = l;
     }
@@ -68,12 +85,12 @@ OnMarkerClickListener, OnInfoWindowClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_mapview,container, false);
-        
-        
-        
+
+
+
         ApplicationEx application = (ApplicationEx) getActivity().getApplication();
         recordService = application.getRecordService();
-        
+
         mapView = (MapView) view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         setupMap();
@@ -89,9 +106,9 @@ OnMarkerClickListener, OnInfoWindowClickListener {
     		}
     	}
     	return map!=null;
-    	
+
     }
-    
+
     private void setupMap() {
     	if(!checkMap()) {
     		return;
@@ -99,9 +116,9 @@ OnMarkerClickListener, OnInfoWindowClickListener {
     	map.getUiSettings().setZoomControlsEnabled(false);
     	map.setOnMarkerClickListener(this);
     	map.setOnInfoWindowClickListener(this);
-    	
+
     }
-    
+
     private void addMakerToMap() {
     	if(!checkMap()) {
     		return;
@@ -119,17 +136,17 @@ OnMarkerClickListener, OnInfoWindowClickListener {
     		options.position(latlng);
     		options.title(record.type);
     		options.snippet(record.address.getAddress());
-    		
+
     		Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.report_graffiti);
     		options.icon(BitmapDescriptorFactory.fromBitmap(bitmap
     				));
-    				
+
     		markerCount++;
     		Marker marker = map.addMarker(options);
     		markerList.add(marker);
     		builder.include(latlng);
     	}
-    	
+
 
     	if(markerCount>0) {
     		handler.postDelayed(new Runnable() {
@@ -139,20 +156,20 @@ OnMarkerClickListener, OnInfoWindowClickListener {
 					// TODO Auto-generated method stub
 					map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 200));
 				}
-        		
+
         	}, 800);
-    		
+
     	}
-    	
+
     }
-    
+
     @Override
 	public void onInfoWindowClick(Marker marker) {
     	if(makerClickListener!=null) {
     		int index = markerList.indexOf(marker);
     		makerClickListener.onRecordSelected(index);
     	}
-		
+
 	}
 
 	@Override
@@ -160,14 +177,14 @@ OnMarkerClickListener, OnInfoWindowClickListener {
 		// TODO Auto-generated method stub
 		return false;
 	}
-    
-    
-	
+
+
+
 	public void refresh() {
 	//	setupMap();
         addMakerToMap();
 	}
-    
+
 	@Override
     public void onResume() {
         super.onResume();
@@ -199,5 +216,5 @@ OnMarkerClickListener, OnInfoWindowClickListener {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
-    
+
 }

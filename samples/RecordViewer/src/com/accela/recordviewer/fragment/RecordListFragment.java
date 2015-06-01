@@ -1,3 +1,20 @@
+/**
+  * Copyright 2015 Accela, Inc.
+  *
+  * You are hereby granted a non-exclusive, worldwide, royalty-free license to
+  * use, copy, modify, and distribute this software in source code or binary
+  * form for use in connection with the web services and APIs provided by
+  * Accela.
+  *
+  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+  * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  * DEALINGS IN THE SOFTWARE.
+  *
+  */
 package com.accela.recordviewer.fragment;
 
 
@@ -35,7 +52,7 @@ public class RecordListFragment extends Fragment  {
     }
 
     public RecordListFragment() {
-    	
+
     }
 
     @Override
@@ -43,34 +60,34 @@ public class RecordListFragment extends Fragment  {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recordlist,container, false);
-        
+
         ApplicationEx application = (ApplicationEx) getActivity().getApplication();
         recordService = application.getRecordService();
-        
+
         listviewRecord = (ListView) view.findViewById(R.id.listviewRecord);
-        
-        
+
+
         AbsListView.LayoutParams lp = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 120);
 
         FrameLayout layout = new FrameLayout(getActivity());
 
         layout.setLayoutParams(lp);
         Button buttonMore = new Button(this.getActivity());
-        
+
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         buttonMore.setLayoutParams(params);
         buttonMore.setText("More...");
         layout.addView(buttonMore);
-        
+
         buttonMore.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				recordService.loadRecordAsyn(false);
 			}
 		});
         listviewRecord.addFooterView(layout);
-        
+
         /*
         AbsListView.LayoutParams lp = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 150);
 
@@ -91,10 +108,10 @@ public class RecordListFragment extends Fragment  {
 
         //listviewRecord.addHeaderView(mHeaderView);
         //listviewRecord.addFooterView(mFooterView);
-        
-        
+
+
         listviewRecord.setAdapter(adapter = new AdapterRecordList());
-        
+
         listviewRecord.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
@@ -103,20 +120,20 @@ public class RecordListFragment extends Fragment  {
 				if(listSelectListener!=null) {
 					listSelectListener.onItemSelected(position);
 				}
-				
+
 			}
-        	
+
 		});
         return view;
     }
 
-    
-    
+
+
     public void setOnListSelectListener(OnListSelectListener l) {
     	listSelectListener = l;
     }
-    
-    
+
+
     class AdapterRecordList extends BaseAdapter {
 
     	@Override
@@ -154,16 +171,16 @@ public class RecordListFragment extends Fragment  {
     		} else {
     			textView.setText("Unknown address");
     		}
-    		
+
     		return convertView;
     	}
-    
+
     }
-    
+
 	public void refresh() {
 		if(adapter!=null) {
 			adapter.notifyDataSetChanged();
 		}
 	}
-    
+
 }

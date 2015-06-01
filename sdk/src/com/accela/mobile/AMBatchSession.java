@@ -104,7 +104,7 @@ public class AMBatchSession {
 
 		String json = toJsonArray(models);
 		params.put("json", json);
-		AccelaMobile accelaMobile = AccelaMobileInternal.defaultInstance();
+		AccelaMobile accelaMobile = AccelaMobile.defaultInstance();
 		JSONObject result = accelaMobile.fetch(path, null, customParams, HTTPMethod.POST,
 				params);
 		return result;
@@ -141,7 +141,7 @@ public class AMBatchSession {
 
 		String json = toJsonArray(models);
 		params.put("json", json);
-		AccelaMobile accelaMobile = AccelaMobileInternal.defaultInstance();
+		AccelaMobile accelaMobile = AccelaMobile.defaultInstance();
 		accelaMobile.request(path, null, customParams, HTTPMethod.POST, params,requestDelegate);
 	}
 	
