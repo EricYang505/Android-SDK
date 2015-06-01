@@ -176,8 +176,13 @@ public class AccelaMobile {
 	 */
 	protected Environment environment = Environment.PROD ;	// Default value
 
-	protected Map<String, String> customHttpHeader = new HashMap<String, String>();
+	protected Map<String, String> amCustomHttpHeader = new HashMap<String, String>();
 
+	/**
+	 * Used to support multiple agency
+	 *
+	 * @since 4.0
+	 */
 	public static final String IS_ALL_AGENCIES = "is_all_agencies";
 	public static final String AGENCY_NAME = "agency_name";
 	public static final String ENVIRONMENT_NAME = "environment_name";
@@ -502,7 +507,7 @@ public class AccelaMobile {
 	}
 
 	public Map<String, String> getCustomHttpHeader(){
-		return this.customHttpHeader;
+		return this.amCustomHttpHeader;
 	}
 
 	/**
@@ -568,7 +573,7 @@ public class AccelaMobile {
 	 * @since 1.0
 	 */
 	public JSONObject fetch(String path, RequestParams urlParams) {
-		return this.fetch(path, urlParams, customHttpHeader);
+		return this.fetch(path, urlParams, amCustomHttpHeader);
 	}
 
 	/**
@@ -599,7 +604,7 @@ public class AccelaMobile {
 	 * @since 1.0
 	 */
 	public JSONObject fetch(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData) {
-		return this.fetch(path, urlParams, customHttpHeader, httpMethod, postData);
+		return this.fetch(path, urlParams, amCustomHttpHeader, httpMethod, postData);
 	}
 
 	/**
@@ -647,8 +652,9 @@ public class AccelaMobile {
 	 *
 	 * @param path The path to the Accela Construct API endpoint.
 	 * @param urlParams The collection of parameters associated with the specific URL.
+	 * @param customHttpHeader The HTTP header fields in key value pairs.
 	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
-	 *
+	 * @param customHttpHeader The HTTP header fields in key value pairs.
 	 * @return The AMRequest object corresponding to this API call.
 	 *
 	 * @since 1.0
@@ -912,7 +918,7 @@ public class AccelaMobile {
 	}
 
 	public void setCustomHttpHeader(Map<String, String> customHttpHeader){
-		this.customHttpHeader = customHttpHeader;
+		this.amCustomHttpHeader = customHttpHeader;
 	}
 
 	/**
@@ -931,7 +937,7 @@ public class AccelaMobile {
 	 * @since 1.0
 	 */
 	public AMRequest uploadAttachments(String path, RequestParams postData, Map<String, String> fileInformation, AMRequestDelegate requestDelegate) {
-		return uploadAttachments(path, postData, fileInformation, customHttpHeader, requestDelegate);
+		return uploadAttachments(path, postData, fileInformation, amCustomHttpHeader, requestDelegate);
 	}
 
 	/**
@@ -980,7 +986,7 @@ public class AccelaMobile {
 	 * @since 4.1
 	 */
 	public AMRequest downloadAttachment(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData, String localFile, AMRequestDelegate requestDelegate) {
-		return this.downloadAttachment(path, urlParams, customHttpHeader, null, null, localFile, requestDelegate);
+		return this.downloadAttachment(path, urlParams, amCustomHttpHeader, null, null, localFile, requestDelegate);
 	}
 
 	/**
