@@ -255,7 +255,6 @@ public class AMRequest {
 	 */
 	private ResourceBundle stringLoader = AMSetting.getStringResourceBundle();
 
-	private Map<String, String> customHttpHeaders;
 	/**
 	 * Constructor with the given parameters.
 	 *
@@ -341,6 +340,8 @@ public class AMRequest {
 		if (syncHttpClient == null) {
 			syncHttpClient = createSyncHttpClient();
 		}
+		
+		Map<String, String> customHttpHeaders = syncHttpClient.getHeader();
 
 		// Add app version and app id to HTTP header
 		syncHttpClient.addHeader(HEADER_X_ACCELA_APPVERSION, accelaMobile.getAppVersion());
@@ -444,6 +445,7 @@ public class AMRequest {
 		if (asyncHttpClient == null) {
 			asyncHttpClient = createAsyncHttpClient();
 		}
+		Map<String, String> customHttpHeaders = asyncHttpClient.getHeader();
 		// Add app version and app id to HTTP header
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPVERSION, accelaMobile.getAppVersion());
 		asyncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());

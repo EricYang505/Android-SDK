@@ -653,8 +653,8 @@ public class AccelaMobile {
 	 *
 	 * @since 1.0
 	 */
-	public AMRequest request(String path, RequestParams urlParams, AMRequestDelegate requestDelegate) {
-		return this.request(path, urlParams, HTTPMethod.GET, null, requestDelegate);
+	public AMRequest request(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {
+		return this.request(path, urlParams, customHttpHeader, HTTPMethod.GET, null, requestDelegate);
 	}
 
 	/**
