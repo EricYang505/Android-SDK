@@ -1,19 +1,11 @@
 
 package com.accela.mobile.http;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.security.KeyStore;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.WeakHashMap;
-import java.util.concurrent.Future;
-import java.util.zip.GZIPInputStream;
+import android.content.Context;
+
+import com.accela.mobile.AMLogger;
+import com.accela.mobile.AMSetting;
+import com.accela.mobile.http.mime.AccelaMultipartFormEntity;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -49,11 +41,19 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 
-import android.content.Context;
-
-import com.accela.mobile.AMLogger;
-import com.accela.mobile.AMSetting;
-import com.accela.mobile.http.mime.AccelaMultipartFormEntity;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.security.KeyStore;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.WeakHashMap;
+import java.util.concurrent.Future;
+import java.util.zip.GZIPInputStream;
 
 /**
  * <pre>
@@ -685,7 +685,7 @@ public class AsyncHttpClient {
 	/**
 	 * Private method, used to process the request.
 	 */	
-	private void sendRequest(DefaultHttpClient client, HttpContext httpContext, HttpUriRequest uriRequest, String contentType, AsyncHttpResponseHandler responseHandler, Context context) {
+	protected void sendRequest(DefaultHttpClient client, HttpContext httpContext, HttpUriRequest uriRequest, String contentType, AsyncHttpResponseHandler responseHandler, Context context) {
 		if (contentType != null) {
 			 uriRequest.addHeader("Content-Type", contentType);
 		} 

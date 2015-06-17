@@ -1,14 +1,11 @@
 package com.accela.mobile.http;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.SocketTimeoutException;
-import java.security.KeyStore;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
+import android.os.StrictMode;
+
+import com.accela.mobile.AMLogger;
+import com.accela.mobile.AMRequest.HTTPMethod;
+import com.accela.mobile.AMSetting;
+import com.accela.mobile.http.mime.AccelaMultipartFormEntity;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -45,12 +42,15 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.StrictMode;
-
-import com.accela.mobile.AMLogger;
-import com.accela.mobile.AMRequest.HTTPMethod;
-import com.accela.mobile.AMSetting;
-import com.accela.mobile.http.mime.AccelaMultipartFormEntity;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.SocketTimeoutException;
+import java.security.KeyStore;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 
 
@@ -406,7 +406,7 @@ public class SyncHttpClient {
 	/**
 	 * Private method, used to process the request.
 	 */	
-	private JSONObject sendRequest(DefaultHttpClient client, HttpUriRequest uriRequest, String contentType) {		
+	protected JSONObject sendRequest(DefaultHttpClient client, HttpUriRequest uriRequest, String contentType) {
 		
 		if (!clientHeaderMap.isEmpty()) {
 			for (String key : clientHeaderMap.keySet()) {
