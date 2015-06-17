@@ -25,7 +25,7 @@ public class AMBatchRequestModelTest {
     AMBatchRequestModel requestModel;
 
     @Before
-    public void before() throws Exception {
+    public void before() {
         url = "https://apis.accela.com";
         method = "GET";
         body = "Request body";
