@@ -94,8 +94,7 @@ class AgencyLoginDialog extends AMLoginView  {
 	 * 
 	 * @param accelaMobileInternal The AccelaMobile which creates the login dialog.
 	 * @param permissions The array of access permissions. For example, search_records get_single_record  create_record, and etc.
-	 * @param sessionDelegate The session delegate which manager session lifecycle.
-	 * 
+	 *
 	 * @return An initialized AgencyLoginDialog instance.
 	 * 
 	 * @since 2.1
