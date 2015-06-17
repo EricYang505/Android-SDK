@@ -26,7 +26,8 @@ package com.accela.mobile;
 class CivicLoginDialogImageResource {
 	
 	// Image resources for Android Phone 
-	static String logoHeaderImageBase64EncodedtStr4Phone = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABaCAIAAADvkBJlAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJ"
+	static String logoHeaderImageBase64EncodedtStr4Phone = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABaCAIAAADvkBJlAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJ";
+ /*
  + "bWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdp"
  + "bj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6"
  + "eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEz"
@@ -1116,7 +1117,7 @@ class CivicLoginDialogImageResource {
  + "oT8aAO2bf77JNmIpfjOxbIfZ2KDbl3cJnANxfMn8x6tYpw7yksJV1E9EHEQNmWgDeQQhQyrdkhzb"
  + "GrpYNpYIWnETtmBhUcDB1xa/uXHssJlWlZZ6ow+dUcZpDmk01Hw3uMKF2Wly9EUSMTdhE+AQFsut"
  + "7i+DXaDGtM3m/mS5U5pvHLVTK2bJX8U955gjj0WN4gdd24qB5MrFbJIJW71lAcLaEZlc6JRW+XSw"
- + "bd5SNTHQOuwpLwVMe3soVCRgjUxV/0bEtZr/J8AAoLJTMRl3eo4AAAAASUVORK5CYII=";
+ + "bd5SNTHQOuwpLwVMe3soVCRgjUxV/0bEtZr/J8AAoLJTMRl3eo4AAAAASUVORK5CYII=";*/
 	
 	static String facebookButtonImageBase64EncodedtStr4Phone = "iVBORw0KGgoAAAANSUhEUgAAAb4AAABGCAYAAACzO/EpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAK"
  + "T2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AU"
