@@ -17,13 +17,6 @@
   */
 package com.accela.mobile;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import org.json.JSONObject;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -40,6 +33,13 @@ import android.text.TextUtils;
 import com.accela.mobile.AMBatchResponse.AMBatchRequestDelegate;
 import com.accela.mobile.AMRequest.HTTPMethod;
 import com.accela.mobile.http.RequestParams;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 
 /**
@@ -282,8 +282,8 @@ public class AccelaMobile {
 	 *
 	 * Set the URL of cloud server for user authorization and service API
 	 *
-	 * @param amAuthHost The URL of cloud server for user authorization.
-	 * @param amApisHost The URL of cloud server for service API calling.
+	 * @param authHost The URL of cloud server for user authorization.
+	 * @param apisHost The URL of cloud server for service API calling.
 	 *
 	 * @return Void.
 	 *
@@ -634,7 +634,7 @@ public class AccelaMobile {
 	 * @param batchSession
 	 * @param path
 	 * @param urlParams
-	 * @param customParams
+	 * @param customHttpHeader
 	 * @param requestDelegate
 	 * @return
 	 *
@@ -875,7 +875,7 @@ public class AccelaMobile {
 	 *
 	 * Set the value of property environment.
 	 *
-	 * @param environmentType The new value to be assigned.
+	 * @param environment The new value to be assigned.
 	 *
 	 * @return Void.
 	 *
@@ -928,7 +928,7 @@ public class AccelaMobile {
 	 * @param path The path to the Accela Construct API endpoint.
 	 * @param postData The array of file's JSON object is posted together with attachments.
 	 * 									 Note file's JSON object contains keys "serviceProviderCode","fileName","type",and "description".
-	 * @param files The file collection of key-value pairs.
+	 * @param fileInformation The file collection of key-value pairs.
 	 * 									 Note the key name is "fileName", and the value is file's full path.
 	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
 	 *
@@ -947,7 +947,7 @@ public class AccelaMobile {
 	 * @param path The path to the Accela Construct API endpoint.
 	 * @param postData The array of file's JSON object is posted together with attachments.
 	 * 									 Note file's JSON object contains keys "serviceProviderCode","fileName","type",and "description".
-	 * @param files The file collection of key-value pairs.
+	 * @param fileInformation The file collection of key-value pairs.
 	 * 									 Note the key name is "fileName", and the value is file's full path.
 	 * @param customHttpHeader The HTTP header fields in key value pairs.
 	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
