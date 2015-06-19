@@ -12,6 +12,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
+import org.apache.http.protocol.HttpContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -24,6 +25,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.Robolectric;
 
 import java.io.UnsupportedEncodingException;
+
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -73,7 +76,7 @@ public class AMRequestTest extends PowerMockTestCaseBase{
     }
 
     @Test
-    public void testFetch() throws Exception{
+    public void testSynchrousRequestUrl() throws Exception{
         RequestParams params = new RequestParams();
         RequestParams postData = new RequestParams();
         AMRequest.HTTPMethod httpMethod = AMRequest.HTTPMethod.GET;
@@ -92,7 +95,7 @@ public class AMRequestTest extends PowerMockTestCaseBase{
             public Object answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
                 Object mock = invocation.getMock();
-                if(args.length == 1 && (args[0] instanceof HttpUriRequest)) {
+                if(args.length >= 1 && (args[0] instanceof HttpUriRequest)) {
                     HttpResponse response = TestDataHelper.makeResponse(200, expectedJsonReturn.toString());
                     return response;
                 }
@@ -103,12 +106,74 @@ public class AMRequestTest extends PowerMockTestCaseBase{
 
 
         AMRequest request = new AMRequest(accelaMobile, serviceURL, params, httpMethod);
-        JSONObject reponse  = request.fetch(postData);
+        JSONObject response  = request.fetch(postData);
 
-        TestUtils.assertEquals(expectedJsonReturn, reponse);
+        TestUtils.assertEquals(expectedJsonReturn, response);
     }
 
 
+
+
+    boolean asynchronusCallFinish = false;
+
+    @Test
+    public void testAsynchrousRequestUrl() throws Exception{
+        final RequestParams params = new RequestParams();
+        final RequestParams postData = new RequestParams();
+
+        asynchronusCallFinish = false;
+        //power mock DefaultHttpClient
+        PowerMockito.mockStatic(DefaultHttpClient.class);
+
+        //create mockHttpClient
+        DefaultHttpClient mockHttpClient = PowerMockito.mock(DefaultHttpClient.class);;
+        PowerMockito.whenNew(DefaultHttpClient.class).withAnyArguments().thenReturn(mockHttpClient);
+
+        //mock httpclient.execute
+        PowerMockito.when(mockHttpClient.execute(Matchers.any(HttpUriRequest.class), Matchers.any(HttpContext.class))).thenAnswer(new Answer() {
+            public Object answer(InvocationOnMock invocation) {
+                Object[] args = invocation.getArguments();
+                Object mock = invocation.getMock();
+                if (args.length >= 1 && (args[0] instanceof HttpUriRequest)) {
+                    HttpResponse response = TestDataHelper.makeResponse(200, expectedJsonReturn.toString());
+                    return response;
+                }
+                return null;
+            }
+        });
+
+        AMRequest.HTTPMethod httpMethod = AMRequest.HTTPMethod.GET;
+        String serviceURL = "https://apis.accela.com";
+        final AMRequest request = new AMRequest(accelaMobile, serviceURL, params, httpMethod);
+        AMRequestDelegate delegate = new AMRequestDelegate() {
+
+            @Override
+            public void onSuccess(JSONObject response) {
+
+                TestUtils.assertEquals(expectedJsonReturn, response);
+                asynchronusCallFinish = true;
+            }
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onFailure(AMError error) {
+                asynchronusCallFinish = true;
+                assertTrue(false);
+            }
+        };
+        request.sendRequest(postData, delegate);
+
+
+        while (!asynchronusCallFinish) {
+            Robolectric.runUiThreadTasks();
+            Thread.sleep(100);
+        }
+
+    }
 
 
 
