@@ -128,7 +128,9 @@ public class AsyncHttpClient {
 
 		SchemeRegistry schemeRegistry = new SchemeRegistry();
 		schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-		schemeRegistry.register(new Scheme("https", sslSocketFactory, 443));
+		if(sslSocketFactory!=null) {
+			schemeRegistry.register(new Scheme("https", sslSocketFactory, 443));
+		}
 		ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(httpParams, schemeRegistry);
 
 		httpContext = new SyncBasicHttpContext(new BasicHttpContext());

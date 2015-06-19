@@ -15,6 +15,7 @@ import org.apache.http.HttpVersion;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -85,7 +86,7 @@ public class SyncHttpClient {
 	private static final String HTTP_ENCODING_GZIP = "gzip";	
 	private HTTPMethod httpMethod;
 	private String serviceURL;
-	private final DefaultHttpClient httpClient;	
+	private final DefaultHttpClient httpClient;
 	private final HttpContext httpContext;
 	private Header httpResponseHeader;
 	private HttpResponse httpResponse;
@@ -132,7 +133,9 @@ public class SyncHttpClient {
 
 		SchemeRegistry schemeRegistry = new SchemeRegistry();
 		schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-		schemeRegistry.register(new Scheme("https", sslSocketFactory, 443));
+		if(sslSocketFactory!=null) {
+			schemeRegistry.register(new Scheme("https", sslSocketFactory, 443));
+		}
 		ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(httpParams, schemeRegistry);
 
 		httpContext = new SyncBasicHttpContext(new BasicHttpContext());
@@ -406,7 +409,7 @@ public class SyncHttpClient {
 	/**
 	 * Private method, used to process the request.
 	 */	
-	protected JSONObject sendRequest(DefaultHttpClient client, HttpUriRequest uriRequest, String contentType) {
+	protected JSONObject sendRequest(HttpClient client, HttpUriRequest uriRequest, String contentType) {
 		
 		if (!clientHeaderMap.isEmpty()) {
 			for (String key : clientHeaderMap.keySet()) {
@@ -509,12 +512,13 @@ public class SyncHttpClient {
 					"synchronous", httpMethod, responseContent);
 		}
 		// Add timeout flag into the returned Json.
+		/*
 		try {
 			returnedJsonObject.put("isTimeout", isTimeout);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		return returnedJsonObject;
 	}	
 	
