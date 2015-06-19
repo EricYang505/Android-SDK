@@ -346,9 +346,17 @@ abstract class AsyncHttpResponseHandler {
 		// Assign value to responseHeaders property
 		this.responseHeaders = response.getAllHeaders();
 		// Get content type and assign it to contentType property
-		String contentTypeStr = response.getFirstHeader("Content-Type")
-				.getValue();
-		this.contentType = contentTypeStr.split(";")[0];
+		String contentTypeStr = null;
+
+		Header header = response.getFirstHeader("Content-Type");
+		if(header!=null) {
+			contentTypeStr = header.getValue();
+		}
+		String [] types = null;
+		if(contentTypeStr!=null) {
+			types = contentTypeStr.split(";");
+		}
+		this.contentType = types!=null? types[0]: "";
 		// Get status code and assign it to responseStatusCode property
 		StatusLine status = response.getStatusLine();
 		this.responseStatusCode = status.getStatusCode();
