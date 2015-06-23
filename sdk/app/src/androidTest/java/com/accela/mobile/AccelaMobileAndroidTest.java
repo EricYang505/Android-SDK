@@ -7,11 +7,16 @@ import android.support.test.runner.AndroidJUnit4;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
+import com.accela.mobile.http.RequestParams;
+
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -40,26 +45,25 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
 
     AccelaMobileInternal accelaMobile;
     Context context;
-    final CountDownLatch signalLogin = new CountDownLatch(1);
-    final CountDownLatch signalLogout = new CountDownLatch(1);
+    CountDownLatch signal;
 
     AMSessionDelegate sessionDelegate = new AMSessionDelegate() {
         @Override
         public void amDidLogin() {
             Log.d(TAG, "login successfully");
-            signalLogin.countDown();
+            signal.countDown();
         }
 
         @Override
         public void amDidLoginFailure(AMError error) {
             Log.d(TAG, "login failed" + error.getMessage());
-            signalLogin.countDown();
+            signal.countDown();
         }
 
         @Override
         public void amDidCancelLogin() {
             Log.d(TAG, "login canceled");
-            signalLogin.countDown();
+            signal.countDown();
         }
 
         @Override
@@ -69,7 +73,7 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
 
         @Override
         public void amDidLogout() {
-            signalLogout.countDown();
+            signal.countDown();
             Log.d(TAG, "logout");
         }
     };
@@ -91,15 +95,18 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
 
 
     private void login() {
-        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+     /*   Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
         instrumentation.runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 accelaMobile.authenticate("", userName, password, appScopesCitizen);
             }
-        });
+        });*/
+        signal = new CountDownLatch(1);
+        accelaMobile.authenticate("", userName, password, appScopesCitizen);
+
         try {
-            signalLogin.await(30, TimeUnit.SECONDS);
+            signal.await(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
 
         }
@@ -109,16 +116,53 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
 
     @Test
     public void testLogin() {
+        Log.d(TAG, "testLogin start");
         assertTrue(accelaMobile.isSessionValid());
+        Log.d(TAG, "testLogin end");
     }
 
     @Test
-    public void testSyncRequest() {
-        
+    public void testGetRecord() {
+        Log.d(TAG, "testGetRecord start");
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("offset", "0");
+        requestParams.put("limit", "20");
+        requestParams.put("lang", "en_US");
+
+        Map<String, String> headerParams = new HashMap<String, String>();
+        headerParams.put("x-accela-agencies", "All");
+        headerParams.put("x-accela-environment", "PROD");
+        signal = new CountDownLatch(1);
+        accelaMobile.request("/v4/records/mine", requestParams, headerParams, new AMRequestDelegate() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                Log.d(TAG, "testGetRecord successfully" + response.toString());
+                signal.countDown();
+                assertTrue(true);
+            }
+            @Override
+            public void onStart() {
+
+            }
+            @Override
+            public void onFailure(AMError error) {
+                Log.d(TAG, "testGetRecord failed");
+                signal.countDown();
+                assertTrue(false);
+            }
+        });
+        try {
+            signal.await(30, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+
+        }
+        Log.d(TAG, "testGetRecord end");
     }
 
     @Test
     public void testLogout() {
+        Log.d(TAG, "testLogout start");
+        signal = new CountDownLatch(1);
         Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
         instrumentation.runOnMainSync(new Runnable() {
             @Override
@@ -127,12 +171,13 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
             }
         });
         try {
-            signalLogout.await(30, TimeUnit.SECONDS);
+            signal.await(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
 
         }
         Log.d(TAG, "logout completed");
         assertFalse(accelaMobile.isSessionValid());
+        Log.d(TAG, "testLogout end");
     }
 
 }
