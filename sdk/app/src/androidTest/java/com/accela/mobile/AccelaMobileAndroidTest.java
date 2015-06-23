@@ -1,6 +1,5 @@
 package com.accela.mobile;
 
-import android.app.Instrumentation;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
@@ -95,13 +94,6 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
 
 
     private void login() {
-     /*   Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        instrumentation.runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
-                accelaMobile.authenticate("", userName, password, appScopesCitizen);
-            }
-        });*/
         signal = new CountDownLatch(1);
         accelaMobile.authenticate("", userName, password, appScopesCitizen);
 
@@ -140,10 +132,12 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
                 signal.countDown();
                 assertTrue(true);
             }
+
             @Override
             public void onStart() {
 
             }
+
             @Override
             public void onFailure(AMError error) {
                 Log.d(TAG, "testGetRecord failed");
@@ -159,17 +153,51 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
         Log.d(TAG, "testGetRecord end");
     }
 
+
+    @Test
+    public void testGetInspection() {
+        Log.d(TAG, "testGetInspection start");
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("offset", "0");
+        requestParams.put("limit", "20");
+        requestParams.put("lang", "en_US");
+
+        Map<String, String> headerParams = new HashMap<String, String>();
+        headerParams.put(accelaMobile.AGENCY_NAME, "OAKLAND-APPS");
+        headerParams.put(accelaMobile.ENVIRONMENT_NAME, "PROD");
+        signal = new CountDownLatch(1);
+        accelaMobile.request("/v4/records/OAKLAND-15CAP-00000-07298/inspections", requestParams, headerParams, new AMRequestDelegate() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                Log.d(TAG, "testGetInspection successfully" + response.toString());
+                signal.countDown();
+                assertTrue(true);
+            }
+            @Override
+            public void onStart() {
+
+            }
+            @Override
+            public void onFailure(AMError error) {
+                Log.d(TAG, "testGetInspection failed: " + error.getMessage());
+                signal.countDown();
+                assertTrue(false);
+            }
+        });
+        try {
+            signal.await(30, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+
+        }
+        Log.d(TAG, "testGetInspection end");
+    }
+
+
     @Test
     public void testLogout() {
         Log.d(TAG, "testLogout start");
         signal = new CountDownLatch(1);
-        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        instrumentation.runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
-                accelaMobile.logout();
-            }
-        });
+        accelaMobile.logout();
         try {
             signal.await(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
