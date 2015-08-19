@@ -798,7 +798,11 @@ public class AuthorizationManager {
 			postParams.put("grant_type", "password");
 			postParams.put("username", this.user);
 			postParams.put("password", this.password);
-			if (this.permissions != null) { // Optional
+
+            //put here temporal
+            postParams.put("id_provider", "citizen");
+
+            if (this.permissions != null) { // Optional
 				postParams.put("scope", convertStringArray2StringWithSpaceSeparator(this.permissions));
 			}
 			postParams.put("client_id", this.clientId);
