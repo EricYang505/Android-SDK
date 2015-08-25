@@ -109,7 +109,7 @@ public class CitizenTestActivity extends Activity implements OnClickListener {
 				requestParams.put("limit", "10");
 				requestParams.put("offset", "0");
 				currentRequest = appContext.accelaMobile4Citizen.request(
-						servicePath, requestParams, requestDelegate);
+						servicePath, requestParams, null, requestDelegate);
 			}
 			break;
 		case R.id.btnCivicCreateRecord:

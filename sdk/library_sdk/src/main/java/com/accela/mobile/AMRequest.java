@@ -19,20 +19,24 @@ package com.accela.mobile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.view.ViewGroup;
 
-import com.accela.mobile.http.AsyncHttpClient;
+import com.accela.mobile.http.AMHttpRequest;
+import com.accela.mobile.http.AMRequestFactory;
+import com.accela.mobile.http.AMRequestQueue;
 import com.accela.mobile.http.RequestParams;
-import com.accela.mobile.http.SyncHttpClient;
+import com.accela.mobile.http.volley.Request;
 
 
 /**
@@ -53,7 +57,7 @@ public class AMRequest {
 		GET, POST, PUT, DELETE
 	}
 
-	/**
+	/**POST
 	 * Request type enumerations.
 	 *
 	 * @since 1.0
@@ -171,33 +175,6 @@ public class AMRequest {
 	 */
 	private AMRequestDelegate requestDelegate;
 
-	/**
-	 * The AsyncHttpClient instance which processes asynchronous request.
-	 *
-	 * @since 1.0
-	 */
-	private AsyncHttpClient  asyncHttpClient;
-
-	/**
-	 * The SyncHttpClient instance which processes synchronous request.
-	 *
-	 * @since 1.0
-	 */
-	private SyncHttpClient  syncHttpClient;
-
-	/**
-	 * The collection of request parameters which will be appended to service URL with & symbol.
-	 *
-	 * @since 1.0
-	 */
-	private RequestParams urlParams;
-
-	/**
-	 * The post data (only used for http method POST or PUT).
-	 *
-	 * @since 1.0
-	 */
-	private RequestParams postParams;
 
 	/**
 	 * The local path of the document which is downloaded(used in document downloading request only).
@@ -235,18 +212,25 @@ public class AMRequest {
 	private AccelaMobile accelaMobile;
 
 	/**
-	 * The flag which indicates whether the request is synchronous or not.
-	 *
-	 * @since 3.0
-	 */
-	private Boolean isSynchronous = false;
-
-	/**
 	 * The flag which indicates whether the request is cancelled (for AsyncHttpClient only).
 	 *
 	 * @since 3.0
 	 */
 	private Boolean isCancelled = false;
+
+    /**
+     * The collection of request parameters which will be appended to service URL with & symbol.
+     *
+     * @since 1.0
+     */
+    private RequestParams urlParams;
+
+    /**
+     * The post data (only used for http method POST or PUT).
+     *
+     * @since 1.0
+     */
+    private RequestParams postParams;
 
 	/**
 	 * The string loader which loads localized text.
@@ -255,13 +239,17 @@ public class AMRequest {
 	 */
 	private ResourceBundle stringLoader = AMSetting.getStringResourceBundle();
 
+    private AMRequestQueue requestQueue;
+
+    private Map<String, String> requestHttpHeader = new HashMap<String, String>();
+
+    protected AMHttpRequest mRequest;
 	/**
 	 * Constructor with the given parameters.
 	 *
 	 * @param accelaMobile The AccelaMobile instance which create this request.
 	 * @param serviceURL The service's full path(including server host).
 	 * @param params The collection of URL parameters which will be added to URL with & symbol.
-	 * @param customHttpHeaders The HTTP headers in key, value pairs
 	 * @param httpMethod One of HTTP method such as GET, POST, PUT or DELETE.
 	 *
 	 * @return An initialized AMRequest instance.
@@ -275,6 +263,7 @@ public class AMRequest {
 		this.urlParams = params;
 		this.httpMethod = httpMethod;
 		this.tag = String.valueOf(new Random().nextInt(100));
+        requestQueue = AMRequestQueue.getAMRequestQueue(this.ownerContext);
 	}
 
 	/**
@@ -304,13 +293,8 @@ public class AMRequest {
 	 * @since 1.0
 	 */
 	public void cancelRequest() {
-		if (!isSynchronous && (asyncHttpClient != null)) {  // is asynchronous
-			asyncHttpClient.cancelRequests(this.ownerContext, true);
-			isCancelled = true;
-			if ((this.requestWaitingView != null) && (this.requestWaitingView.isShowing())) {
-				this.requestWaitingView.dismiss();
-			}
-		}
+		if(mRequest !=null)
+            mRequest.cancel();
 	}
 
 	/**
@@ -324,104 +308,6 @@ public class AMRequest {
 		return this.isCancelled;
 	}
 
-	/**
-	 * Synchronously send a request identified by the Accela Construct API endpoint with the given data using an HTTP POST method.
-	 *
-	 * @param paramData The content sent with the corresponding request.
-	 *
-	 * @return The resulting object is a JSON object if succeed; otherwise, null.
-	 *
-	 * @since 1.0
-	 */
-
-	public JSONObject fetch(RequestParams paramData) {
-		// Initialize HTTP client.
-		asyncHttpClient = null;
-		if (syncHttpClient == null) {
-			syncHttpClient = createSyncHttpClient();
-		}
-		
-		Map<String, String> customHttpHeaders = syncHttpClient.getHeader();
-
-		// Add app version and app id to HTTP header
-		syncHttpClient.addHeader(HEADER_X_ACCELA_APPVERSION, accelaMobile.getAppVersion());
-		syncHttpClient.addHeader(HEADER_X_ACCELA_APPID, accelaMobile.getAppId());
-		syncHttpClient.addHeader(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
-
-		syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
-
-		if(customHttpHeaders!=null && customHttpHeaders.get(AccelaMobile.IS_ALL_AGENCIES)!=null){
-			syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCIES, customHttpHeaders.get(AccelaMobile.IS_ALL_AGENCIES));
-		}else if(customHttpHeaders!=null && customHttpHeaders.get(AccelaMobile.AGENCY_NAME)!=null){
-			syncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, customHttpHeaders.get(AccelaMobile.AGENCY_NAME));
-		}
-
-		if(customHttpHeaders!=null && customHttpHeaders.get(AccelaMobile.ENVIRONMENT_NAME)!=null){
-			syncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, customHttpHeaders.get(AccelaMobile.ENVIRONMENT_NAME));
-		}else{
-			syncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());
-		}
-
-		syncHttpClient.addHeader(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());
-		// Add access token or app secret to HTTP header
-		AuthorizationManager authorizationManager = accelaMobile.authorizationManager;
-		if ((authorizationManager != null) && (authorizationManager.getAccessToken() != null)) {
-			syncHttpClient.addHeader("Authorization", accelaMobile.authorizationManager.getAccessToken());
-		}
-		// Process HTTP/HTTPS request
-		JSONObject returnedJsonObject = null;
-		String serializeURL = assembleUrlWithParams(this.serviceURL, this.urlParams);
-		switch (this.httpMethod) {
-			case GET:
-				returnedJsonObject = syncHttpClient.get(serializeURL);
-				break;
-			case POST:
-				this.postParams = paramData;
-				if (paramData == null) {
-					returnedJsonObject = syncHttpClient.post(serializeURL, null);
-				} else {
-					String contentType = null;
-					if (RequestType.AUTHENTICATION.equals(this.requestType))
-					{
-						contentType = "application/x-www-form-urlencoded";
-						returnedJsonObject = syncHttpClient.post(serializeURL, paramData.getStringEntity(true), contentType);
-					}
-					else if (RequestType.MULTIPART.equals(this.requestType))
-					{
-						contentType = "multipart/form-data;boundary=" + syncHttpClient.getMultipartSeparatorLine();
-						syncHttpClient.addHeader("Content-Type", contentType);
-						syncHttpClient.post(serializeURL, paramData.getEntity(), contentType);
-					}
-					else
-					{
-						contentType = "application/json";
-						returnedJsonObject = syncHttpClient.post(serializeURL, paramData.getStringEntity(true), contentType);
-					}
-				}
-				break;
-			case PUT:
-				this.postParams = paramData;
-				if (paramData == null) {
-					returnedJsonObject = syncHttpClient.put(serializeURL, null);
-				} else {
-					String contentType = null;
-					if (RequestType.AUTHENTICATION.equals(this.requestType))
-					{
-						contentType = "application/x-www-form-urlencoded";
-						returnedJsonObject = syncHttpClient.put(serializeURL, paramData.getStringEntity(true), contentType);
-					} else {
-						contentType = "application/json";
-						returnedJsonObject = syncHttpClient.put(serializeURL, paramData.getStringEntity(true), contentType);
-					}
-				}
-				break;
-			case DELETE:
-				returnedJsonObject = syncHttpClient.delete(serializeURL);
-				break;
-			default:
-			}
-			return returnedJsonObject;
-	}
 
 	/**
 	 * Makes a request to the Accela Construct API endpoint with the given data using an HTTP POST method as an asynchronous operation.
@@ -433,115 +319,115 @@ public class AMRequest {
 	 *
 	 * @since 1.0
 	 */
-	public AMRequest sendRequest(RequestParams paramData, AMRequestDelegate requestDelegate) {
+	public AMRequest sendRequest(RequestParams paramData, AMRequestDelegate requestDelegate) throws JSONException {
 		// Initialize request delegate
 		if (requestDelegate != null) {
 			this.requestDelegate = requestDelegate;
 		} else {
 			this.requestDelegate = defaultRequestDelegate;
 		}
-		// Initialize HTTP client.
-		syncHttpClient = null;
-		if (asyncHttpClient == null) {
-			asyncHttpClient = createAsyncHttpClient();
-		}
-		Map<String, String> customHttpHeaders = asyncHttpClient.getHeader();
+
+        HashMap<String, String> httpHeader = new HashMap<String, String>();
 		// Add app version and app id to HTTP header
-		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPVERSION, accelaMobile.getAppVersion());
-		asyncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());
-		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
-		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPID, accelaMobile.getAppId());
+        httpHeader.put(HEADER_X_ACCELA_APPVERSION, accelaMobile.getAppVersion());
+        httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());
+        httpHeader.put(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
+        httpHeader.put(HEADER_X_ACCELA_APPID, accelaMobile.getAppId());
 
-		asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
+        httpHeader.put(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
+        httpHeader.put("Accept", "*/*");
 
-		if(customHttpHeaders!=null && customHttpHeaders.get(AccelaMobile.IS_ALL_AGENCIES)!=null){
-			asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCIES, customHttpHeaders.get(AccelaMobile.IS_ALL_AGENCIES));
-		}else if(customHttpHeaders!=null && customHttpHeaders.get(AccelaMobile.AGENCY_NAME)!=null){
-			asyncHttpClient.addHeader(HEADER_X_ACCELA_AGENCY, customHttpHeaders.get(AccelaMobile.AGENCY_NAME));
+		if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.IS_ALL_AGENCIES)!=null){
+            httpHeader.put(HEADER_X_ACCELA_AGENCIES, requestHttpHeader.get(AccelaMobile.IS_ALL_AGENCIES));
+		}else if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.AGENCY_NAME)!=null){
+            httpHeader.put(HEADER_X_ACCELA_AGENCY, requestHttpHeader.get(AccelaMobile.AGENCY_NAME));
 		}
 
-		if(customHttpHeaders!=null && customHttpHeaders.get(AccelaMobile.ENVIRONMENT_NAME)!=null){
-			asyncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, customHttpHeaders.get(AccelaMobile.ENVIRONMENT_NAME));
+		if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.ENVIRONMENT_NAME)!=null){
+            httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, requestHttpHeader.get(AccelaMobile.ENVIRONMENT_NAME));
 		}else{
-			asyncHttpClient.addHeader(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());
+            httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());
 		}
 
-		asyncHttpClient.addHeader(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());
+        httpHeader.put(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());
 		// Add access token or app secret to HTTP header
 		AuthorizationManager authorizationManager = accelaMobile.authorizationManager;
 		if ((authorizationManager != null) && (authorizationManager.getAccessToken() != null)) {
-			asyncHttpClient.addHeader("Authorization", accelaMobile.authorizationManager.getAccessToken());
+            httpHeader.put("Authorization", accelaMobile.authorizationManager.getAccessToken());
 		}
 		else if ((accelaMobile != null) && (accelaMobile.getAppSecret() != null)) {
-			asyncHttpClient.addHeader(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
+            httpHeader.put(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
 		}
 		String serializeURL = assembleUrlWithParams(this.serviceURL, this.urlParams);
 		switch (this.httpMethod) {
 			case GET:
 				if (RequestType.AUTHENTICATION.equals(this.requestType))
 				{
-					asyncHttpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-				}
-				else
+                    mRequest = AMRequestFactory.createLoginRequest(serializeURL, com.accela.mobile.http.volley.Request.Method.GET, httpHeader, null, false, this.requestDelegate);
+
+                }else
 				{
-					asyncHttpClient.addHeader("Content-Type", "application/json");
+//                    httpHeader.put("Content-Type", "application/json");
+                    mRequest = AMRequestFactory.createJsonRequest(serializeURL, com.accela.mobile.http.volley.Request.Method.GET, httpHeader, null, false, this.requestDelegate);
 				}
-				asyncHttpClient.get(serializeURL, this.requestDelegate);
+                requestQueue.addToRequestQueue(mRequest);
 				break;
 			case POST:
 				this.postParams = paramData;
 				if (paramData == null) {
-					asyncHttpClient.post(serializeURL, this.requestDelegate);
+                    mRequest = AMRequestFactory.createJsonRequest(serializeURL, com.accela.mobile.http.volley.Request.Method.POST, httpHeader, null, false, this.requestDelegate);
+                    requestQueue.addToRequestQueue(mRequest);
 				} else {
 					String contentType = null;
 					if (RequestType.AUTHENTICATION.equals(this.requestType))
 					{
-						contentType = "application/x-www-form-urlencoded";
-						asyncHttpClient.addHeader("Content-Type", contentType);
-						asyncHttpClient.post(this.ownerContext, serializeURL, paramData.getStringEntity(false), contentType, this.requestDelegate);
-					}
-					else if (RequestType.MULTIPART.equals(this.requestType))
-					{
-						contentType = "multipart/form-data;boundary=" + asyncHttpClient.getMultipartSeparatorLine();
-						asyncHttpClient.addHeader("Content-Type", contentType);
-						asyncHttpClient.post(this.ownerContext, serializeURL, paramData.getEntity(), contentType, this.requestDelegate);
-					}
-					else
-					{
+                        mRequest = AMRequestFactory.createLoginRequest(serializeURL, com.accela.mobile.http.volley.Request.Method.POST, httpHeader, paramData.getAuthBody(), false, this.requestDelegate);
+                        requestQueue.addToRequestQueue(mRequest);
+                    } else if (RequestType.MULTIPART.equals(this.requestType)){
+//                        contentType = "multipart/form-data;boundary=" + syncHttpClient.getMultipartSeparatorLine();
+//                        syncHttpClient.addHeader("Content-Type", contentType);
+//                        syncHttpClient.post(serializeURL, paramData.getEntity(), contentType);
+                        throw new RuntimeException("Not implemented yet!");
+					} else {
 						contentType = "application/json";
-						asyncHttpClient.addHeader("Content-Type", contentType);
-						asyncHttpClient.post(this.ownerContext, serializeURL, paramData.getStringEntity(true), contentType, this.requestDelegate);
+                        httpHeader.put("Content-Type", contentType);
+                        mRequest = AMRequestFactory.createJsonRequest(serializeURL, com.accela.mobile.http.volley.Request.Method.POST, httpHeader, paramData.getStringBody(), false, this.requestDelegate);
+                        requestQueue.addToRequestQueue(mRequest);
 					}
 				}
 				break;
 			case PUT:
 				this.postParams = paramData;
 				if (paramData == null) {
-					asyncHttpClient.put(serializeURL, this.requestDelegate);
+                    mRequest = AMRequestFactory.createJsonRequest(serializeURL, com.accela.mobile.http.volley.Request.Method.PUT, httpHeader, null, false, this.requestDelegate);
+                    requestQueue.addToRequestQueue(mRequest);
 				} else {
 					String contentType = null;
 					if (RequestType.AUTHENTICATION.equals(this.requestType))
 					{
 						contentType = "application/x-www-form-urlencoded";
-						asyncHttpClient.addHeader("Content-Type", contentType);
-						asyncHttpClient.put(this.ownerContext, serializeURL, paramData.getStringEntity(false), contentType, this.requestDelegate);
+                        httpHeader.put("Content-Type", contentType);
+                        mRequest = AMRequestFactory.createJsonRequest(serializeURL, com.accela.mobile.http.volley.Request.Method.PUT, httpHeader, paramData.getAuthBody(), false, this.requestDelegate);
+                        requestQueue.addToRequestQueue(mRequest);
 					}
 					else if (RequestType.MULTIPART.equals(this.requestType))
 					{
 						contentType = "multipart/form-data";
-						asyncHttpClient.addHeader("Content-Type", contentType);
-						asyncHttpClient.put(this.ownerContext, serializeURL, paramData.getEntity(), contentType, this.requestDelegate);
+                        httpHeader.put("Content-Type", contentType);
+                        throw new RuntimeException("Not supported yet!");
 					}
 					else
 					{
 						contentType = "application/json";
-						asyncHttpClient.addHeader("Content-Type", contentType);
-						asyncHttpClient.put(this.ownerContext, serializeURL, paramData.getStringEntity(true), contentType, this.requestDelegate);
+                        httpHeader.put("Content-Type", contentType);
+                        mRequest = AMRequestFactory.createJsonRequest(serializeURL, com.accela.mobile.http.volley.Request.Method.PUT, httpHeader, paramData.getStringBody(), false, this.requestDelegate);
+                        requestQueue.addToRequestQueue(mRequest);
 					}
 				}
 				break;
 			case DELETE:
-				asyncHttpClient.delete(serializeURL, this.requestDelegate);
+                mRequest = AMRequestFactory.createJsonRequest(serializeURL, com.accela.mobile.http.volley.Request.Method.DELETE, httpHeader, null, false, this.requestDelegate);
+                requestQueue.addToRequestQueue(mRequest);
 				break;
 			default:
 			}
@@ -578,13 +464,8 @@ public class AMRequest {
 		}
 		// Send request.
 		this.requestType = RequestType.MULTIPART;
-		if (this.isSynchronous) {
-			this.fetch(postData);
-		} else {
-			this.sendRequest(postData, requestDelegate);
-		}
-
-		return this;
+//		this.sendRequest(postData, requestDelegate);
+        throw new RuntimeException("not support yet!");
 	}
 
 	/**
@@ -619,14 +500,15 @@ public class AMRequest {
 		}
 
 		// Send request.
-		this.requestType = RequestType.MULTIPART;
-		if (this.isSynchronous) {
-			this.fetch(postData);
-		} else {
-			this.sendRequest(postData, requestDelegate);
-		}
+        // Send request.
+        this.requestType = RequestType.MULTIPART;
 
-		return this;
+        try {
+            this.sendRequest(postData, requestDelegate);
+        } catch (JSONException e) {
+            AMLogger.logWarn(e.toString());
+        }
+        return this;
 	}
 
 	/**
@@ -660,12 +542,8 @@ public class AMRequest {
 	public AMRequest downloadAttachment(String localFile,RequestParams paramData, AMRequestDelegate requestDelegate) {
 		this.amDownloadDestinationPath = localFile;
 		this.requestType = RequestType.DOWNLOAD;
-		if (this.isSynchronous) {
-			this.fetch(null);
-		} else {
-			this.sendRequest(paramData, requestDelegate);
-		}
-		return this;
+
+        throw new RuntimeException("not support yet!");
 	}
 
 
@@ -701,18 +579,6 @@ public class AMRequest {
 	 */
 	public String getAmUploadDestinationPath() {
 		return this.amUploadDestinationPath;
-	}
-
-
-	/**
-	 * Get the value of property asyncHttpClient.
-	 *
-     * @return The value of property asyncHttpClient.
-	 *
-	 * @since 1.0
-	 */
-	public AsyncHttpClient  getAsyncHttpClient() {
-		return this.asyncHttpClient;
 	}
 
 
@@ -787,18 +653,6 @@ public class AMRequest {
 		return this.serviceURL;
 	}
 
-
-	/**
-	 * Get the value of property syncHttpClient.
-	 *
-	 * @return The value of property syncHttpClient.
-	 *
-	 * @since 1.0
-	 */
-	public SyncHttpClient  getSyncHttpClient() {
-		return this.syncHttpClient;
-	}
-
 	/**
 	 * Get the value of property tag.
 	 *
@@ -823,22 +677,6 @@ public class AMRequest {
 
 
 
-	/**
-	 * Indicates whether the request is in progress.
-	 *
-	 * @return true when this request is in progress; otherwise, false.
-	 *
-	 * @since 1.0
-	 */
-	public Boolean isLoading() {
-		boolean result = false;
-		if (isSynchronous && (syncHttpClient != null)) {
-			result = syncHttpClient.isLoading();
-		} else if (!isSynchronous && (asyncHttpClient != null)) { // is asynchronous
-			result = asyncHttpClient.isLoading();
-		}
-		return result;
-	}
 
 
 
@@ -868,37 +706,10 @@ public class AMRequest {
 	public void setHttpHeader(Map<String, String> httpHeaders) {
 		if ( httpHeaders == null || httpHeaders.size() == 0 )
 			return;
-		
-		if (isSynchronous) {
-			if (syncHttpClient == null) {
-				syncHttpClient = createSyncHttpClient();
-			}
-			for (String header : httpHeaders.keySet()) {
-				syncHttpClient.addHeader(header, httpHeaders.get(header));
-			}
-		} else {  // is asynchronous
-			if (asyncHttpClient == null) {
-				asyncHttpClient = createAsyncHttpClient();
-			}
-			for (String header : httpHeaders.keySet()) {
-				asyncHttpClient.addHeader(header, httpHeaders.get(header));
-			}
-		}
+
+        requestHttpHeader = httpHeaders;
 	}
 
-	/**
-	 *
-	 * Set value for property isSynchronous.
-	 *
-	 * @param isSynchronous true or false
-	 *
-	 * @return Void.
-	 *
-	 * @since 3.0
-     */
-	public void setIsSynchronous(Boolean isSynchronous) {
-		this.isSynchronous = isSynchronous;
-	}
 
 	/**
 	 * Show a waiting indicator in the specified view.
@@ -964,78 +775,35 @@ public class AMRequest {
 
 
 
-	/**
-	 * Wait until the current request is finished.
-	 *
-	 * @return Void.
-	 *
-	 * @since 3.0
-	 */
-	public void waitUntilFinished() {
-		if (isSynchronous && (syncHttpClient != null)) {
-			while (syncHttpClient.isLoading()) {
-				try {
-					this.wait(3000); // Wait 3 seconds
-				} catch (InterruptedException e) {
-					AMLogger.logError("In AMRequest.waitUntilFinished()-syncHttpClient: InterruptedException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
-				}
-			}
-		} else if (!isSynchronous && (asyncHttpClient != null)) { // is asynchronous
-			while (asyncHttpClient.isLoading()) {
-				try {
-					this.wait(3000); // Wait 3 seconds
-				} catch (InterruptedException e) {
-					AMLogger.logError("In AMRequest.waitUntilFinished()-asyncHttpClient: InterruptedException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
-				}
-			}
-		}
-	}
 
-	/**
-	 * Private method, used to initialize an AsyncHttpClient instance.
-	 */
-	private AsyncHttpClient createAsyncHttpClient() {
-		AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-		if (RequestType.DOWNLOAD.equals(this.requestType))  {
-			 asyncHttpClient.addHeader("Accept", "application/octet-stream");
-		} else {
-			 asyncHttpClient.addHeader("Accept", "application/json");
-		}
-		return asyncHttpClient;
-	}
 
-	/**
-	 * Private method, used to initialize a SyncHttpClient instance.
-	 */
-	private SyncHttpClient createSyncHttpClient() {
-		SyncHttpClient syncHttpClient = new SyncHttpClient();
-		if (RequestType.DOWNLOAD.equals(this.requestType))  {
-			syncHttpClient.addHeader("Accept", "application/octet-stream");
-		} else {
-			 syncHttpClient.addHeader("Accept", "application/json");
-		}
-		return syncHttpClient;
-	}
 
 	/**
 	 * Private method, used to assemble URL with query string..
 	 */
-	String assembleUrlWithParams(String url, RequestParams urlParams) {
+	String assembleUrlWithParams(String url, RequestParams requestParams) {
 		//AMLogger.logError("In AMRequest.assembleUrlWithParams()");
+        if(requestParams==null)
+            return url;
 		boolean urlContainsLanguage = (url != null) && (url.contains("lang="));
-		boolean paramsContainsLanguage = (urlParams != null) && (urlParams.hasKey("lang"));
+        Map<String, String> urlParams = requestParams.getUrlParams();
+		boolean paramsContainsLanguage = (urlParams != null) && (urlParams.containsKey("lang"));
 		if ((!urlContainsLanguage) && (!paramsContainsLanguage)) {
 			String languageCode = String.format("%s_%s", Locale.getDefault().getLanguage(),Locale.getDefault().getCountry());
-			if (urlParams == null) {
-				urlParams = new RequestParams("lang", languageCode);
+			if (this.urlParams == null) {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("lang", languageCode);
+				this.urlParams = new RequestParams();
+                this.urlParams.setUrlParams(params);
 			} else {
-				urlParams.put("lang", languageCode);
+                Map<String, String> params = requestParams.getUrlParams();
+                params.put("lang", languageCode);
 			}
 		}
 		//Log.d("DEBUG", "************* In AMRequest.assembleUrlWithParams(): url = " + url);
-		if (urlParams != null) {
-	    	this.urlParams = urlParams;
-	    	String paramString = urlParams.getParamString();
+		if (requestParams != null) {
+	    	this.urlParams = requestParams;
+	    	String paramString = requestParams.getParamString();
 	    	//Log.d("DEBUG", "************* In AMRequest.assembleUrlWithParams(): paramString = " + paramString);
 	    	if (!url.contains("?")) {
 	    		//Log.d("DEBUG", "		==> Add: url.contains(\"?\") == false ");
