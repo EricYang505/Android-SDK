@@ -46,8 +46,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -71,6 +74,7 @@ import com.accela.mobile.AMRequestDelegate;
 import com.accela.mobile.AMSessionDelegate;
 import com.accela.mobile.AMSetting;
 import com.accela.mobile.AccelaMobile;
+import com.accela.mobile.http.AMImageLoader;
 import com.accela.mobile.http.RequestParams;
 
 
@@ -175,29 +179,29 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.btnAgencyGetRecordsSync:
 			if (isSessionValid()) {
-				// Disable the button before sending the synchronous request.
-				btnGetRecordsSync.setEnabled(false);
-				// Populate the request parameters then send the synchronous
-				// request.
-				servicePath = SERVICE_URI_RECORD_LIST;
-				requestParams.put("limit", "10");
-				requestParams.put("offset", "0");
-				JSONObject responseJson = accelaMobile.fetch(
-						servicePath, requestParams, AMRequest.HTTPMethod.GET, null);
-				String alertMessage;
-				if (responseJson == null) {
-					alertMessage = this.getResources().getString(
-							R.string.msg_request_completed_message);
-				} else {
-					alertMessage = responseJson.toString();
-				}
-				// Show dialog with the returned data
-				createAlertDialog(
-						this.getResources().getString(
-								R.string.msg_request_completed_title),
-						alertMessage);
-				// Enable the button after the synchronous request is finished.
-				btnGetRecordsSync.setEnabled(true);
+//				// Disable the button before sending the synchronous request.
+//				btnGetRecordsSync.setEnabled(false);
+//				// Populate the request parameters then send the synchronous
+//				// request.
+//				servicePath = SERVICE_URI_RECORD_LIST;
+//				requestParams.put("limit", "10");
+//				requestParams.put("offset", "0");
+//				JSONObject responseJson = accelaMobile.fetch(
+//						servicePath, requestParams, AMRequest.HTTPMethod.GET, null);
+//				String alertMessage;
+//				if (responseJson == null) {
+//					alertMessage = this.getResources().getString(
+//							R.string.msg_request_completed_message);
+//				} else {
+//					alertMessage = responseJson.toString();
+//				}
+//				// Show dialog with the returned data
+//				createAlertDialog(
+//						this.getResources().getString(
+//								R.string.msg_request_completed_title),
+//						alertMessage);
+//				// Enable the button after the synchronous request is finished.
+//				btnGetRecordsSync.setEnabled(true);
 			}
 			break;
 		case R.id.btnAgencyGetSpecificRecord:
@@ -295,12 +299,13 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 
 					servicePath = SERVICE_URI_RECORD_AttachmentDownload
 							.replace("{documentId}", attachmentId);
-					String downloadFilePath = this.getApplicationContext()
-							.getFilesDir().getAbsolutePath()
-							+ "/AccelaAnalytics.png";
-					currentRequest = accelaMobile.downloadAttachment(
-							servicePath, null, downloadFilePath,
-							downloadDocumentRequestDelegate);
+                    accelaMobile.loadImage(servicePath, new RequestParams(), null, downloadDocumentRequestDelegate);
+//					String downloadFilePath = this.getApplicationContext()
+//							.getFilesDir().getAbsolutePath()
+//							+ "/AccelaAnalytics.png";
+//					currentRequest = accelaMobile.downloadAttachment(
+//							servicePath, null, downloadFilePath,
+//							downloadDocumentRequestDelegate);
 				} else {
 					Toast toast = Toast.makeText(this,
 							"Please get attachment list first.",
@@ -955,6 +960,19 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 					AgencyTestActivity.this.getResources().getString(
 							R.string.error_request_timeout_message));
 		}
+
+        @Override
+        public void onSuccess(Bitmap bitmap){
+            // Dismiss the process waiting view
+            ProgressDialog progressDialog = currentRequest
+                    .getRequestWaitingView();
+            if ((progressDialog != null) && (progressDialog.isShowing())) {
+                progressDialog.dismiss();
+            }
+            Drawable d = new BitmapDrawable(getResources(),bitmap);
+            btnDownloadAttachmentWithProgress.setBackground(d);
+            Toast.makeText(AgencyTestActivity.this, "Download success!", Toast.LENGTH_SHORT).show();
+        }
 
 		@Override
 		public void onSuccess(byte[] content) {

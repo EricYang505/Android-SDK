@@ -99,8 +99,7 @@ public class CitizenTestActivity extends Activity implements OnClickListener {
 					permissions4Authorization, "ISLANDTON");
 			break;
 		case R.id.btnCivicEmbeddedWebLogin:
-			appContext.accelaMobile4Citizen.authorize2(
-					permissions4Authorization, "ISLANDTON");
+			appContext.accelaMobile4Citizen.authorize2(permissions4Authorization, "ISLANDTON");
 			break;
 		case R.id.btnCivicGetRecords:
 			if (isSessionValid()) {

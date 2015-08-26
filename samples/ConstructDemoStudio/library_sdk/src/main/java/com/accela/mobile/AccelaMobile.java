@@ -29,6 +29,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.text.TextUtils;
+import android.widget.ImageView;
 
 import com.accela.mobile.AMBatchResponse.AMBatchRequestDelegate;
 import com.accela.mobile.AMRequest.HTTPMethod;
@@ -564,73 +565,6 @@ public class AccelaMobile {
 	}
 
 	/**
-	 * Synchronously get resource identified by the Accela Construct API endpoint with the given parameters using HTTP GET method.
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 *
-	 * @return A simple JSON object or a complex JSON object which contains child JSON objects.
-	 *
-	 * @since 1.0
-	 */
-	public JSONObject fetch(String path, RequestParams urlParams) {
-		return this.fetch(path, urlParams, amCustomHttpHeader);
-	}
-
-	/**
-	 * Synchronously get resource identified by the Accela Construct API endpoint with the given parameters using HTTP GET method.
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param customHttpHeader The HTTP header fields in key value pairs.
-	 *
-	 * @return A simple JSON object or a complex JSON object which contains child JSON objects.
-	 *
-	 * @since 4.1
-	 */
-	public JSONObject fetch(String path, RequestParams urlParams, Map<String, String> customHttpHeader) {
-		return this.fetch(path, urlParams, customHttpHeader, HTTPMethod.GET, null);
-	}
-
-	/**
-	 * Synchronously get resource identified by the Accela Construct API endpoint with the given parameters using the given HTTP method.
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param httpMethod The HTTP data transfer method (such as GET, POST, PUT or DELETE).
-	 * @param postData The content sent with the corresponding request(only used in POST or PUT method).
-	 *
-	 * @return The resulting object is a simple JSON object or a complex JSON object which contains child JSON objects.
-	 *
-	 * @since 1.0
-	 */
-	public JSONObject fetch(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData) {
-		return this.fetch(path, urlParams, amCustomHttpHeader, httpMethod, postData);
-	}
-
-	/**
-	 * Synchronously get resource identified by the Accela Construct API endpoint with the given parameters using the given HTTP method.
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param customHttpHeader The HTTP header fields in key value pairs.
-	 * @param httpMethod The HTTP data transfer method (such as GET, POST, PUT or DELETE).
-	 * @param postData The content sent with the corresponding request(only used in POST or PUT method).
-	 *
-	 * @return The resulting object is a simple JSON object or a complex JSON object which contains child JSON objects.
-	 *
-	 * @since 4.1
-	 */
-	public JSONObject fetch(String path, RequestParams urlParams, Map<String, String> customHttpHeader, HTTPMethod httpMethod, RequestParams postData) {
-		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, httpMethod);
-		amRequest.setAccelaMobile(this);
-		amRequest.setHttpHeader(customHttpHeader);
-
-		throw new RuntimeException("not implemented yet!");
-	}
-
-
-	/**
 	 *
 	 * @param batchSession
 	 * @param path
@@ -766,6 +700,33 @@ public class AccelaMobile {
 		amRequest.setAccelaMobile(this);
 		return amRequest.sendRequest(postData, attachments, requestDelegate);
 	}
+
+    public AMRequest loadImage(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate, int maxWidth, int maxHeight, ImageView.ScaleType scaleType) {
+        AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, HTTPMethod.GET);
+        amRequest.setAccelaMobile(this);
+        amRequest.setHttpHeader(customHttpHeader);
+        amRequest.setRequestType(AMRequest.RequestType.IMAGE);
+        amRequest.loadImage(requestDelegate, maxWidth, maxHeight, scaleType);
+        return amRequest;
+    }
+
+    public AMRequest loadImage(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate, int maxWidth, int maxHeight) {
+        AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, HTTPMethod.GET);
+        amRequest.setAccelaMobile(this);
+        amRequest.setHttpHeader(customHttpHeader);
+        amRequest.setRequestType(AMRequest.RequestType.IMAGE);
+        amRequest.loadImage(requestDelegate, maxWidth, maxHeight);
+        return amRequest;
+    }
+
+    public AMRequest loadImage(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {
+        AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, HTTPMethod.GET);
+        amRequest.setAccelaMobile(this);
+        amRequest.setHttpHeader(customHttpHeader);
+        amRequest.setRequestType(AMRequest.RequestType.IMAGE);
+        amRequest.loadImage(requestDelegate);
+        return amRequest;
+    }
 
 
 	/**

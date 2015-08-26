@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Created by eyang on 8/20/15.
  */
-public class AMJsonRequest extends AMHttpRequest {
+class AMJsonRequest extends AMHttpRequest {
 
     /** Default charset for JSON request. */
 

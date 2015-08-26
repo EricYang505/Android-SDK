@@ -21,6 +21,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+
+import com.accela.mobile.http.volley.Legacy.HttpEntity;
 import com.accela.mobile.http.volley.Request;
 import com.accela.mobile.http.volley.RequestQueue;
 import com.accela.mobile.http.volley.Response.ErrorListener;
