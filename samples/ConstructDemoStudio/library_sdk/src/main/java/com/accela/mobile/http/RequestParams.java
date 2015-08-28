@@ -20,7 +20,11 @@ package com.accela.mobile.http;
         import com.accela.mobile.AMLogger;
         import com.accela.mobile.AMSetting;
         import com.accela.mobile.http.volley.Legacy.BasicNameValuePair;
+        import com.accela.mobile.http.volley.Legacy.HttpEntity;
         import com.accela.mobile.http.volley.Legacy.URLEncodedUtils;
+        import com.accela.mobile.http.volley.Legacy.mime.AccelaMultipartEntityBuilder;
+        import com.accela.mobile.http.volley.Legacy.mime.AccelaMultipartFormEntity;
+        import com.accela.mobile.http.volley.Legacy.mime.UrlEncodedFormEntity;
 
 
 /**
@@ -157,6 +161,45 @@ public class RequestParams {
         }
     }
 
+    /**
+     * Get the HttpEntity which contains all request parameters
+     *
+     * @return A HttpEntity object.
+     *
+     * @since 1.0
+     */
+    public HttpEntity getEntity() {
+        HttpEntity entity = null;
+
+        if(!fileParams.isEmpty()) {
+            AccelaMultipartEntityBuilder multipartBuilder = AccelaMultipartEntityBuilder.create();
+            multipartBuilder.setBoundary(AccelaMultipartFormEntity.MULTIPART_SEPARATOR_LINE);
+            // Add string parameters
+            for(ConcurrentHashMap.Entry<String, String> entry : stringBody.entrySet()) {
+                multipartBuilder.addTextBody(entry.getKey(), entry.getValue());
+            }
+
+            // Add file parameters
+            for(ConcurrentHashMap.Entry<String, FileWrapper> entry : fileParams.entrySet()) {
+                FileWrapper fileWrapper = entry.getValue();
+                if(fileWrapper.mfile != null) {
+                    multipartBuilder.addBinaryBody(AccelaMultipartFormEntity.MULTIPART_File_KEY, fileWrapper.mfile);
+                }
+            }
+            entity = multipartBuilder.build();
+        } else {
+            try {
+                entity = new UrlEncodedFormEntity(getParamsList(), ENCODING);
+            } catch (UnsupportedEncodingException e) {
+                AMLogger.logError("In RequestParams.getEntity(): UnsupportedEncodingException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
+                if (AMSetting.DebugMode) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return entity;
+    }
 
 
 
@@ -251,9 +294,9 @@ public class RequestParams {
     }
 
     /**
-     * Private inner static class, used to wrap parameters related for file uploading.
+     * public inner static class, used to wrap parameters related for file uploading.
      */
-    private static class FileWrapper {
+    public static class FileWrapper {
         public File mfile;
         public String contentType;
 

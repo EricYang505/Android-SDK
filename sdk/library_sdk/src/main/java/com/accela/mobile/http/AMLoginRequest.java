@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Created by eyang on 8/24/15.
  */
-public class AMLoginRequest extends AMHttpRequest {
+class AMLoginRequest extends AMHttpRequest {
 
 
     /** Content type for request. */

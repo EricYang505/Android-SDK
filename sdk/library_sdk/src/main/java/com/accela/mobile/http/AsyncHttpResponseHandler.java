@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -54,6 +55,7 @@ public abstract class AsyncHttpResponseHandler {
 
     public void onSuccess(JSONArray content) {}
 
+    public void onSuccess(Bitmap bitmap) {}
     /**
      * Fired when a request returns a string response successfully,
      * override to handle in your own code.

@@ -27,6 +27,8 @@
 
 package com.accela.mobile.http.volley.Legacy;
 
+import com.accela.mobile.http.volley.Legacy.mime.Immutable;
+
 import java.io.Serializable;
 
 

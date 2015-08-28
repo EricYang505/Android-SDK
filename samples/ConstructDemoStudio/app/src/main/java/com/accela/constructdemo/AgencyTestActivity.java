@@ -74,13 +74,12 @@ import com.accela.mobile.AMRequestDelegate;
 import com.accela.mobile.AMSessionDelegate;
 import com.accela.mobile.AMSetting;
 import com.accela.mobile.AccelaMobile;
-import com.accela.mobile.http.AMImageLoader;
 import com.accela.mobile.http.RequestParams;
 
 
 public class AgencyTestActivity extends Activity implements OnClickListener {
-	private static final String APP_ID= "635442545792218073";
-	private static final String APP_SECRET = "28c6edc56e714078a23a50a4193f348f";
+	private static final String APP_ID= "com.accela.inspector";//"635442545792218073";
+	private static final String APP_SECRET = "839ffae0ee244cb4b558f252ca84524c";//"28c6edc56e714078a23a50a4193f348f";
 
 	private static String SERVICE_URI_RECORD_LIST = "/v4/records/";
 	private static String SERVICE_URI_RECORD_SEARCH = "/v4/records/{recordIds}/";
@@ -259,10 +258,15 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 				String fileName2 = "CityBuilldings.png";
 				JSONArray fileInfoJsonArray = new JSONArray();
 				Map<String, String> fileInformationMap = new HashMap<String, String>();
-				addDocumentToUpload(fileName1, fileInfoJsonArray,
-						fileInformationMap);
-				addDocumentToUpload(fileName2, fileInfoJsonArray,
-						fileInformationMap);
+                try {
+                    addDocumentToUpload(fileName1, fileInfoJsonArray,
+                            fileInformationMap);
+//                    addDocumentToUpload(fileName2, fileInfoJsonArray,
+//                            fileInformationMap);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
 				// Populate the post data.
 				String fileInfoJsonArrayStr = fileInfoJsonArray.toString();
                 RequestParams postParams = new RequestParams();
@@ -394,8 +398,8 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 		appContext.accelaMobile4Citizen = null;
 		// Override the URLs of default authorization server and api server
 		// defined in Accela SDK package.
-		String authServer = AMSetting.AM_OAUTH_HOST;
-		String apiServer = AMSetting.AM_API_HOST;
+		String authServer = "https://apps-auth.dev.accela.com";//AMSetting.AM_OAUTH_HOST;//
+		String apiServer = "https://apps-apis.dev.accela.com";//AMSetting.AM_API_HOST;//
 		// Initialize an AccelaMobile instance
 		// Create an AccelaMobile instance with the App ID and App Secret of
 		// the registered app.
@@ -481,7 +485,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 	}
 
 	private void addDocumentToUpload(String fileName,
-			JSONArray fileInfoJsonArray, Map<String, String> fileInformationMap) {
+			JSONArray fileInfoJsonArray, Map<String, String> fileInformationMap) throws FileNotFoundException {
 		String fileType = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length()).toLowerCase(Locale.US);
 		String localImagePath = "resources/" + fileName;
@@ -509,11 +513,13 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 
 	// Copy image file from resource folder to application folder.
 	private void copyImageFile2App(String localImagePath,
-			String applicationImagePath) {
+			String applicationImagePath) throws FileNotFoundException {
 		// Create the image file under application's directory before uploading
 		// it
-		InputStream inputStream = this.getClass().getResourceAsStream(
-				localImagePath);
+        File file = new File("/storage/emulated/0/Download/mlogo2x_3.png");
+        FileInputStream inputStream = new FileInputStream(file);
+//		InputStream inputStream = this.getClass().getResourceAsStream(
+//				localImagePath);
 		// Get the size of the resource image file.
 		int imageFileSize = 0;
 		try {

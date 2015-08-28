@@ -189,11 +189,10 @@ public interface HttpEntity {
      *
      * @throws java.io.IOException if an I/O error occurs.
      *
-     * @deprecated (4.1) Use {@link org.apache.http.util.EntityUtils#consume(com.accela.mobile.http.volley.Legacy.HttpEntity)}
      *
      * @see #getContent() and #writeTo(OutputStream)
      */
-    @Deprecated
+
     void consumeContent() throws IOException;
 
 }

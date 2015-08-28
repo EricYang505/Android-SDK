@@ -73,41 +73,6 @@ public class AMBatchSession {
 		return requests;
 	}
 
-	/**
-     * Execute the batch request in synchronous way.
-     * 
-     * 
-     * @return The Json object returned by the request.
-	 * 
-	 * @since 4.0
-	 */
-	public JSONObject execute(Map<String, String> customParams) {
-		List<AMBatchRequestModel> models = new ArrayList<AMBatchRequestModel>();
-		for (AMRequest request : requests) {
-			String url = request.getServiceURL();
-			HTTPMethod httpMethod = request.getHttpMethod();
-			String method = httpMethod.toString();
-
-			AMBatchRequestModel model = new AMBatchRequestModel();
-			model.setUrl(url);
-			model.setMethod(method);
-			if ((httpMethod == HTTPMethod.POST || httpMethod == HTTPMethod.PUT)
-					&& request.getPostParams() != null) {
-				model.setBody(request.getPostParams());
-			} else if(httpMethod == HTTPMethod.GET) {		
-				model.setUrl(request.assembleUrlWithParams(url, request.getUrlParams()));		
- 			}
-
-			models.add(model);
-		}
-
-		String json = toJsonArray(models);
-        RequestParams params = new RequestParams(json);
-		AccelaMobile accelaMobile = AccelaMobile.defaultInstance();
-		JSONObject result = accelaMobile.fetch(path, null, customParams, HTTPMethod.POST,
-				params);
-		return result;
-	}
 
 	/**
      * Execute the batch request in asynchronous way.

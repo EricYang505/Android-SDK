@@ -27,6 +27,8 @@
 
 package com.accela.mobile.http.volley.Legacy;
 
+import com.accela.mobile.http.volley.Legacy.mime.Immutable;
+
 /**
  * Interface for formatting elements of the HEAD section of an HTTP message.
  * This is the complement to {@link LineParser}.

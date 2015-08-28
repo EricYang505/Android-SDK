@@ -20,6 +20,7 @@ package com.accela.mobile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -35,6 +36,7 @@ import android.widget.ImageView;
 
 import com.accela.mobile.http.AMHttpRequest;
 import com.accela.mobile.http.AMImageLoader;
+import com.accela.mobile.http.AMMultiPartRequest;
 import com.accela.mobile.http.AMRequestFactory;
 import com.accela.mobile.http.AMRequestQueue;
 import com.accela.mobile.http.RequestParams;
@@ -325,7 +327,7 @@ public class AMRequest {
         if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.IS_ALL_AGENCIES)!=null){
             httpHeader.put(HEADER_X_ACCELA_AGENCIES, requestHttpHeader.get(AccelaMobile.IS_ALL_AGENCIES));
         }else if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.AGENCY_NAME)!=null){
-            httpHeader.put(HEADER_X_ACCELA_AGENCY, requestHttpHeader.get(AccelaMobile.AGENCY_NAME));
+            httpHeader.put(HEADER_X_ACCELA_AGENCY, requestHttpHeader.get(AccelaMobile.AGENCY_NAME).toUpperCase());
         }
 
         if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.ENVIRONMENT_NAME)!=null){
@@ -431,10 +433,9 @@ public class AMRequest {
                         mRequest = AMRequestFactory.createLoginRequest(serializeURL, Request.Method.POST, httpHeader, paramData.getAuthBody(), false, this.requestDelegate);
                         requestQueue.addToRequestQueue(mRequest);
                     } else if (RequestType.MULTIPART.equals(this.requestType)){
-//                        contentType = "multipart/form-data;boundary=" + syncHttpClient.getMultipartSeparatorLine();
-//                        syncHttpClient.addHeader("Content-Type", contentType);
-//                        syncHttpClient.post(serializeURL, paramData.getEntity(), contentType);
-                        throw new RuntimeException("Not implemented yet!");
+                        AMDocumentManager documentManager = AMDocumentManager.getAMDocumentManager(this.ownerContext);
+                        documentManager.addRequest(AMRequestFactory.createAMMultiPartRequests(serializeURL, httpHeader, paramData, this.requestDelegate));
+                        documentManager.startRequest();
 					} else {
                         mRequest = AMRequestFactory.createJsonRequest(serializeURL, Request.Method.POST, httpHeader, paramData.getStringBody(), false, this.requestDelegate);
                         requestQueue.addToRequestQueue(mRequest);

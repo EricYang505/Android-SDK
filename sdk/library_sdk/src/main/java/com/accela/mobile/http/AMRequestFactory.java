@@ -1,6 +1,10 @@
 package com.accela.mobile.http;
 
+import android.graphics.Bitmap;
+import android.widget.ImageView;
+
 import com.accela.mobile.AMError;
+import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMRequestDelegate;
 import com.accela.mobile.http.volley.Request;
 import com.accela.mobile.http.volley.Response;
@@ -9,7 +13,11 @@ import com.accela.mobile.http.volley.VolleyError;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by eyang on 8/20/15.
@@ -46,8 +54,6 @@ public class AMRequestFactory {
     }
 
     public static AMHttpRequest createLoginRequest(String url, int method, HashMap<String, String> customHttpHeader, String requestBody, boolean shouldCache, final AMRequestDelegate requestDelegate) {
-        {
-
             AMHttpRequest loginRequest = new AMLoginRequest
                     (method, url, customHttpHeader, requestBody, new Response.Listener<JSONObject>() {
 
@@ -73,6 +79,33 @@ public class AMRequestFactory {
             loginRequest.setShouldCache(shouldCache);
 
             return loginRequest;
+
+    }
+
+    public static AMMultiPartRequest createAMMultiPartRequests(String url, HashMap<String, String> customHttpHeader, RequestParams requestParams, final AMRequestDelegate requestDelegate){
+//        List<AMMultiPartRequest> list = new ArrayList<AMMultiPartRequest>();
+//        Map<String, RequestParams.FileWrapper> fileParams = requestParams.getFileParams();
+//        if (fileParams!=null){
+//            for (RequestParams.FileWrapper fileWrapper : fileParams.values()){
+//                try {
+//                    list.add(new AMMultiPartRequest(url, customHttpHeader, fileWrapper, requestDelegate));
+//                } catch (MalformedURLException e) {
+//                    AMLogger.logError(e.toString());
+//                }
+//            }
+//        }
+        AMMultiPartRequest request = null;
+        try {
+            request = new AMMultiPartRequest(url, customHttpHeader, requestParams.getEntity(), requestDelegate);
+        } catch (MalformedURLException e) {
+            AMLogger.logError(e.toString());
         }
+        return request;
+    }
+
+    static AMImageRequest createImageRequest(String url, Map<String, String> customHttpHeader, Response.Listener<Bitmap> listener, int maxWidth, int maxHeight, ImageView.ScaleType scaleType, Bitmap.Config decodeConfig,
+                                                    Response.ErrorListener errorListener){
+        AMImageRequest imageRequest = new AMImageRequest(url, customHttpHeader, listener, maxWidth, maxHeight, scaleType, decodeConfig, errorListener);
+        return imageRequest;
     }
 }

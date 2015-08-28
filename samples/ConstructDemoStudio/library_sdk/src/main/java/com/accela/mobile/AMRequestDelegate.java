@@ -123,6 +123,8 @@ public abstract class AMRequestDelegate extends AsyncHttpResponseHandler {
 	 */
 	public void amRequestDidReceiveResponse(AMRequest request) {
 		// Parse headers
+        if (request.mRequest==null)
+            return;
         Map<String, String> httpResponse = request.mRequest.getResponseHeader();
         int responseStatusCode = request.mRequest.getResponseStatus();
 		if (httpResponse != null) {

@@ -19,14 +19,12 @@ import java.util.Map;
 /**
  * Created by eyang on 8/20/15.
  */
-public class AMJsonRequest extends AMHttpRequest {
+class AMJsonRequest extends AMHttpRequest {
 
     /** Default charset for JSON request. */
-    protected static final String PROTOCOL_CHARSET = "utf-8";
 
     /** Content type for request. */
-    private static final String PROTOCOL_CONTENT_TYPE =
-            String.format("application/json; charset=%s", PROTOCOL_CHARSET);
+    private static final String PROTOCOL_CONTENT_TYPE = "application/json";
 
 
     public AMJsonRequest(int method, String url, HashMap<String, String> customHttpHeader, String stringRequestBody, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
