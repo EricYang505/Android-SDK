@@ -33,6 +33,7 @@ import android.widget.ImageView;
 
 import com.accela.mobile.AMBatchResponse.AMBatchRequestDelegate;
 import com.accela.mobile.AMRequest.HTTPMethod;
+import com.accela.mobile.http.AMDocDownloadRequest;
 import com.accela.mobile.http.RequestParams;
 
 import org.json.JSONException;
@@ -679,27 +680,6 @@ public class AccelaMobile {
 		return amRequest;
 	}
 
-	/**
-	 *
-	 * Makes a request to upload multiple attachments as an asynchronous operation.
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param httpMethod The HTTP data transfer method (such as GET, POST, PUT or DELETE).
-	 * @param postData The content sent with the corresponding request(only used in POST or PUT method).
-	 * @param attachments The attachments to be uploaded in the request. Values mapping: Key => File Path.
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
-	 *
-	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
-	 *
-	 * @since 3.0
-	 * @deprecated use uploadAttachmetns instead
-	 */
-	public AMRequest request(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData, Map<String, String> attachments, AMRequestDelegate requestDelegate) {
-		AMRequest amRequest = new AMRequest(this, this.amApisHost  + path, urlParams, httpMethod);
-		amRequest.setAccelaMobile(this);
-		return amRequest.sendRequest(postData, attachments, requestDelegate);
-	}
 
     public AMRequest loadImage(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate, int maxWidth, int maxHeight, ImageView.ScaleType scaleType) {
         AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, HTTPMethod.GET);
@@ -935,12 +915,11 @@ public class AccelaMobile {
 	 * @param path The path to the Accela Construct API endpoint.
 	 * @param urlParams The collection of parameters associated with the specific URL.
 	 * @param localFile The path for file.
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate. See AMRequestDelegate for more information.
 	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
 	 * @since 1.0
 	 */
-	public AMRequest downloadAttachment(String path, RequestParams urlParams,  String localFile, AMRequestDelegate requestDelegate) {
-		return this.downloadAttachment(path, urlParams, null, null, localFile, requestDelegate);
+	public AMRequest downloadAttachment(String path, RequestParams urlParams,  String localFile, AMDocDownloadRequest.AMDownloadDelegate downloadDelegate) {
+		return this.downloadAttachment(path, urlParams, null, localFile, downloadDelegate);
 	}
 
 	/**
@@ -948,12 +927,11 @@ public class AccelaMobile {
 	 * @param path The path to the Accela Construct API endpoint.
 	 * @param urlParams The collection of parameters associated with the specific URL.
 	 * @param localFile The path for file.
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate. See AMRequestDelegate for more information.
 	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
 	 * @since 4.1
 	 */
-	public AMRequest downloadAttachment(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData, String localFile, AMRequestDelegate requestDelegate) {
-		return this.downloadAttachment(path, urlParams, amCustomHttpHeader, null, null, localFile, requestDelegate);
+	public AMRequest downloadAttachment(String path, RequestParams urlParams, RequestParams postData, String localFile, AMDocDownloadRequest.AMDownloadDelegate downloadDelegate) {
+		return this.downloadAttachment(path, urlParams, amCustomHttpHeader, null, localFile, downloadDelegate);
 	}
 
 	/**
@@ -961,15 +939,14 @@ public class AccelaMobile {
 	 * @param path The path to the Accela Construct API endpoint.
 	 * @param urlParams The collection of parameters associated with the specific URL.
 	 * @param localFile The path for file.
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate. See AMRequestDelegate for more information.
 	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
 	 * @since 4.1
 	 */
-	public AMRequest downloadAttachment(String path, RequestParams urlParams, Map<String, String> customHttpHeader, HTTPMethod httpMethod, RequestParams postData, String localFile, AMRequestDelegate requestDelegate) {
-		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, httpMethod);
+	public AMRequest downloadAttachment(String path, RequestParams urlParams, Map<String, String> customHttpHeader, RequestParams postData, String localFile, AMDocDownloadRequest.AMDownloadDelegate downloadDelegate) {
+		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, HTTPMethod.GET);
 		amRequest.setAccelaMobile(this);
 		amRequest.setHttpHeader(customHttpHeader);
-		return amRequest.downloadAttachment(localFile, postData, requestDelegate);
+		return amRequest.downloadDocument(urlParams, localFile, downloadDelegate);
 	}
 
 

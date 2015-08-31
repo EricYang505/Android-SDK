@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 
 import com.accela.mobile.http.AMMultiPartRequest;
+import com.accela.mobile.http.DocumentRequest;
 import com.accela.mobile.http.volley.Cache;
 import com.accela.mobile.http.volley.Legacy.HttpStatus;
 import com.accela.mobile.http.volley.NetworkResponse;
@@ -27,7 +28,7 @@ public class AMDocumentManager {
     public final static int SERVEREXCEPTION_ERROR = 2;
 
     private static AMDocumentManager mInstance;
-    private final BlockingQueue<AMMultiPartRequest> mBlockingQueue = new ArrayBlockingQueue(100);
+    private final BlockingQueue<DocumentRequest> mBlockingQueue = new ArrayBlockingQueue(100);
 
     private AMDocumentManager(){}
 
@@ -38,23 +39,23 @@ public class AMDocumentManager {
         return mInstance;
     }
 
-    public AMDocumentManager addRequest(AMMultiPartRequest task){
+    public AMDocumentManager addRequest(DocumentRequest task){
         mBlockingQueue.add(task);
         return this;
     }
 
     public void startRequest(){
         while (!mBlockingQueue.isEmpty()){
-            AMMultiPartRequest task = mBlockingQueue.poll();
+            DocumentRequest task = mBlockingQueue.poll();
             new DocumentTask().execute(task);
         }
     }
 
 
-    private class DocumentTask extends AsyncTask<AMMultiPartRequest, Object, NetworkResponse> {
-        AMMultiPartRequest mTask;
+    private class DocumentTask extends AsyncTask<DocumentRequest, Object, NetworkResponse> {
+        DocumentRequest mTask;
         @Override
-        protected NetworkResponse doInBackground(AMMultiPartRequest... task) {
+        protected NetworkResponse doInBackground(DocumentRequest... task) {
             NetworkResponse response = null;
             if (task!=null) {
                 long requestStart = SystemClock.elapsedRealtime();

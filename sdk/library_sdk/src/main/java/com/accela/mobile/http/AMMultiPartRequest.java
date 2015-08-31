@@ -54,7 +54,7 @@ import java.util.TreeMap;
 /**
  * Created by eyang on 8/26/15.
  */
-public class AMMultiPartRequest {
+public class AMMultiPartRequest implements DocumentRequest{
     protected static final String PROTOCOL_CHARSET = "utf-8";
     public final static int MAX_BUFFER_SIZE = 1024*2;
     private final String MULTIPART_SEPARATOR_LINE = "---------------------------7de1a0c22082";
@@ -181,48 +181,6 @@ public class AMMultiPartRequest {
             }
 
 
-//    private void buildMultipartBody(HttpURLConnection connection, DataOutputStream outputStream) throws IOException {
-//
-//    }
-//        String agency = "ISLANDTON";
-//        outputStream.writeBytes(MULTIPART_SEPARATOR_LINE + lineEnd);
-//        outputStream.writeBytes("Content-Disposition: form-data; name=\"fileInfo\"" + lineEnd);
-//        outputStream.writeBytes(lineEnd);
-//        outputStream.writeBytes("[{\"serviceProviderCode\":\""+ agency +"\",\"fileName\":\"AccelaAnalytics.png\",\"type\":\"png\",\"description\":\"Upload document for testing.\"}]");
-//        outputStream.writeBytes(lineEnd);
-//        outputStream.writeBytes(MULTIPART_SEPARATOR_LINE + lineEnd);
-//        outputStream.writeBytes("Content-Disposition: form-data; name=\"uploadedFile\";filename=\"" + mFileWrapper.mfile.getName() + "\"" + lineEnd);
-//        outputStream.writeBytes("Content-Type: application/octet-stream" + lineEnd);
-//        outputStream.writeBytes(lineEnd);
-//
-//        int bytesRead, bytesAvailable, bufferSize;
-//        bytesAvailable = fileInputStream.available();
-//        bufferSize = Math.min(bytesAvailable, MAX_BUFFER_SIZE);
-//        byte[] buffer = new byte[bufferSize];
-//
-//        // Read file
-//        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-//        AMLogger.logInfo("Document length: " + bytesAvailable);
-//        try {
-//            while (bytesRead > 0) {
-//                try {
-//                    outputStream.write(buffer, 0, bufferSize);
-//                } catch (OutOfMemoryError e) {
-//                    AMLogger.logError(e.toString());
-//                    return;
-//                }
-//                bytesAvailable = fileInputStream.available();
-//                bufferSize = Math.min(bytesAvailable, MAX_BUFFER_SIZE);
-//                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-//            }
-//        } catch (Exception e) {
-//            AMLogger.logError(e.toString());
-//        }
-//        outputStream.writeBytes(lineEnd);
-//        outputStream.writeBytes(MULTIPART_SEPARATOR_LINE + twoHyphens + lineEnd);
-
-
-
     private HttpURLConnection openConnection() throws IOException {
         HttpURLConnection connection = (HttpURLConnection)mUrl.openConnection();
 
@@ -297,3 +255,46 @@ public class AMMultiPartRequest {
     }
 
 }
+
+
+
+//    private void buildMultipartBody(HttpURLConnection connection, DataOutputStream outputStream) throws IOException {
+//
+//    }
+//        String agency = "ISLANDTON";
+//        outputStream.writeBytes(MULTIPART_SEPARATOR_LINE + lineEnd);
+//        outputStream.writeBytes("Content-Disposition: form-data; name=\"fileInfo\"" + lineEnd);
+//        outputStream.writeBytes(lineEnd);
+//        outputStream.writeBytes("[{\"serviceProviderCode\":\""+ agency +"\",\"fileName\":\"AccelaAnalytics.png\",\"type\":\"png\",\"description\":\"Upload document for testing.\"}]");
+//        outputStream.writeBytes(lineEnd);
+//        outputStream.writeBytes(MULTIPART_SEPARATOR_LINE + lineEnd);
+//        outputStream.writeBytes("Content-Disposition: form-data; name=\"uploadedFile\";filename=\"" + mFileWrapper.mfile.getName() + "\"" + lineEnd);
+//        outputStream.writeBytes("Content-Type: application/octet-stream" + lineEnd);
+//        outputStream.writeBytes(lineEnd);
+//
+//        int bytesRead, bytesAvailable, bufferSize;
+//        bytesAvailable = fileInputStream.available();
+//        bufferSize = Math.min(bytesAvailable, MAX_BUFFER_SIZE);
+//        byte[] buffer = new byte[bufferSize];
+//
+//        // Read file
+//        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+//        AMLogger.logInfo("Document length: " + bytesAvailable);
+//        try {
+//            while (bytesRead > 0) {
+//                try {
+//                    outputStream.write(buffer, 0, bufferSize);
+//                } catch (OutOfMemoryError e) {
+//                    AMLogger.logError(e.toString());
+//                    return;
+//                }
+//                bytesAvailable = fileInputStream.available();
+//                bufferSize = Math.min(bytesAvailable, MAX_BUFFER_SIZE);
+//                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+//            }
+//        } catch (Exception e) {
+//            AMLogger.logError(e.toString());
+//        }
+//        outputStream.writeBytes(lineEnd);
+//        outputStream.writeBytes(MULTIPART_SEPARATOR_LINE + twoHyphens + lineEnd);
+

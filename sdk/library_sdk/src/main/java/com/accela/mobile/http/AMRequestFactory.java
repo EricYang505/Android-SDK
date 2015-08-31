@@ -82,18 +82,17 @@ public class AMRequestFactory {
 
     }
 
+    public static AMDocDownloadRequest createAMDocDownloadRequest(String url, HashMap<String, String> customHttpHeader, RequestParams requestParams, String localFilePath, final AMDocDownloadRequest.AMDownloadDelegate downloadDelegate){
+        AMDocDownloadRequest request = null;
+        try {
+            request = new AMDocDownloadRequest(url, customHttpHeader, requestParams.getStringBody(), localFilePath, downloadDelegate);
+        } catch (MalformedURLException e) {
+            AMLogger.logError(e.toString());
+        }
+        return request;
+    }
+
     public static AMMultiPartRequest createAMMultiPartRequests(String url, HashMap<String, String> customHttpHeader, RequestParams requestParams, final AMRequestDelegate requestDelegate){
-//        List<AMMultiPartRequest> list = new ArrayList<AMMultiPartRequest>();
-//        Map<String, RequestParams.FileWrapper> fileParams = requestParams.getFileParams();
-//        if (fileParams!=null){
-//            for (RequestParams.FileWrapper fileWrapper : fileParams.values()){
-//                try {
-//                    list.add(new AMMultiPartRequest(url, customHttpHeader, fileWrapper, requestDelegate));
-//                } catch (MalformedURLException e) {
-//                    AMLogger.logError(e.toString());
-//                }
-//            }
-//        }
         AMMultiPartRequest request = null;
         try {
             request = new AMMultiPartRequest(url, customHttpHeader, requestParams.getEntity(), requestDelegate);

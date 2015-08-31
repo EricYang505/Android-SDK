@@ -34,6 +34,7 @@ import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.accela.mobile.http.AMDocDownloadRequest;
 import com.accela.mobile.http.AMHttpRequest;
 import com.accela.mobile.http.AMImageLoader;
 import com.accela.mobile.http.AMMultiPartRequest;
@@ -179,13 +180,6 @@ public class AMRequest {
 	 */
 	private AMRequestDelegate requestDelegate;
 
-
-	/**
-	 * The local path of the document which is downloaded(used in document downloading request only).
-	 *
-	 * @since 1.0
-	 */
-	private String amDownloadDestinationPath;
 
 	/**
 	 * The local path of the document which is uploaded(used in document uploading request only).
@@ -387,6 +381,15 @@ public class AMRequest {
         return this;
     }
 
+    public AMRequest downloadDocument(RequestParams paramData, String localFilePath, AMDocDownloadRequest.AMDownloadDelegate downloadRequest){
+        HashMap<String, String> httpHeader = generateHttpHeader();
+        String serializeURL = assembleUrlWithParams(this.serviceURL, this.urlParams);
+        AMDocumentManager documentManager = AMDocumentManager.getAMDocumentManager(this.ownerContext);
+        documentManager.addRequest(AMRequestFactory.createAMDocDownloadRequest(serializeURL, httpHeader, paramData, localFilePath, downloadRequest));
+        documentManager.startRequest();
+        return this;
+    }
+
 	/**
 	 * Makes a request to the Accela Construct API endpoint with the given data using an HTTP POST method as an asynchronous operation.
 	 *
@@ -415,7 +418,6 @@ public class AMRequest {
                     mRequest = AMRequestFactory.createLoginRequest(serializeURL, Request.Method.GET, httpHeader, null, false, this.requestDelegate);
 
                 }else{
-//                    httpHeader.put("Content-Type", "application/json");
                     mRequest = AMRequestFactory.createJsonRequest(serializeURL, Request.Method.GET, httpHeader, null, false, this.requestDelegate);
 				}
                 if (mRequest!=null)
@@ -480,39 +482,6 @@ public class AMRequest {
 		return this;
 	}
 
-	/**
-	 * Makes an asynchronous request using an HTTP POST method to upload multiple attachments.
-	 *
-	 * @param postData The multipart form data which contains both "fileInfo" JSON and file streams.
-	 * 									 Note fileInfo's JSON contains keys "serviceProviderCode","fileName","type",and "description".
-	 * @param attachments The attachments to be uploaded in the request. Values mapping: Key => File Path.
-	 * @param requestDelegate The request's delegate.
-	 *
-	 * @return The AMRequest object corresponding to this API call.
-	 *
-	 * @since 3.0
-	 */
-
-	public AMRequest sendRequest(RequestParams postData, Map<String, String> attachments, AMRequestDelegate requestDelegate) {
-		for (Map.Entry<String, String> entry : attachments.entrySet()) {
-			String fileName = entry.getKey();
-			String filePath = entry.getValue();
-			File file = new File(filePath);
-			if (file.exists()) {
-				try {
-					postData.put(fileName, file);
-				} catch (FileNotFoundException e) {
-					AMLogger.logError("In AMRequest.sendRequest(): FileNotFoundException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
-				}
-			} else {
-				AMLogger.logError("AMRequest.uploadAttachment(): " +  stringLoader.getString("Log_FILE_NOT_FOUND"), filePath);
-			}
-		}
-		// Send request.
-		this.requestType = RequestType.MULTIPART;
-//		this.sendRequest(postData, requestDelegate);
-        throw new RuntimeException("not support yet!");
-	}
 
 	/**
 	 * Uploads multiple binary files together with JSON data represented as an asynchronous operation or synchronous operation.
@@ -558,43 +527,6 @@ public class AMRequest {
 	}
 
 	/**
-	 * Download a binary file as an asynchronous operation or synchronous operation.
-	 * That depends on the value of isSynchronous boolean variable.
-	 *
-	 * @param localFile The local file path with which the downloaded file will be created.
-	 * 	@param requestDelegate The delegate for asynchronous request, or null for synchronous request.
-	 * 									  Note this parameter is used only for asynchronous request (this.isSynchronous = false).
-	 *
-	 * @return The AMRequest object corresponding to this API call.
-	 *
-	 * @since 1.0
-	 */
-	public AMRequest downloadAttachment(String localFile, AMRequestDelegate requestDelegate) {
-		return downloadAttachment(localFile, null, requestDelegate);
-	}
-
-
-	/**
-	 * Download a binary file as an asynchronous operation.
-	 *
-	 * @param localFile The local file path with which the downloaded file will be created.
-	 * @param paramData The collection of parameters associated with post request body.
-	 * @param requestDelegate The delegate for asynchronous request, or null for synchronous request.
-	 *
-	 * @return The AMRequest object corresponding to this API call.
-	 *
-	 * @since 1.0
-	 */
-	public AMRequest downloadAttachment(String localFile,RequestParams paramData, AMRequestDelegate requestDelegate) {
-		this.amDownloadDestinationPath = localFile;
-		this.requestType = RequestType.DEFAULT;
-
-        throw new RuntimeException("not support yet!");
-	}
-
-
-
-	/**
 	 * Get the value of property accelaMobile.
 	 *
      * @return The value of property accelaMobile.
@@ -605,16 +537,6 @@ public class AMRequest {
 		return this.accelaMobile;
 	}
 
-	/**
-	 * Get the value of property amDownloadDestinationPath.
-	 *
-	 * @return The value of property amDownloadDestinationPath.
-	 *
-	 * @since 1.0
-	 */
-	public String getAmDownloadDestinationPath() {
-		return this.amDownloadDestinationPath;
-	}
 
 	/**
 	 * Get the value of property amUploadDestinationPath.
