@@ -245,7 +245,6 @@ public class AMRequest {
 	/**
 	 * Constructor with the given parameters.
 	 *
-	 * @param accelaMobile The AccelaMobile instance which create this request.
 	 * @param serviceURL The service's full path(including server host).
 	 * @param params The collection of URL parameters which will be added to URL with & symbol.
 	 * @param httpMethod One of HTTP method such as GET, POST, PUT or DELETE.
@@ -254,8 +253,8 @@ public class AMRequest {
 	 *
 	 * @since 1.0
 	 */
-	public AMRequest(AccelaMobile accelaMobile, String serviceURL, RequestParams params, HTTPMethod httpMethod) {
-		this.accelaMobile = accelaMobile;
+	public AMRequest(String serviceURL, RequestParams params, HTTPMethod httpMethod) {
+		this.accelaMobile = AccelaMobile.getInstance();
 		this.ownerContext = accelaMobile.ownerContext;
 		this.serviceURL = serviceURL;
 		this.urlParams = params;
@@ -267,7 +266,6 @@ public class AMRequest {
 	/**
 	 * Constructor with the given parameters and delegate.
 	 *
-	 * @param accelaMobile The AccelaMobile instance which create this request.
 	 * @param serviceURL The service's full path(including server host).
 	 * @param params The collection of URL parameters which will be added to URL with & symbol.
 	 * @param httpMethod One of HTTP method such as GET, POST, PUT or DELETE.
@@ -277,8 +275,8 @@ public class AMRequest {
 	 *
 	 * @since 4.0
 	 */
-	public AMRequest(AccelaMobile accelaMobile, String serviceURL, RequestParams params, HTTPMethod httpMethod, AMRequestDelegate requestDelegate) {
-		this(accelaMobile, serviceURL, params, httpMethod);
+	public AMRequest(String serviceURL, RequestParams params, HTTPMethod httpMethod, AMRequestDelegate requestDelegate) {
+		this(serviceURL, params, httpMethod);
 		this.requestDelegate = requestDelegate;
 	}
 
@@ -641,24 +639,6 @@ public class AMRequest {
 	 */
 	public RequestParams getUrlParams() {
 		return this.urlParams;
-	}
-
-
-
-
-
-
-	/**
-	 * Set the value of property accelaMobile.
-	 *
-	 * @param accelaMobile The new value to be assigned.
-	 *
-     * @return Void.
-	 *
-	 * @since 3.0
-	 */
-	public void setAccelaMobile(AccelaMobile accelaMobile) {
-		this.accelaMobile = accelaMobile;
 	}
 
 	/**

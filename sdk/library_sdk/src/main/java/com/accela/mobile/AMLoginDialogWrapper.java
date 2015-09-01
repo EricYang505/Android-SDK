@@ -72,7 +72,7 @@ public class AMLoginDialogWrapper extends Dialog {
         //    contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
             // Invoke session delegate
             AMError amError = new AMError(AMError.STATUS_CODE_OTHER,String.valueOf(errorCode),String.valueOf(errorCode), description, failingUrl);
-            accelaMobile.sessionDelegate.amDidLoginFailure(amError);
+            accelaMobile.getAuthorizationManager().sessionDelegate.amDidLoginFailure(amError);
         }        
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             super.onReceivedSslError(view, handler, error);
@@ -81,7 +81,7 @@ public class AMLoginDialogWrapper extends Dialog {
          //   contentFrameLayout.setBackgroundColor(Color.TRANSPARENT);
             // Invoke session delegate
             AMError amError = new AMError(AMError.STATUS_CODE_OTHER,null,String.valueOf(AMError.ERROR_CODE_Bad_Request), error.toString(), null);
-            accelaMobile.sessionDelegate.amDidLoginFailure(amError);
+            accelaMobile.getAuthorizationManager().sessionDelegate.amDidLoginFailure(amError);
         } 
         
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -101,7 +101,7 @@ public class AMLoginDialogWrapper extends Dialog {
             return true;
         }
     }
-    private AccelaMobile accelaMobile;   
+    private AccelaMobile accelaMobile;
     private String url;
     private WebView webView;
     private ProgressDialog spinner;
@@ -113,7 +113,6 @@ public class AMLoginDialogWrapper extends Dialog {
     /**
      * Constructor which can be used to display a dialog with an already-constructed URL and a custom theme.
      *
-     * @param accelaMobile The AccelaMobile instance which presents this dialog.
      * @param url    The URL of the Web Dialog to display; no validation is done on this URL, but it should
      *                be a valid URL.
      *                
@@ -121,10 +120,10 @@ public class AMLoginDialogWrapper extends Dialog {
 	 *
 	 * @since 3.0
      */
-    public AMLoginDialogWrapper(AccelaMobile accelaMobile, String url) {
-    	 super(accelaMobile.ownerContext, android.R.style.Theme_Translucent_NoTitleBar);     	 
-    	 this.accelaMobile = accelaMobile;
-    	 this.url = url;
+    public AMLoginDialogWrapper(String url) {
+    	super(AccelaMobile.getInstance().ownerContext, android.R.style.Theme_Translucent_NoTitleBar);
+        this.accelaMobile = AccelaMobile.getInstance();
+        this.url = url;
     }
   
 

@@ -104,9 +104,9 @@ public class AuthorizationActivity extends Activity {
 		  }  		  
 		  // It means the current activity is activated by the predefined schema intent coming from independent web browser(working with AccelaMobile.authorize() method).
 		  else if ((accelaMobile != null) && (currentIntent.getData() != null))
-		  {			 
-			Uri webIntentUri = currentIntent.getData();					
-			String action = currentIntent.getAction();	
+		  {
+			Uri webIntentUri = currentIntent.getData();
+			String action = currentIntent.getAction();
 			String schema = webIntentUri.getScheme();
 			if ((Intent.ACTION_VIEW.equals(action)) && (accelaMobile != null) 
 					&& (schema.equalsIgnoreCase(accelaMobile.getUrlSchema())) && (accelaMobile.authorizationManager != null))  { 

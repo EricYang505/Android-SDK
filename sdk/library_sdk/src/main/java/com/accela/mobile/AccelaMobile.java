@@ -17,31 +17,11 @@
   */
 package com.accela.mobile;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.text.TextUtils;
-import android.widget.ImageView;
-
-import com.accela.mobile.AMBatchResponse.AMBatchRequestDelegate;
-import com.accela.mobile.AMRequest.HTTPMethod;
-import com.accela.mobile.http.AMDocDownloadRequest;
-import com.accela.mobile.http.RequestParams;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 
@@ -53,7 +33,9 @@ import java.util.ResourceBundle;
 
 public class AccelaMobile {
 
-	/**
+    private AMRequestSender requestSender;
+
+    /**
 	 * The enum of authorization status
 	 *
 	 * @since 3.0
@@ -116,13 +98,6 @@ public class AccelaMobile {
 	protected Boolean amIsRemember = true;
 
 	/**
-	 * The session delegate which methods are called during the progress of user authentication.
-	 *
-	 * @since 1.0
-	 */
-	protected AMSessionDelegate sessionDelegate;
-
-	/**
 	 * The authorization status
 	 *
 	 * @since 3.0
@@ -179,8 +154,6 @@ public class AccelaMobile {
 	 */
 	protected Environment environment = Environment.PROD ;	// Default value
 
-	protected Map<String, String> amCustomHttpHeader = new HashMap<String, String>();
-
 	/**
 	 * Used to support multiple agency
 	 *
@@ -198,7 +171,7 @@ public class AccelaMobile {
 	 *
 	 * @since 3.0
 	 */
-	public static AccelaMobile defaultInstance() {
+	public synchronized static AccelaMobile getInstance() {
     	if (instance == null)  {
     		instance = new AccelaMobile();
     	}
@@ -224,9 +197,9 @@ public class AccelaMobile {
 	 *
 	 * @since 3.0
 	 */
-	public AccelaMobile(Context ownerContext, String appId, String appSecret) {
+	public void initialize(Context ownerContext, String appId, String appSecret) {
 		// Initialize instance properties.
-		this(ownerContext,appId, appSecret, null);
+        initialize(ownerContext,appId, appSecret, null);
 	}
 
 	/**
@@ -242,18 +215,8 @@ public class AccelaMobile {
 	 *
 	 * @since 3.0
 	 */
-	public AccelaMobile(Context ownerContext, String appId, String appSecret, AMSessionDelegate sessionDelegate) {
-		// Initialize instance properties.
-		this.ownerContext = ownerContext;
-		this.appId = appId;
-		this.appSecret = appSecret;
-		this.sessionDelegate = (sessionDelegate != null) ? sessionDelegate : defaultSessionDelegate;
-		this.authorizationManager = new AuthorizationManager(this);
-		this.authorizationManager.setSessionDelegate(sessionDelegate);
-		// Remember the current instance if the default instance is null.
-		if (instance == null) {
-			instance = this;
-		}
+	public void initialize(Context ownerContext, String appId, String appSecret, AMSessionDelegate sessionDelegate) {
+        this.initialize(ownerContext, appId, appSecret, sessionDelegate, null, null);
 	}
 
 	/**
@@ -271,15 +234,27 @@ public class AccelaMobile {
 	 *
 	 * @since 4.0
 	 */
-	public AccelaMobile(Context ownerContext, String appId, String appSecret, AMSessionDelegate sessionDelegate, String authHost, String apisHost) {
-		this(ownerContext, appId, appSecret, sessionDelegate);
-		this.amAuthHost = (authHost !=null) ? authHost : this.amAuthHost;
-		this.amApisHost = (apisHost !=null) ? apisHost : this.amApisHost;
+	public void initialize(Context ownerContext, String appId, String appSecret, AMSessionDelegate sessionDelegate, String authHost, String apisHost) {
+		this.amAuthHost = (authHost !=null) ? authHost : AMSetting.AM_OAUTH_HOST;
+		this.amApisHost = (apisHost !=null) ? apisHost : AMSetting.AM_API_HOST;
+        // Initialize instance properties.
+        this.ownerContext = ownerContext;
+        this.appId = appId;
+        this.appSecret = appSecret;
+
+        this.authorizationManager = new AuthorizationManager();
+        this.authorizationManager.setSessionDelegate(sessionDelegate==null ? defaultSessionDelegate : sessionDelegate);
+
+        this.requestSender = new AMRequestSender();
 	}
 
 	public AuthorizationManager getAuthorizationManager() {
 		return this.authorizationManager;
 	}
+
+    public AMRequestSender getRequestSender(){
+        return this.requestSender;
+    }
 
 	/**
 	 *
@@ -321,67 +296,6 @@ public class AccelaMobile {
 		return this.amApisHost;
 	}
 
-
-	/**
-	 * Authorizes user through web view with the given permissions array.
-	 *
-	 * @param permissions The array of access permissions. For example, search_records get_single_record  create_record, and etc.
-	 *
-	 * @return Void.
-	 *
-	 * @since 3.0
-	 */
-	public void authorize(String[] permissions) {
-		authorize(permissions, null);
-	}
-
-	/**
-	 * Authorizes user through web view with the given agency and permissions array.
-	 *
-	 * @param permissions The array of access permissions. For example, search_records get_single_record  create_record, and etc.
-	 * @param agency The agency name.
-	 *
-	 * @return Void.
-	 *
-	 * @since 3.0
-	 */
-	public void authorize(String[] permissions, String agency) {
-		showAuthorizationWebView(permissions, agency, false);
-	}
-
-	/**
-	 * Authorizes the user with the given agency, through the login web view wrapped in a native login dialog.
-	 * The native login dialog will be presented for the user if he / she has not valid token.
-	 * Otherwise, the user will be authorized directly without the native login dialog.
-	 *
-	 * @param permissions The array of access permissions. For example, search_records get_single_record  create_record, and etc.
-	 *
-	 * @return Void.
-	 *
-	 * @since 3.0
-	 */
-	public void authorize2(String[] permissions) {
-		authorize2(permissions, null);
-	}
-
-	/**
-	 * Authorizes the user with default agency defined in cloud, through the login web view wrapped in a native login dialog.
-	 * The native login dialog will be presented for the user if he / she has not valid token.
-	 * Otherwise, the user will be authorized directly without the native login dialog.
-	 *
-	 * @param permissions The array of access permissions. For example, search_records get_single_record  create_record, and etc.
-	 * @param agency The agency name.
-	 *
-	 * @return Void.
-	 *
-	 * @since 3.0
-	 */
-	public void authorize2(String[] permissions, String agency) {
-		showAuthorizationWebView(permissions, agency, true);
-	}
-
-	
-	
 	/**
 	 *
 	 * Get the value of property agency.
@@ -486,19 +400,6 @@ public class AccelaMobile {
 
 	/**
 	 *
-	 * Get the value of property sessionDelegate.
-	 *
-	 * @return The value of property sessionDelegate.
-	 *
-	 * @since 1.0
-	 */
-	public AMSessionDelegate getSessionDelegate() {
-		return this.sessionDelegate;
-	}
-
-
-	/**
-	 *
 	 * Get the value of property urlSchema.
 	 *
 	 * @return The value of property urlSchema.
@@ -509,9 +410,6 @@ public class AccelaMobile {
 		return this.urlSchema;
 	}
 
-	public Map<String, String> getCustomHttpHeader(){
-		return this.amCustomHttpHeader;
-	}
 
 	/**
 	 *
@@ -523,255 +421,6 @@ public class AccelaMobile {
 	 */
 	public Boolean isSessionValid() {
 		return (this.authorizationManager != null) && (this.authorizationManager.getAccessToken() != null);
-	}
-
-	public String getToken(){
-		return authorizationManager.getAccessToken();
-	}
-
-	/**
-	 *
-	 * Refresh token.
-	 *
-	 * @param sessionDelegate The session delegate which handle the success or failure resule of token refreshing.
-	 * @return The request which processes the token refreshing.
-	 *
-	 * @since 4.0
-	 */
-	public AMRequest refreshToken(AMSessionDelegate sessionDelegate) {
-		AMRequest tokenRequest = null;
-		if (this.authorizationManager !=null) {
-			tokenRequest = authorizationManager.fetchAccessTokenByRefreshToken(sessionDelegate);
-		}
-		return tokenRequest;
-	}
-
-	/**
-	 *
-	 * Logs out the user.
-	 *
-	 * @return Void.
-	 *
-	 * @since 1.0
-	 */
-	public void logout() {
-		// Clear token.
-		if (authorizationManager != null) {
-			authorizationManager.clearAuthorizationAndToken(true);
-		}
-		// Call session delegate.
-		if (this.sessionDelegate != null) {
-			this.sessionDelegate.amDidLogout();
-		}
-	}
-
-	/**
-	 *
-	 * @param batchSession
-	 * @param path
-	 * @param urlParams
-	 * @param customHttpHeader
-	 * @param requestDelegate
-	 * @return
-	 *
-	 * @since 4.0
-	 */
-	public AMRequest request(AMBatchSession batchSession, String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {
-		AMRequest amRequest = new AMRequest(this, path, urlParams, HTTPMethod.GET, requestDelegate);
-		amRequest.setHttpHeader(customHttpHeader);
-		batchSession.add(amRequest);
-		return amRequest;
-	}
-
-	/**
-	 * Makes a request to the Accela Construct API endpoint with the given parameters using HTTP GET method as an asynchronous operation.
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param customHttpHeader The HTTP header fields in key value pairs.
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
-	 * @param customHttpHeader The HTTP header fields in key value pairs.
-	 * @return The AMRequest object corresponding to this API call.
-	 *
-	 * @since 1.0
-	 */
-	public AMRequest request(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {
-		return this.request(path, urlParams, customHttpHeader, HTTPMethod.GET, null, requestDelegate);
-	}
-
-	/**
-	 * Makes a request to the Accela Construct API endpoint with the given parameters using the given HTTP method as an asynchronous operation.
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param httpMethod The HTTP data transfer method (such as GET, POST, PUT or DELETE).
-	 * @param postData The content sent with the corresponding request(only used in POST or PUT method).
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
-	 *
-	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
-	 *
-	 * @since 1.0
-	 */
-	public AMRequest request(String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData, AMRequestDelegate requestDelegate) {
-		return request(path, urlParams, null, httpMethod, postData, requestDelegate);
-	}
-
-	/**
-	 * Makes a request to the Accela Construct API endpoint with the given parameters using the given HTTP method as an asynchronous operation.
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param customHttpHeader The HTTP header fields in key value pairs.
-	 * @param httpMethod The HTTP data transfer method (such as GET, POST, PUT or DELETE).
-	 * @param postData The content sent with the corresponding request(only used in POST or PUT method).
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
-	 *
-	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
-	 *
-	 * @since 4.1
-	 */
-	public AMRequest request(String path, RequestParams urlParams, Map<String, String> customHttpHeader, HTTPMethod httpMethod, RequestParams postData, AMRequestDelegate requestDelegate) {
-		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, httpMethod);
-		amRequest.setAccelaMobile(this);
-		amRequest.setHttpHeader(customHttpHeader);
-        try {
-            return amRequest.sendRequest(postData, requestDelegate);
-        } catch (JSONException e) {
-            AMLogger.logError(e.toString());
-        }
-        return amRequest;
-    }
-
-	/**
-	 * Makes a request to the Accela Construct API end point with the given parameters using the given HTTP method as an asynchronous operation.
-	 *
-	 * @param path The path to the Accela Construct API end point.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param httpMethod The HTTP data transfer method (such as GET, POST, PUT or DELETE).
-	 * @param postData The content sent with the corresponding request(only used in POST or PUT method).
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
-	 *
-	 * @return The AMRequest object corresponding to this Accela Construct API end point call.
-	 *
-	 * @since 4.0
-	 */
-	public AMRequest request(AMBatchSession batchSession,String path, RequestParams urlParams, HTTPMethod httpMethod, RequestParams postData, AMRequestDelegate requestDelegate) {
-		return request(batchSession, path, urlParams, null, httpMethod, postData, requestDelegate);
-	}
-
-	/**
-	 * Makes a request to the Accela Construct API end point with the given parameters using the given HTTP method as an asynchronous operation.
-	 *
-	 * @param path The path to the Accela Construct API end point.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param customHttpHeader The HTTP header fields in key value pairs.
-	 * @param httpMethod The HTTP data transfer method (such as GET, POST, PUT or DELETE).
-	 * @param postData The content sent with the corresponding request(only used in POST or PUT method).
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
-	 *
-	 * @return The AMRequest object corresponding to this Accela Construct API end point call.
-	 *
-	 * @since 4.1
-	 */
-	public AMRequest request(AMBatchSession batchSession,String path, RequestParams urlParams, Map<String, String> customHttpHeader, HTTPMethod httpMethod, RequestParams postData, AMRequestDelegate requestDelegate) {
-		AMRequest amRequest = new AMRequest(this, path, urlParams, HTTPMethod.POST, requestDelegate);
-		amRequest.setHttpHeader(customHttpHeader);
-		batchSession.add(amRequest);
-		return amRequest;
-	}
-
-
-    public AMRequest loadImage(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate, int maxWidth, int maxHeight, ImageView.ScaleType scaleType) {
-        AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, HTTPMethod.GET);
-        amRequest.setAccelaMobile(this);
-        amRequest.setHttpHeader(customHttpHeader);
-        amRequest.setRequestType(AMRequest.RequestType.IMAGE);
-        amRequest.loadImage(requestDelegate, maxWidth, maxHeight, scaleType);
-        return amRequest;
-    }
-
-    public AMRequest loadImage(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate, int maxWidth, int maxHeight) {
-        AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, HTTPMethod.GET);
-        amRequest.setAccelaMobile(this);
-        amRequest.setHttpHeader(customHttpHeader);
-        amRequest.setRequestType(AMRequest.RequestType.IMAGE);
-        amRequest.loadImage(requestDelegate, maxWidth, maxHeight);
-        return amRequest;
-    }
-
-    public AMRequest loadImage(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {
-        AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, HTTPMethod.GET);
-        amRequest.setAccelaMobile(this);
-        amRequest.setHttpHeader(customHttpHeader);
-        amRequest.setRequestType(AMRequest.RequestType.IMAGE);
-        amRequest.loadImage(requestDelegate);
-        return amRequest;
-    }
-
-
-	/**
-	 *
-	 * Start a batch request.
-	 *
-	 * @return An initialized AMBatchSession instance.
-	 *
-	 * @since 4.0
-	 */
-	public static AMBatchSession batchBegin(){
-		return new AMBatchSession();
-	}
-
-
-	/**
-	 *
-	 * Commit the currently started batch request.
-	 *
-	 * @param session The batch session instance.
-	 * @param batchRequestDelegate The delegate of batch session.
-	 *
-	 * @return An initialized AccelaMobile instance.
-	 *
-	 * @since 4.0
-	 */
-	public static void batchCommit(AMBatchSession session, Map<String, String> customParams, AMBatchRequestDelegate batchRequestDelegate){
-		final AMBatchSession batchSession = session;
-		final AMBatchRequestDelegate batchRequestDelegate1 = batchRequestDelegate;
-		AMRequestDelegate requestDelegate = new AMRequestDelegate() {
-			@Override
-			public void onStart() {}
-
-			@Override
-			public void onSuccess(JSONObject result) {
-				AMBatchResponse response = new AMBatchResponse(result);
-				List<JSONObject> childResponses = response.getResult();
-				List<AMRequest> requests = batchSession.getRequests();
-
-				if(response == null || childResponses.size()!= requests.size()){
-					batchRequestDelegate1.onSuccessful();
-					return;
-				}
-
-				for(int index = 0; index < requests.size(); index++){
-					AMRequest request = requests.get(index);
-					JSONObject childResponse = childResponses.get(index);
-					AMRequestDelegate rstDelegate = request.getRequestDelegate();
-					rstDelegate.onSuccess(childResponse);
-				}
-
-				if(batchRequestDelegate1 != null){
-					batchRequestDelegate1.onSuccessful();
-				}
-			}
-
-			@Override
-			public void onFailure(AMError error) {
-				if(batchRequestDelegate1 != null){
-					batchRequestDelegate1.onFailed(error);
-				}
-			}
-		};
-
-		session.executeAsync(customParams, requestDelegate);
 	}
 
 	/**
@@ -786,21 +435,6 @@ public class AccelaMobile {
 	 */
 	public void setAmIsRemember(Boolean remember) {
 		this.amIsRemember = remember;
-	}
-
-
-	/**
-	 *
-	 * Set the value of property authorizationManager.
-	 *
-	 * @param authorizationManager The new value to be assigned.
-	 *
-	 * @return Void.
-	 *
-	 * @since 3.0
-	 */
-	public void setAuthorizationManager(AuthorizationManager authorizationManager) {
-		this.authorizationManager = authorizationManager;
 	}
 
 	/**
@@ -835,23 +469,6 @@ public class AccelaMobile {
 
 	/**
 	 *
-	 * Set the value of property sessionDelegate.
-	 *
-	 * @param sessionDelegate The new value to be assigned.
-	 *
-	 * @return Void.
-	 *
-	 * @since 1.0
-	 */
-	public void setSessionDelegate(AMSessionDelegate sessionDelegate) {
-		this.sessionDelegate = sessionDelegate;
-		if ( this.authorizationManager!= null ) {
-			this.authorizationManager.setSessionDelegate(this.sessionDelegate);
-		}
-	}
-
-	/**
-	 *
 	 * Set the value of property urlSchema.
 	 *
 	 * @param urlSchema The new value to be assigned.
@@ -864,169 +481,27 @@ public class AccelaMobile {
 		this.urlSchema = urlSchema;
 	}
 
-	public void setCustomHttpHeader(Map<String, String> customHttpHeader){
-		this.amCustomHttpHeader = customHttpHeader;
-	}
+    /**
+     * Private variable, used as the default value of sessionDelegate property if its value is not initialized.
+     */
+    private AMSessionDelegate defaultSessionDelegate = new AMSessionDelegate() {
 
-	/**
-	 *
-	 * Uploads a set of binary files as an asynchronous operation.
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param postData The array of file's JSON object is posted together with attachments.
-	 * 									 Note file's JSON object contains keys "serviceProviderCode","fileName","type",and "description".
-	 * @param fileInformation The file collection of key-value pairs.
-	 * 									 Note the key name is "fileName", and the value is file's full path.
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
-	 *
-	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
-	 *
-	 * @since 1.0
-	 */
-	public AMRequest uploadAttachments(String path, RequestParams postData, Map<String, String> fileInformation, AMRequestDelegate requestDelegate) {
-		return uploadAttachments(path, postData, fileInformation, amCustomHttpHeader, requestDelegate);
-	}
+        public void amDidCancelLogin() {
+            AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidCancelLogin"));
+        }
+        public void amDidLogin() {
+            AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLogin"));
+        }
+        public void amDidLoginFailure(AMError error) {
+            AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLoginFailure"), error.toString());
+        }
 
-	/**
-	 *
-	 * Uploads a set of binary files as an asynchronous operation.
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param postData The array of file's JSON object is posted together with attachments.
-	 * 									 Note file's JSON object contains keys "serviceProviderCode","fileName","type",and "description".
-	 * @param fileInformation The file collection of key-value pairs.
-	 * 									 Note the key name is "fileName", and the value is file's full path.
-	 * @param customHttpHeader The HTTP header fields in key value pairs.
-	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
-	 *
-	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
-	 *
-	 * @since 1.0
-	 */
-	public AMRequest uploadAttachments(String path, RequestParams postData, Map<String, String> fileInformation,  Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {
-		AMRequest amRequest = new AMRequest(this, this.amApisHost + path,  null, HTTPMethod.POST);
-		amRequest.setAccelaMobile(this);
-		amRequest.setHttpHeader(customHttpHeader);
-		return amRequest.uploadAttachments(postData, fileInformation, requestDelegate);
-	}
-
-	/**
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param localFile The path for file.
-	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
-	 * @since 1.0
-	 */
-	public AMRequest downloadAttachment(String path, RequestParams urlParams,  String localFile, AMDocDownloadRequest.AMDownloadDelegate downloadDelegate) {
-		return this.downloadAttachment(path, urlParams, null, localFile, downloadDelegate);
-	}
-
-	/**
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param localFile The path for file.
-	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
-	 * @since 4.1
-	 */
-	public AMRequest downloadAttachment(String path, RequestParams urlParams, RequestParams postData, String localFile, AMDocDownloadRequest.AMDownloadDelegate downloadDelegate) {
-		return this.downloadAttachment(path, urlParams, amCustomHttpHeader, null, localFile, downloadDelegate);
-	}
-
-	/**
-	 *
-	 * @param path The path to the Accela Construct API endpoint.
-	 * @param urlParams The collection of parameters associated with the specific URL.
-	 * @param localFile The path for file.
-	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
-	 * @since 4.1
-	 */
-	public AMRequest downloadAttachment(String path, RequestParams urlParams, Map<String, String> customHttpHeader, RequestParams postData, String localFile, AMDocDownloadRequest.AMDownloadDelegate downloadDelegate) {
-		AMRequest amRequest = new AMRequest(this, this.amApisHost + path, urlParams, HTTPMethod.GET);
-		amRequest.setAccelaMobile(this);
-		amRequest.setHttpHeader(customHttpHeader);
-		return amRequest.downloadDocument(urlParams, localFile, downloadDelegate);
-	}
-
-
-	/**
-	 * Private method, used to show login web view in an independent web browser or a native dialog.
-	 */
-	private  void showAuthorizationWebView(String[] permissions, String agency, boolean isWrappedWebView) {
-		// Initialize authorization manager if it is null
-		this.authorizationManager = (this.authorizationManager !=null) ? this.authorizationManager : new AuthorizationManager(this);
-		// Return directly if the authorization manager has access token (loaded from local store)
-		if ((authorizationManager.getAccessToken() != null) && (sessionDelegate != null))
-		{
-			sessionDelegate.amDidLogin();
-			return;
-		}
-		// Return directly if internet permission is not granted in AndroidManifest.xml file.
-		else if (this.ownerContext.checkCallingOrSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-			new AlertDialog.Builder(ownerContext)
-			.setTitle(null)
-			.setMessage(stringLoader.getString("Error_Require_Internet_Permission"))
-			.setNegativeButton(stringLoader.getString("Button_OK"), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					// Do nothing except closing the alert dialog.
-				}
-			}).create().show();
-			return;
-		}
-
-		// Otherwise, show the login dialog which embeds the HTML login view.
-		this.authorizationManager.setClientInfo(this.appId, this.appSecret, this.environment.name(), agency, this.amAuthHost, this.amApisHost);
-		this.authorizationManager.setIsRememberToken(this.amIsRemember);
-		this.authorizationManager.setSessionDelegate(this.sessionDelegate);
-
-		if (isWrappedWebView) {  // Login through a dialog which wraps HTML login web view.
-			String redirectUrl = urlSchema + "://authorize";
-		 	if (agency != null) {
-		 		redirectUrl += "&agency=" + agency;
-		 	}
-			String authorizationURL = this.authorizationManager.getAuthorizeUrl4WebLogin(redirectUrl, permissions);
-			AMLoginDialogWrapper amLoginDialogWrapper = new AMLoginDialogWrapper(this, authorizationURL);
-			this.authorizationManager.getAuthorizeCode4Public(amLoginDialogWrapper, redirectUrl, permissions);
-		} else {   // Login through an independent web browser.
-			HashMap<String, Object> actionBundle = new HashMap<String, Object>();
-			actionBundle.put("permissions", permissions);
-			if (agency != null) {
-				actionBundle.put("agency_name", agency);
-			}
-			AuthorizationActivity.accelaMobile = this;
-			Intent intent = new Intent(this.ownerContext, AuthorizationActivity.class);
-			intent.putExtra("isWrappedWebView", isWrappedWebView);
-			intent.putExtra("actionBundle", actionBundle);
-			try {
-				((Activity) this.ownerContext).startActivity(intent);
-			} catch (ActivityNotFoundException e) {
-				AMLogger.logError("In AccelaMobile.authorize(String agency, String[] permissions): ActivityNotFoundException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
-				AMLogger.logError(stringLoader.getString("Log_AuthorizationActivity_NOT_Declared"));
-			}
-		}
-	}
-	/**
-	 * Private variable, used as the default value of sessionDelegate property if its value is not initialized.
-	 */
-	private AMSessionDelegate defaultSessionDelegate = new AMSessionDelegate() {
-
-		public void amDidCancelLogin() {
-			AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidCancelLogin"));
-		}
-		public void amDidLogin() {
-			AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLogin"));
-		}
-		public void amDidLoginFailure(AMError error) {
-			AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLoginFailure"), error.toString());
-		}
-
-		public void amDidLogout() {
-			AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLogout"));
-		}
-		public void amDidSessionInvalid(AMError error) {
-			AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidSessionInvalid"), error.toString());
-		}
-	};
+        public void amDidLogout() {
+            AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLogout"));
+        }
+        public void amDidSessionInvalid(AMError error) {
+            AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidSessionInvalid"), error.toString());
+        }
+    };
 
 }

@@ -104,8 +104,7 @@ public class AMBatchSession {
 
 		String json = toJsonArray(models);
         RequestParams params = new RequestParams(json);
-		AccelaMobile accelaMobile = AccelaMobile.defaultInstance();
-		accelaMobile.request(path, null, customParams, HTTPMethod.POST, params,requestDelegate);
+        AccelaMobile.getInstance().request(path, null, customParams, HTTPMethod.POST, params,requestDelegate);
 	}
 	
 	/**
