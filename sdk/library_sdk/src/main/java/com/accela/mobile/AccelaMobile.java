@@ -33,18 +33,6 @@ import java.util.ResourceBundle;
 
 public class AccelaMobile {
 
-    private AMRequestSender requestSender;
-
-    /**
-	 * The enum of authorization status
-	 *
-	 * @since 3.0
-	 */
-	public enum AuthorizationStatus
-	{
-		AUTHORIZED, LOGGEDIN, NONE
-	}
-
 	/**
 	 * Environment enumerations.
 	 *
@@ -90,26 +78,14 @@ public class AccelaMobile {
 	 */
 	protected AuthorizationManager authorizationManager;
 
-	/**
-	 * The flag which indicates whether user profile should be saved to local storage after successful login.
-	 *
-	 * @since 1.0
-	 */
-	protected Boolean amIsRemember = true;
-
-	/**
-	 * The authorization status
-	 *
-	 * @since 3.0
-	 */
-	protected AuthorizationStatus authorizationStatus;
+    private AMRequestSender requestSender;
 
 	/**
 	 * The Android context (usually an Activity) which creates the current AccelaMobile instance.
 	 *
 	 * @since 1.0
 	 */
-	protected Context ownerContext;
+	Context ownerContext;
 
 	/**
 	 * The string loader which loads localized text strings.
@@ -119,25 +95,18 @@ public class AccelaMobile {
 	protected  ResourceBundle stringLoader = AMSetting.getStringResourceBundle();
 
 	/**
-	 * The URL schema used by the callback of user authorization or other intents which are returned from web view.
-	 *
-	 * @since 1.0
-	 */
-	private String urlSchema;
-
-	/**
 	 * The ID string of the application registered on developer portal.
 	 *
 	 * @since 1.0
 	 */
-	private String appId;
+	String appId;
 
 	/**
 	 * The security string of the application registered on developer portal.
 	 *
 	 * @since 3.0
 	 */
-	private String appSecret ;
+	String appSecret ;
 
 
 	/**
@@ -145,23 +114,23 @@ public class AccelaMobile {
 	 *
 	 * @since 1.0
 	 */
-	protected String agency ;
+	private String agency ;
 
 	/**
 	 * The environment to which user logs in.
 	 *
 	 * @since 3.0
 	 */
-	protected Environment environment = Environment.PROD ;	// Default value
+	private Environment environment = Environment.PROD ;	// Default value
 
-	/**
-	 * Used to support multiple agency
-	 *
-	 * @since 4.0
-	 */
-	public static final String IS_ALL_AGENCIES = "is_all_agencies";
-	public static final String AGENCY_NAME = "agency_name";
-	public static final String ENVIRONMENT_NAME = "environment_name";
+//	/**
+//	 * Used to support multiple agency
+//	 *
+//	 * @since 4.0
+//	 */
+//	public static final String IS_ALL_AGENCIES = "is_all_agencies";
+//	public static final String AGENCY_NAME = "agency_name";
+//	public static final String ENVIRONMENT_NAME = "environment_name";
 
 	/**
 	 *
@@ -197,9 +166,9 @@ public class AccelaMobile {
 	 *
 	 * @since 3.0
 	 */
-	public void initialize(Context ownerContext, String appId, String appSecret) {
+	public void initialize(Context ownerContext, String appId, String appSecret, Environment environment) {
 		// Initialize instance properties.
-        initialize(ownerContext,appId, appSecret, null);
+        initialize(ownerContext,appId, appSecret, environment, null);
 	}
 
 	/**
@@ -215,8 +184,8 @@ public class AccelaMobile {
 	 *
 	 * @since 3.0
 	 */
-	public void initialize(Context ownerContext, String appId, String appSecret, AMSessionDelegate sessionDelegate) {
-        this.initialize(ownerContext, appId, appSecret, sessionDelegate, null, null);
+	public void initialize(Context ownerContext, String appId, String appSecret, Environment environment, AMSessionDelegate sessionDelegate) {
+        this.initialize(ownerContext, appId, appSecret, environment, sessionDelegate, null, null);
 	}
 
 	/**
@@ -234,14 +203,14 @@ public class AccelaMobile {
 	 *
 	 * @since 4.0
 	 */
-	public void initialize(Context ownerContext, String appId, String appSecret, AMSessionDelegate sessionDelegate, String authHost, String apisHost) {
+	public void initialize(Context ownerContext, String appId, String appSecret, Environment environment, AMSessionDelegate sessionDelegate, String authHost, String apisHost) {
 		this.amAuthHost = (authHost !=null) ? authHost : AMSetting.AM_OAUTH_HOST;
 		this.amApisHost = (apisHost !=null) ? apisHost : AMSetting.AM_API_HOST;
         // Initialize instance properties.
         this.ownerContext = ownerContext;
         this.appId = appId;
         this.appSecret = appSecret;
-
+        this.environment = environment;
         this.authorizationManager = new AuthorizationManager();
         this.authorizationManager.setSessionDelegate(sessionDelegate==null ? defaultSessionDelegate : sessionDelegate);
 
@@ -256,45 +225,7 @@ public class AccelaMobile {
         return this.requestSender;
     }
 
-	/**
-	 *
-	 * Set the URL of cloud server for user authorization and service API
-	 *
-	 * @param authHost The URL of cloud server for user authorization.
-	 * @param apisHost The URL of cloud server for service API calling.
-	 *
-	 * @return Void.
-	 *
-	 * @since 4.0
-	 */
-	public void setHostUrl(String authHost, String apisHost) {
-		this.amAuthHost = authHost;
-		this.amApisHost = apisHost;
-	}
 
-	/**
-	 *
-	 * Get the URL of cloud server for user authorization
-	 *
-	 * @return The URL of cloud server for user authorization.
-	 *
-	 * @since 4.0
-	 */
-	public String getAuthHost() {
-		return this.amAuthHost;
-	}
-
-	/**
-	 *
-	 * Get the URL of cloud server for service API calling.
-	 *
-	 * @return The URL of cloud server for service API calling.
-	 *
-	 * @since 4.0
-	 */
-	public String getApisHost() {
-		return this.amApisHost;
-	}
 
 	/**
 	 *
@@ -345,42 +276,6 @@ public class AccelaMobile {
 
 	/**
 	 *
-	 * Get the value of property appId.
-	 *
-	 * @return The value of property appId.
-	 *
-	 * @since 1.0
-	 */
-	public String getAppId() {
-		return this.appId;
-	}
-
-	/**
-	 *
-	 * Get the value of property appSecret.
-	 *
-	 * @return The value of property appSecret.
-	 *
-	 * @since 3.0
-	 */
-	public String getAppSecret() {
-		return this.appSecret;
-	}
-
-	/**
-	 *
-	 * Get the flag whether the current user has been authorized.
-	 *
-	 * @return true if user has been authorized; otherwise false.
-	 *
-	 * @since 3.0
-	 */
-	public AuthorizationStatus getAuthorizationStatus() {
-		return this.authorizationStatus;
-	}
-
-	/**
-	 *
 	 * Get the value of property environment.
 	 *
 	 * @return The value of property environment.
@@ -398,18 +293,6 @@ public class AccelaMobile {
 		return this.environment;
 	}
 
-	/**
-	 *
-	 * Get the value of property urlSchema.
-	 *
-	 * @return The value of property urlSchema.
-	 *
-	 * @since 2.1
-	 */
-	public String getUrlSchema() {
-		return this.urlSchema;
-	}
-
 
 	/**
 	 *
@@ -421,20 +304,6 @@ public class AccelaMobile {
 	 */
 	public Boolean isSessionValid() {
 		return (this.authorizationManager != null) && (this.authorizationManager.getAccessToken() != null);
-	}
-
-	/**
-	 *
-	 * Set the value of property amIsRemember.
-	 *
-	 * @param remember true or false.
-	 *
-	 * @return Void.
-	 *
-	 * @since 1.0
-	 */
-	public void setAmIsRemember(Boolean remember) {
-		this.amIsRemember = remember;
 	}
 
 	/**
@@ -451,35 +320,6 @@ public class AccelaMobile {
 		 AMSetting.DebugMode = isOn;
 	}
 
-
-	/**
-	 *
-	 * Set the value of property environment.
-	 *
-	 * @param environment The new value to be assigned.
-	 *
-	 * @return Void.
-	 *
-	 * @since 3.0
-	 */
-	public void setEnvironment(Environment environment) {
-		 this.environment = environment;
-	}
-
-
-	/**
-	 *
-	 * Set the value of property urlSchema.
-	 *
-	 * @param urlSchema The new value to be assigned.
-	 *
-	 * @return Void.
-	 *
-	 * @since 2.1
-	 */
-	public void setUrlSchema(String urlSchema) {
-		this.urlSchema = urlSchema;
-	}
 
     /**
      * Private variable, used as the default value of sessionDelegate property if its value is not initialized.

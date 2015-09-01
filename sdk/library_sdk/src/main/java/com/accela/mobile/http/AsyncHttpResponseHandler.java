@@ -39,18 +39,6 @@ public abstract class AsyncHttpResponseHandler {
      */
     public abstract void onStart();
 
-
-
-    /**
-     * Fired in all cases when the request is finished, after both success and
-     * failure, override to handle in your own code
-     *
-     * @return Void.
-     *
-     * @since 1.0
-     */
-    public void onFinish() {}
-
     public void onSuccess(JSONObject content) {}
 
     public void onSuccess(JSONArray content) {}
@@ -69,18 +57,18 @@ public abstract class AsyncHttpResponseHandler {
      */
     public void onSuccess(String content) {}
 
-    /**
-     * Fired when a request returns a byte array response successfully,
-     * override to handle in your own code.
-     *
-     * @param content
-     *            The byte array body of the HTTP response from the server.
-     *
-     * @return Void.
-     *
-     * @since 1.0
-     */
-    public void onSuccess(byte[] content) {}
+//    /**
+//     * Fired when a request returns a byte array response successfully,
+//     * override to handle in your own code.
+//     *
+//     * @param content
+//     *            The byte array body of the HTTP response from the server.
+//     *
+//     * @return Void.
+//     *
+//     * @since 1.0
+//     */
+//    public void onSuccess(byte[] content) {}
 
     /**
      * Fired when a request fails to complete, override to handle in your own
@@ -95,18 +83,5 @@ public abstract class AsyncHttpResponseHandler {
      */
     public void onFailure(AMError error) {
     }
-
-
-    /**
-     * Fired when a request times out, override to handle in your own code.
-     *
-     * @param error
-     *            The underlying cause of the failure.
-     *
-     * @return Void.
-     *
-     * @since 4.0
-     */
-    public void onTimeout() {}
 
 }

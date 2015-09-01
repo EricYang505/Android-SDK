@@ -173,22 +173,6 @@ public abstract class AMRequestDelegate extends AsyncHttpResponseHandler {
 	}
 
 	/**
-	 * Called when an request times out after waiting the connection time
-	 * interval defined in {@link AMSetting}.
-	 * 
-	 * @param request The AMRequest instance which is processing the current request.
-	 * 
-	 * @return Void.
-	 * 
-	 * @since 3.0
-	 */
-	public void amRequestDidTimeout(AMRequest request) {
-		if (AMSetting.DebugMode) {
-			AMLogger.logError(stringLoader.getString("Log_AMRequestDelegate_amRequestDidTimeout_Body"),request.getTag(), request.getHttpMethod(),AMSetting.HTTP_CONNECTION_TIMEOUT);
-		}
-	}
-
-	/**
 	 * Called when an error prevents the request from completing successfully.
 	 * 
 	 * @param request The AMRequest instance which is processing the current request.
@@ -209,12 +193,12 @@ public abstract class AMRequestDelegate extends AsyncHttpResponseHandler {
 	 * object. The resulting object format may be a dictionary or an array. Note
 	 * that the result is null if the amDownloadDestinationPath property bas
 	 * been set to a valid value.
-	 * 
+	 *
 	 * @param request The AMRequest instance which is processing the current request.
 	 * @param result The JSON object which contains the result data.
-	 * 
+	 *
 	 * @return Void.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public void amRequestDidLoad(AMRequest request, JSONObject result) {
@@ -222,55 +206,5 @@ public abstract class AMRequestDelegate extends AsyncHttpResponseHandler {
 			AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestDidLoad_Body"),request.getTag(), request.getHttpMethod(),result.toString());
 		}
 	}
-	
-	/**
-	 * Called when the request receives some data.
-	 * 
-	 * Note that the total is 0 if there is no Content-Length variable in the
-	 * HTTP headers.
-	 * 
-	 * @param request The AMRequest instance which is processing the current request.
-	 * @param bytes The bytes of data which has been received.
-	 * @param total The total bytes of data which will be received.
-	 * 
-	 * @since 1.0
-	 */
-	public void amRequestReceivedBytes(AMRequest request, long bytes, long total) {
-		if (AMSetting.DebugMode) {
-			AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestReceivedBytes_Body"),request.getTag(), request.getHttpMethod(), bytes, total);
-		}
-	}
 
-	/**
-	 * Called when the request sends some data.
-	 * 
-	 * @param request The AMRequest instance which is processing the current request.
-	 * @param bytes The bytes of data which has been sent.
-	 * 
-	 * @since 1.0
-	 */
-
-	public void amRequestSendBytes(AMRequest request, long bytes) {
-		if (AMSetting.DebugMode) {
-			AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestSendBytes_Body"),request.getTag(), request.getHttpMethod(), bytes);
-		}
-	}
-
-	/**
-	 * private method, used to populate response's headers into a string.
-	 */
-	private String getHeadersString(Header[] headers) {
-		if ((headers == null) || (headers.length == 0)) {
-			return null;
-		}
-
-		String headersString = "";
-		for (Header header : headers) {
-			headersString += header.getName() + "=" + header.getValue() + ";";
-		}
-		// Remove the last char
-		headersString = headersString.substring(0, headersString.length() - 2);
-		// Return the string with JSON format.
-		return "{" + headersString + "}";
-	}
 }

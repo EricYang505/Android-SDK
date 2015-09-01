@@ -42,7 +42,7 @@ public class AMLoginView extends PopupWindow {
 	protected String[] permissions;	
 	protected String agency;	
 	protected String environment;	
-	protected AccelaMobile accelaMobileInternal;   
+	protected AccelaMobile accelaMobile;
 	
 	protected Boolean isUserProfileRemebered = false;
 	protected AMRequest currentRequest;
@@ -61,10 +61,10 @@ public class AMLoginView extends PopupWindow {
 	 */	
 	AMLoginView(AccelaMobile accelaMobileInternal) {		
 		this(accelaMobileInternal.ownerContext);
-		this.accelaMobileInternal = accelaMobileInternal;
+		this.accelaMobile = accelaMobileInternal;
 		// init data
-		this.agency = this.accelaMobileInternal.agency;
-		this.environment = this.accelaMobileInternal.environment.name();
+		this.agency = this.accelaMobile.getAgency();
+		this.environment = this.accelaMobile.getEnvironment().name();
 		// Get screen height and width
 		DisplayMetrics displayMetrics = new DisplayMetrics();   
 		((Activity) accelaMobileInternal.ownerContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -73,7 +73,7 @@ public class AMLoginView extends PopupWindow {
 		// Check whether the current device is Pad or not (Phone)
 		isDevicePad = isRunningOnTabletDevice();
 		
-		this.isUserProfileRemebered = accelaMobileInternal.amIsRemember;
+		this.isUserProfileRemebered = accelaMobile.getAuthorizationManager().amIsRemember;
 	}
 	
 	/**
@@ -100,7 +100,7 @@ public class AMLoginView extends PopupWindow {
 				bytes[i] += 256;
 			}
 		}				
-		return new BitmapDrawable(accelaMobileInternal.ownerContext.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+		return new BitmapDrawable(accelaMobile.ownerContext.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public class AMLoginView extends PopupWindow {
 	 */	
 	protected Drawable geRoundCornerRowShape(int width,int height, int color) {
 		DisplayMetrics displayMetrics = new DisplayMetrics();   
-		((Activity) accelaMobileInternal.ownerContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);			
+		((Activity) accelaMobile.ownerContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		GradientDrawable g = new GradientDrawable();
 		g.setGradientType(GradientDrawable.RECTANGLE);         
 		g.setBounds(10, 0, 10, 0);
@@ -124,7 +124,7 @@ public class AMLoginView extends PopupWindow {
 	 * Private method, used to detect whether the running device is a Tablet or not.
 	 */	
 	private Boolean isRunningOnTabletDevice() {
-	    return (accelaMobileInternal.ownerContext.getResources().getConfiguration().screenLayout
+	    return (accelaMobile.ownerContext.getResources().getConfiguration().screenLayout
 	            & Configuration.SCREENLAYOUT_SIZE_MASK)
 	            >= Configuration.SCREENLAYOUT_SIZE_LARGE;
 	}	

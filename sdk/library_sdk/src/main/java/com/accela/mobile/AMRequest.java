@@ -91,7 +91,7 @@ public class AMRequest {
 	 *
 	 * @since 3.0
 	 */
-	private static final String HEADER_X_ACCELA_ENVIRONMENT = "x-accela-environment";
+	public static final String HEADER_X_ACCELA_ENVIRONMENT = "x-accela-environment";
 
 	/**
 	 * App ID header name in HTTP/HTTPS request headers.
@@ -127,14 +127,14 @@ public class AMRequest {
 	 *
 	 * @since 3.0
 	 */
-	private static final String HEADER_X_ACCELA_AGENCY = "x-accela-agency";
+	public static final String HEADER_X_ACCELA_AGENCY = "x-accela-agency";
 
 	/**
 	 * Agencies header name in HTTP/HTTPS request headers.
 	 *
 	 * @since 3.0
 	 */
-	private static final String HEADER_X_ACCELA_AGENCIES = "x-accela-agencies";
+	public static final String HEADER_X_ACCELA_AGENCIES = "x-accela-agencies";
 
 	/**
 	 * The context which processes the request.
@@ -223,11 +223,6 @@ public class AMRequest {
      */
     private RequestParams urlParams;
 
-    /**
-     * The post data (only used for http method POST or PUT).
-     *
-     * @since 1.0
-     */
     private RequestParams postParams;
 
 	/**
@@ -246,18 +241,18 @@ public class AMRequest {
 	 * Constructor with the given parameters.
 	 *
 	 * @param serviceURL The service's full path(including server host).
-	 * @param params The collection of URL parameters which will be added to URL with & symbol.
 	 * @param httpMethod One of HTTP method such as GET, POST, PUT or DELETE.
 	 *
 	 * @return An initialized AMRequest instance.
 	 *
 	 * @since 1.0
 	 */
-	public AMRequest(String serviceURL, RequestParams params, HTTPMethod httpMethod) {
+	public AMRequest(String serviceURL, RequestParams urlParams, RequestParams postParams, HTTPMethod httpMethod) {
 		this.accelaMobile = AccelaMobile.getInstance();
 		this.ownerContext = accelaMobile.ownerContext;
 		this.serviceURL = serviceURL;
-		this.urlParams = params;
+		this.urlParams = urlParams;
+        this.postParams = postParams;
 		this.httpMethod = httpMethod;
 		this.tag = String.valueOf(new Random().nextInt(100));
         requestQueue = AMRequestQueue.getAMRequestQueue(this.ownerContext);
@@ -267,7 +262,6 @@ public class AMRequest {
 	 * Constructor with the given parameters and delegate.
 	 *
 	 * @param serviceURL The service's full path(including server host).
-	 * @param params The collection of URL parameters which will be added to URL with & symbol.
 	 * @param httpMethod One of HTTP method such as GET, POST, PUT or DELETE.
 	 * @param requestDelegate The delegate which manages the request's lifecycle.
 	 *
@@ -275,8 +269,8 @@ public class AMRequest {
 	 *
 	 * @since 4.0
 	 */
-	public AMRequest(String serviceURL, RequestParams params, HTTPMethod httpMethod, AMRequestDelegate requestDelegate) {
-		this(serviceURL, params, httpMethod);
+	public AMRequest(String serviceURL, RequestParams urlParams, RequestParams postParams, HTTPMethod httpMethod, AMRequestDelegate requestDelegate) {
+		this(serviceURL, urlParams, postParams, httpMethod);
 		this.requestDelegate = requestDelegate;
 	}
 
@@ -310,23 +304,23 @@ public class AMRequest {
         // Add app version and app id to HTTP header
         httpHeader.put(HEADER_X_ACCELA_APPVERSION, accelaMobile.getAppVersion());
         httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());
-        httpHeader.put(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
-        httpHeader.put(HEADER_X_ACCELA_APPID, accelaMobile.getAppId());
+        httpHeader.put(HEADER_X_ACCELA_APPSECRET, accelaMobile.appSecret);
+        httpHeader.put(HEADER_X_ACCELA_APPID, accelaMobile.appId);
 
         httpHeader.put(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
         httpHeader.put("Accept", "*/*");
 
-        if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.IS_ALL_AGENCIES)!=null){
-            httpHeader.put(HEADER_X_ACCELA_AGENCIES, requestHttpHeader.get(AccelaMobile.IS_ALL_AGENCIES));
-        }else if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.AGENCY_NAME)!=null){
-            httpHeader.put(HEADER_X_ACCELA_AGENCY, requestHttpHeader.get(AccelaMobile.AGENCY_NAME).toUpperCase());
-        }
+//        if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.IS_ALL_AGENCIES)!=null){
+//            httpHeader.put(HEADER_X_ACCELA_AGENCIES, requestHttpHeader.get(AccelaMobile.IS_ALL_AGENCIES));
+//        }else if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.AGENCY_NAME)!=null){
+//            httpHeader.put(HEADER_X_ACCELA_AGENCY, requestHttpHeader.get(AccelaMobile.AGENCY_NAME).toUpperCase());
+//        }
+//
+//        if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.ENVIRONMENT_NAME)!=null){
+//            httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, requestHttpHeader.get(AccelaMobile.ENVIRONMENT_NAME));
+//        }else{
+        httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());
 
-        if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.ENVIRONMENT_NAME)!=null){
-            httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, requestHttpHeader.get(AccelaMobile.ENVIRONMENT_NAME));
-        }else{
-            httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());
-        }
 
         httpHeader.put(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());
         // Add access token or app secret to HTTP header
@@ -334,8 +328,14 @@ public class AMRequest {
         if ((authorizationManager != null) && (authorizationManager.getAccessToken() != null)) {
             httpHeader.put("Authorization", accelaMobile.authorizationManager.getAccessToken());
         }
-        else if ((accelaMobile != null) && (accelaMobile.getAppSecret() != null)) {
-            httpHeader.put(HEADER_X_ACCELA_APPSECRET, accelaMobile.getAppSecret());
+        else if ((accelaMobile != null) && (accelaMobile.appSecret != null)) {
+            httpHeader.put(HEADER_X_ACCELA_APPSECRET, accelaMobile.appSecret);
+        }
+
+        if(requestHttpHeader!=null){   //copy the requestHttpHeader
+            for (Map.Entry<String, String> entry : requestHttpHeader.entrySet()) {
+                httpHeader.put(entry.getKey(), entry.getValue());
+            }
         }
         return httpHeader;
     }
@@ -391,14 +391,13 @@ public class AMRequest {
 	/**
 	 * Makes a request to the Accela Construct API endpoint with the given data using an HTTP POST method as an asynchronous operation.
 	 *
-	 * @param paramData The content sent with the corresponding request.
 	 * @param requestDelegate The request's delegate.
 	 *
 	 * @return The AMRequest object corresponding to this API call.
 	 *
 	 * @since 1.0
 	 */
-	public AMRequest sendRequest(RequestParams paramData, AMRequestDelegate requestDelegate) throws JSONException {
+	public AMRequest sendRequest(AMRequestDelegate requestDelegate) throws JSONException {
 		// Initialize request delegate
 		if (requestDelegate != null) {
 			this.requestDelegate = requestDelegate;
@@ -422,29 +421,27 @@ public class AMRequest {
                     requestQueue.addToRequestQueue(mRequest);
 				break;
 			case POST:
-				this.postParams = paramData;
-				if (paramData == null) {
+				if (postParams == null) {
                     mRequest = AMRequestFactory.createJsonRequest(serializeURL, Request.Method.POST, httpHeader, null, false, this.requestDelegate);
                     requestQueue.addToRequestQueue(mRequest);
 				} else {
 					String contentType = null;
 					if (RequestType.AUTHENTICATION.equals(this.requestType))
 					{
-                        mRequest = AMRequestFactory.createLoginRequest(serializeURL, Request.Method.POST, httpHeader, paramData.getAuthBody(), false, this.requestDelegate);
+                        mRequest = AMRequestFactory.createLoginRequest(serializeURL, Request.Method.POST, httpHeader, postParams.getAuthBody(), false, this.requestDelegate);
                         requestQueue.addToRequestQueue(mRequest);
                     } else if (RequestType.MULTIPART.equals(this.requestType)){
                         AMDocumentManager documentManager = AMDocumentManager.getAMDocumentManager(this.ownerContext);
-                        documentManager.addRequest(AMRequestFactory.createAMMultiPartRequests(serializeURL, httpHeader, paramData, this.requestDelegate));
+                        documentManager.addRequest(AMRequestFactory.createAMMultiPartRequests(serializeURL, httpHeader, postParams, this.requestDelegate));
                         documentManager.startRequest();
 					} else {
-                        mRequest = AMRequestFactory.createJsonRequest(serializeURL, Request.Method.POST, httpHeader, paramData.getStringBody(), false, this.requestDelegate);
+                        mRequest = AMRequestFactory.createJsonRequest(serializeURL, Request.Method.POST, httpHeader, postParams.getStringBody(), false, this.requestDelegate);
                         requestQueue.addToRequestQueue(mRequest);
 					}
 				}
 				break;
 			case PUT:
-				this.postParams = paramData;
-				if (paramData == null) {
+				if (postParams == null) {
                     mRequest = AMRequestFactory.createJsonRequest(serializeURL, Request.Method.PUT, httpHeader, null, false, this.requestDelegate);
                     requestQueue.addToRequestQueue(mRequest);
 				} else {
@@ -453,7 +450,7 @@ public class AMRequest {
 					{
 						contentType = "application/x-www-form-urlencoded";
                         httpHeader.put("Content-Type", contentType);
-                        mRequest = AMRequestFactory.createJsonRequest(serializeURL, Request.Method.PUT, httpHeader, paramData.getAuthBody(), false, this.requestDelegate);
+                        mRequest = AMRequestFactory.createJsonRequest(serializeURL, Request.Method.PUT, httpHeader, postParams.getAuthBody(), false, this.requestDelegate);
                         requestQueue.addToRequestQueue(mRequest);
 					}
 					else if (RequestType.MULTIPART.equals(this.requestType))
@@ -466,7 +463,7 @@ public class AMRequest {
 					{
 						contentType = "application/json";
                         httpHeader.put("Content-Type", contentType);
-                        mRequest = AMRequestFactory.createJsonRequest(serializeURL, Request.Method.PUT, httpHeader, paramData.getStringBody(), false, this.requestDelegate);
+                        mRequest = AMRequestFactory.createJsonRequest(serializeURL, Request.Method.PUT, httpHeader, postParams.getStringBody(), false, this.requestDelegate);
                         requestQueue.addToRequestQueue(mRequest);
 					}
 				}
@@ -485,8 +482,6 @@ public class AMRequest {
 	 * Uploads multiple binary files together with JSON data represented as an asynchronous operation or synchronous operation.
 	 * That depends on the value of isSynchronous boolean variable.	 *
 	 *
-	 * @param postData The multipart form data which contains both "fileInfo" JSON and file streams.
-	 * 									 Note fileInfo's JSON contains keys "serviceProviderCode","fileName","type",and "description".
 	 * @param attachmentInfo The file collection of key-value pairs.
 	 * 									 Note the key name is "fileName", and the value is file's full path.
 	 * @param requestDelegate The delegate for asynchronous request, or null for synchronous request.
@@ -496,7 +491,8 @@ public class AMRequest {
 	 *
 	 * @since 4.0
 	 */
-	public AMRequest uploadAttachments(RequestParams postData, Map<String, String> attachmentInfo, AMRequestDelegate requestDelegate) {
+	public AMRequest uploadAttachments(Map<String, String> attachmentInfo, AMRequestDelegate requestDelegate) {
+        RequestParams postData = new RequestParams();
 		for (Map.Entry<String, String> entry : attachmentInfo.entrySet()) {
 			String fileName = entry.getKey();
 			String filePath = entry.getValue();
@@ -515,9 +511,9 @@ public class AMRequest {
 		// Send request.
         // Send request.
         this.requestType = RequestType.MULTIPART;
-
+        this.postParams = postData;
         try {
-            this.sendRequest(postData, requestDelegate);
+            this.sendRequest(requestDelegate);
         } catch (JSONException e) {
             AMLogger.logWarn(e.toString());
         }

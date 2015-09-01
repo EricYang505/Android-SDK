@@ -83,7 +83,7 @@ public class AMBatchSession {
 	 * 
 	 * @since 4.0
 	 */
-	public void executeAsync(Map<String, String> customParams, AMRequestDelegate requestDelegate) {
+	public void executeAsync(Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {
 		List<AMBatchRequestModel> models = new ArrayList<AMBatchRequestModel>();
 		for (AMRequest request : requests) {
 			String url = request.getServiceURL();
@@ -104,7 +104,7 @@ public class AMBatchSession {
 
 		String json = toJsonArray(models);
         RequestParams params = new RequestParams(json);
-        AccelaMobile.getInstance().getRequestSender().sendRequest(path, null, customParams, HTTPMethod.POST, params,requestDelegate);
+        AccelaMobile.getInstance().getRequestSender().sendRequest(path, null, customHttpHeader, HTTPMethod.POST, params,requestDelegate);
 	}
 	
 	/**

@@ -85,7 +85,7 @@ public class AMLoginDialogWrapper extends Dialog {
         } 
         
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        	String authorizeSchemaUrl = accelaMobile.getUrlSchema() + "://authorize";            		
+        	String authorizeSchemaUrl = accelaMobile.getAuthorizationManager().mUrlSchema + "://authorize";
             if (url.startsWith(authorizeSchemaUrl)) { // Redirect to the predefined authorization schema.  
             	// Dismiss spinner
             	spinner.dismiss();            

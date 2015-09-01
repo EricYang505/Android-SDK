@@ -25,10 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,7 +34,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import com.accela.mobile.AMRequest.HTTPMethod;
 import com.accela.mobile.AMRequest.RequestType;
-import com.accela.mobile.AccelaMobile.AuthorizationStatus;
 import com.accela.mobile.http.RequestParams;
 
 
@@ -83,6 +80,13 @@ public class AuthorizationManager {
 	 * @since 4.0
 	 */
 	private static final String REFRESH_TOKEN_KEY_IN_PREF_FILE = "refresh_token";
+
+    /**
+     * The flag which indicates whether user profile should be saved to local storage after successful login.
+     *
+     * @since 1.0
+     */
+    protected Boolean amIsRemember = true;
 
 	/**
 	 * The SharedPreferences instance used to save login information.
@@ -135,7 +139,7 @@ public class AuthorizationManager {
 
 	/**
 	 * The environment for authorization.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private String environment;
@@ -191,14 +195,6 @@ public class AuthorizationManager {
 	private AMLoginView loginDialog;
 
 	/**
-	 * The AuthorizationActivity which authorize user through independent web
-	 * browser.
-	 * 
-	 * @since 3.0
-	 */
-	private AuthorizationActivity authorizationActivity;
-
-	/**
 	 * The AMLoginDialogWrapper dialog which wraps the HTML login view.
 	 * 
 	 * @since 4.0
@@ -251,9 +247,9 @@ public class AuthorizationManager {
 	 */
 	protected ResourceBundle stringLoader = AMSetting.getStringResourceBundle();
 
-	
+    String mUrlSchema;
 
-	/**
+    /**
 	 * Constructor.
 	 * 
 	 * @return An initialized AuthorizationManager instance.
@@ -278,7 +274,7 @@ public class AuthorizationManager {
     public AMRequest authenticate(String agency, String user, String password, String[] permissions) {
         this.agency = agency;
         this.setClientInfo(accelaMobile.getEnvironment().name(), agency, accelaMobile.amAuthHost, accelaMobile.amApisHost);
-        this.setIsRememberToken(accelaMobile.amIsRemember);
+        this.setIsRememberToken(amIsRemember);
         this.setSessionDelegate(this.sessionDelegate);
         return getAuthorizeCode4Private(this.loginDialog, agency, user, password, permissions, false);
     }
@@ -333,7 +329,6 @@ public class AuthorizationManager {
 		this.authorizationCode = null;
 		this.accessToken = null;
 		this.refreshToken = null;
-		accelaMobile.authorizationStatus = AuthorizationStatus.NONE;
 		// Clear the values in local session store.
 		if (clearSessionStore) {
 			SharedPreferences.Editor prefsWriter = sessionStorePrefs.edit();
@@ -346,7 +341,7 @@ public class AuthorizationManager {
     /**
      * public method, used to show login web view in an independent web browser or a native dialog.
      */
-    public void showAuthorizationWebView(String[] permissions, String agency, boolean isWrappedWebView) {
+    public void showAuthorizationWebView(String[] permissions, String urlSchema, String agency, boolean isWrappedWebView) {
         // Return directly if the authorization manager has access token (loaded from local store)
         if ((getAccessToken() != null) && (sessionDelegate != null))
         {
@@ -367,35 +362,19 @@ public class AuthorizationManager {
         }
 
         // Otherwise, show the login dialog which embeds the HTML login view.
-        this.setClientInfo(accelaMobile.environment.name(), agency, accelaMobile.amAuthHost, accelaMobile.amApisHost);
-        this.setIsRememberToken(accelaMobile.amIsRemember);
+        this.mUrlSchema = urlSchema;
+        this.setClientInfo(accelaMobile.getEnvironment().name(), agency, accelaMobile.amAuthHost, accelaMobile.amApisHost);
+        this.setIsRememberToken(amIsRemember);
         this.setSessionDelegate(this.sessionDelegate);
 
-        if (isWrappedWebView) {  // Login through a dialog which wraps HTML login web view.
-            String redirectUrl = accelaMobile.getUrlSchema() + "://authorize";
-            if (agency != null) {
-                redirectUrl += "&agency=" + agency;
-            }
-            String authorizationURL = this.getAuthorizeUrl4WebLogin(redirectUrl, permissions);
-            AMLoginDialogWrapper amLoginDialogWrapper = new AMLoginDialogWrapper(authorizationURL);
-            getAuthorizeCode4Public(amLoginDialogWrapper, redirectUrl, permissions);
-        } else {   // Login through an independent web browser.
-            HashMap<String, Object> actionBundle = new HashMap<String, Object>();
-            actionBundle.put("permissions", permissions);
-            if (agency != null) {
-                actionBundle.put("agency_name", agency);
-            }
-            AuthorizationActivity.accelaMobile = this.accelaMobile;
-            Intent intent = new Intent(accelaMobile.ownerContext, AuthorizationActivity.class);
-            intent.putExtra("isWrappedWebView", isWrappedWebView);
-            intent.putExtra("actionBundle", actionBundle);
-            try {
-                ((Activity) accelaMobile.ownerContext).startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                AMLogger.logError("In AccelaMobile.authorize(String agency, String[] permissions): ActivityNotFoundException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
-                AMLogger.logError(stringLoader.getString("Log_AuthorizationActivity_NOT_Declared"));
-            }
+        String redirectUrl = urlSchema + "://authorize";
+        if (agency != null) {
+            redirectUrl += "&agency=" + agency;
         }
+        String authorizationURL = this.getAuthorizeUrl4WebLogin(redirectUrl, permissions);
+        AMLoginDialogWrapper amLoginDialogWrapper = new AMLoginDialogWrapper(authorizationURL);
+        getAuthorizeCode4Public(amLoginDialogWrapper, redirectUrl, permissions);
+
     }
 //	/**
 //	 * Force login with Civic ID
@@ -506,6 +485,21 @@ public class AuthorizationManager {
 	public String getRefreshToken() {
 		return this.refreshToken;
 	}
+
+
+    /**
+     *
+     * Set the value of property amIsRemember.
+     *
+     * @param remember true or false.
+     *
+     * @return Void.
+     *
+     * @since 1.0
+     */
+    public void setAmIsRemember(Boolean remember) {
+        this.amIsRemember = remember;
+    }
 
 	/**
 	 * 
@@ -625,31 +619,12 @@ public class AuthorizationManager {
 		// SharedPreferences file).
 		clearAuthorizationAndToken(false);
 		// Show login web view.
-		if (authorizationView.getClass() == AuthorizationActivity.class) { // Login
-																			// through
-																			// an
-																			// independent
-																			// web
-																			// browser.
-			this.authorizationActivity = (AuthorizationActivity) authorizationView;
-			String authorizeUrl = this.getAuthorizeUrl4WebLogin(redirectUrl,
-					permissions);
-			Intent intent = new Intent(Intent.ACTION_VIEW,
-					Uri.parse(authorizeUrl));
-			this.authorizationActivity.startActivity(intent);
-		} else if (authorizationView.getClass() == AMLoginDialogWrapper.class) { // Login
-																					// through
-																					// a
-																					// dialog
-																					// which
-																					// wraps
-																					// HTML
-																					// login
-																					// web
-																					// view.
+        if (authorizationView.getClass() == AMLoginDialogWrapper.class) {
 			this.loginDialogWrapper = (AMLoginDialogWrapper) authorizationView;
 			this.loginDialogWrapper.show();
-		}
+		}else{
+            AMLogger.logWarn("authorizationView not valid, need to be AMLoginDialogWrapper.class!");
+        }
 	}
 
 	/**
@@ -677,7 +652,7 @@ public class AuthorizationManager {
 		// Populate HTTP parameters
 		HashMap<String, String> authorizationInfo = new HashMap<String, String>();
 		authorizationInfo.put("environment", this.environment);
-		authorizationInfo.put("client_id", this.accelaMobile.getAppId());
+		authorizationInfo.put("client_id", this.accelaMobile.appId);
 		authorizationInfo.put("redirect_uri", this.redirectUrl);
 		authorizationInfo.put("state", this.authorizationState);
 		authorizationInfo.put("scope",
@@ -740,20 +715,7 @@ public class AuthorizationManager {
 		this.environment = uri.getQueryParameter("environment");
 		// Send request to get access token.
 		if (("authorize".equalsIgnoreCase(action)) && (this.authorizationCode != null)) {
-			accelaMobile.authorizationStatus = AuthorizationStatus.AUTHORIZED;
-			// Dismiss the login view.
-			if (this.authorizationActivity != null) { // Login through an independent web browser.
-				Intent intent4Back = new Intent(this.authorizationActivity,
-						accelaMobile.ownerContext.getClass());
-				intent4Back.putExtra("isAuthorized", true);
-				this.authorizationActivity
-						.dismissAMLoginDialogWrapperIfExists();
-				this.authorizationActivity.startActivity(intent4Back);
-				this.authorizationActivity.finish();
-			} else if (this.loginDialogWrapper != null) { // Login through a
-															// dialog which
-															// wraps HTML login
-															// web view.
+			if (this.loginDialogWrapper != null) {
 				this.loginDialogWrapper.dismiss();
 			}
 			// Continue to send request to get access token.
@@ -829,10 +791,10 @@ public class AuthorizationManager {
 			this.sessionDelegate = sessionDelegate;
 		}
 		String hostUrl = this.apisServer + AMSetting.ACCESS_TOKEN_URI;
-		RequestParams requestParams = new RequestParams();
+		RequestParams postParams = new RequestParams();
 		Map<String, String> authBody = new HashMap<String, String>();
-		authBody.put("client_id", this.accelaMobile.getAppId());
-		authBody.put("client_secret", this.accelaMobile.getAppSecret());
+		authBody.put("client_id", this.accelaMobile.appId);
+		authBody.put("client_secret", this.accelaMobile.appSecret);
 		authBody.put("refresh_token", this.refreshToken);
 
 		if (isNativeAuthorization) {
@@ -845,13 +807,13 @@ public class AuthorizationManager {
 		}
 		//Clear the stored token
 		clearAuthorizationAndToken(false);
-        requestParams.setAuthBody(authBody);
+        postParams.setAuthBody(authBody);
 		//Send request to get refreshed token.
-		AMRequest amRequest = new AMRequest(hostUrl,requestParams, HTTPMethod.POST);
+		AMRequest amRequest = new AMRequest(hostUrl,null, postParams, HTTPMethod.POST);
 		amRequest.setRequestType(RequestType.AUTHENTICATION);
 		this.currentRequest = amRequest;
         try {
-            return amRequest.sendRequest(requestParams, this.tokenRequestDelegate);
+            return amRequest.sendRequest(this.tokenRequestDelegate);
         } catch (JSONException e) {
             AMLogger.logError(e.toString());
         }
@@ -864,10 +826,10 @@ public class AuthorizationManager {
 	 */
 	public AMRequest fetchAccessToken() {
 		String hostUrl = this.apisServer + AMSetting.ACCESS_TOKEN_URI;
-		RequestParams requestParams = new RequestParams();
+		RequestParams requestPostParams = new RequestParams();
         Map<String, String> postParams = new HashMap<String, String>();
-        postParams.put("client_id", this.accelaMobile.getAppId());
-        postParams.put("client_secret", this.accelaMobile.getAppSecret());
+        postParams.put("client_id", this.accelaMobile.appId);
+        postParams.put("client_secret", this.accelaMobile.appSecret);
 
 		if (isNativeAuthorization) {
 			postParams.put("grant_type", "password");
@@ -880,8 +842,8 @@ public class AuthorizationManager {
             if (this.permissions != null) { // Optional
 				postParams.put("scope", convertStringArray2StringWithSpaceSeparator(this.permissions));
 			}
-            postParams.put("client_id", this.accelaMobile.getAppId());
-            postParams.put("client_secret", this.accelaMobile.getAppSecret());
+            postParams.put("client_id", this.accelaMobile.appId);
+            postParams.put("client_secret", this.accelaMobile.appSecret);
 			if (this.agency != null) { // Optional for Civic ID
 				postParams.put("agency_name", this.agency);
 			}
@@ -899,13 +861,12 @@ public class AuthorizationManager {
 		}
 		// this.processIndicatorHolderView = (ViewGroup)((Activity)
 		// this.ownerContext).findViewById(android.R.id.content).getRootView();
-        requestParams.setAuthBody(postParams);
-        AMRequest amRequest = new AMRequest(hostUrl,
-                requestParams, HTTPMethod.POST);
+        requestPostParams.setAuthBody(postParams);
+        AMRequest amRequest = new AMRequest(hostUrl, null, requestPostParams, HTTPMethod.POST);
         amRequest.setRequestType(RequestType.AUTHENTICATION);
         this.currentRequest = amRequest;
         try {
-            return amRequest.sendRequest(requestParams, this.tokenRequestDelegate);
+            return amRequest.sendRequest(this.tokenRequestDelegate);
         } catch (JSONException e) {
             AMLogger.logError(e.toString());
         }
@@ -935,44 +896,6 @@ public class AuthorizationManager {
 	 */
 	private AMRequestDelegate tokenRequestDelegate = new AMRequestDelegate() {
 		private boolean isLoginErrorHandled = false;
-
-		@Override
-		public void onTimeout() {
-			if ((sessionDelegate != null) && (!isLoginErrorHandled)) {
-				AMError exceptionError = new AMError(AMError.ERROR_CODE_Unauthorized,
-						AMError.ERROR_CODE_TOKEN_EXPIRED,null, "Request times out.", null);
-				sessionDelegate.amDidLoginFailure(exceptionError);
-			}
-		};
-
-		@Override
-		public void amRequestDidReceiveResponse(AMRequest request) {
-			super.amRequestDidReceiveResponse(currentRequest);
-			if (errorMessage != null) {
-				AMError error = new AMError(AMError.ERROR_CODE_Unauthorized,
-						AMError.ERROR_CODE_TOKEN_EXPIRED,traceId, errorMessage, null);
-				if (sessionDelegate != null) {
-					sessionDelegate.amDidLoginFailure(error);
-					isLoginErrorHandled = true;
-				}
-			}
-		}
-
-		public void amRequestDidTimeout(AMRequest request) {
-			super.amRequestDidReceiveResponse(currentRequest);
-			// Dismiss the process waiting view
-			ProgressDialog progressDialog = currentRequest
-					.getRequestWaitingView();
-			if ((progressDialog != null) && (progressDialog.isShowing())) {
-				progressDialog.dismiss();
-			}
-			AMError error = new AMError(AMError.ERROR_CODE_Unauthorized,
-					AMError.ERROR_CODE_TOKEN_EXPIRED,traceId, errorMessage, null);
-			if (sessionDelegate != null) {
-				sessionDelegate.amDidLoginFailure(error);
-				isLoginErrorHandled = true;
-			}
-		}
 
 		@Override
 		public void onFailure(AMError error) {
@@ -1016,7 +939,6 @@ public class AuthorizationManager {
 				try {
 					accessToken = response.getString("access_token");
 					refreshToken = response.getString("refresh_token");
-					accelaMobile.authorizationStatus = AuthorizationStatus.LOGGEDIN;
 					if (AMSetting.DebugMode) {
 						AMLogger.logVerbose(
 								"In AuthorizationManager.tokenRequestDelegate: accessToken = %s.",

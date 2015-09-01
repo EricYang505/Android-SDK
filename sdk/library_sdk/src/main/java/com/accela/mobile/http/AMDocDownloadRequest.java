@@ -1,12 +1,12 @@
 package com.accela.mobile.http;
 
 import android.os.SystemClock;
+import android.support.v4.BuildConfig;
 import android.util.Log;
 
 import com.accela.mobile.AMDocumentManager;
 import com.accela.mobile.AMError;
 import com.accela.mobile.AMLogger;
-import com.accela.mobile.BuildConfig;
 import com.accela.mobile.http.volley.DefaultRetryPolicy;
 import com.accela.mobile.http.volley.Legacy.BasicHeader;
 import com.accela.mobile.http.volley.Legacy.BasicHttpResponse;
