@@ -301,7 +301,7 @@ public class AMRequest {
         HashMap<String, String> httpHeader = new HashMap<String, String>();
         // Add app version and app id to HTTP header
         httpHeader.put(HEADER_X_ACCELA_APPVERSION, accelaMobile.getAppVersion());
-        httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());
+        httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.environment.name());
         httpHeader.put(HEADER_X_ACCELA_APPSECRET, accelaMobile.appSecret);
         httpHeader.put(HEADER_X_ACCELA_APPID, accelaMobile.appId);
 
@@ -317,7 +317,7 @@ public class AMRequest {
 //        if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.ENVIRONMENT_NAME)!=null){
 //            httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, requestHttpHeader.get(AccelaMobile.ENVIRONMENT_NAME));
 //        }else{
-        httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.getEnvironment().name());
+        httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.environment.name());
 
 
         httpHeader.put(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());

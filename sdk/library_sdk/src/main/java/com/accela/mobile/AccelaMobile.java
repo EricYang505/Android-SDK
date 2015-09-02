@@ -121,7 +121,7 @@ public class AccelaMobile {
 	 *
 	 * @since 3.0
 	 */
-	private Environment environment = Environment.PROD ;	// Default value
+	public Environment environment = Environment.PROD ;	// Default value
 
 //	/**
 //	 * Used to support multiple agency
@@ -273,26 +273,6 @@ public class AccelaMobile {
 		String deviceName = android.os.Build.MODEL;
         return osType + "|" + osVersion + "|" + deviceName;
      }
-
-	/**
-	 *
-	 * Get the value of property environment.
-	 *
-	 * @return The value of property environment.
-	 *
-	 * @since 3.0
-	 */
-	public Environment getEnvironment() {
-		if (TextUtils.isEmpty(this.agency)) {
-			if (this.authorizationManager != null
-					&& !TextUtils.isEmpty(this.authorizationManager.getEnvironment())
-					&& !this.authorizationManager.getEnvironment().equalsIgnoreCase(this.environment.name())) {
-				this.environment = Enum.valueOf(Environment.class, this.authorizationManager.getEnvironment());
-			}
-		}
-		return this.environment;
-	}
-
 
 	/**
 	 *

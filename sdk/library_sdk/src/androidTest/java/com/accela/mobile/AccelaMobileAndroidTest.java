@@ -42,7 +42,7 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
     private final static String userName = "ca@accela.com";
     private final static String password  = "test1234";
 
-    AccelaMobileInternal accelaMobile;
+    AccelaMobile accelaMobile;
     Context context;
     CountDownLatch signal;
 
@@ -83,7 +83,7 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
         super.setUp();
         context = InstrumentationRegistry.getContext();
         Log.d(TAG, "setUp");
-        accelaMobile = new AccelaMobileInternal(InstrumentationRegistry.getContext(), appId, appSecret, sessionDelegate, authHost, apiHost);
+        accelaMobile = new AccelaMobile(InstrumentationRegistry.getContext(), appId, appSecret, sessionDelegate, authHost, apiHost);
         login();
     }
 

@@ -53,27 +53,27 @@ public class AMLoginView extends PopupWindow {
 	 * 
 	 * Default constructor .
 	 * 
-	 * @param accelaMobileInternal The AccelaMobile which creates the login dialog.
+	 * @param accelaMobile The AccelaMobile which creates the login dialog.
 	 * 
 	 * @return An initialized AMLoginView instance.
 	 * 
 	 * @since 3.0
 	 */	
-	AMLoginView(AccelaMobile accelaMobileInternal) {		
-		this(accelaMobileInternal.ownerContext);
-		this.accelaMobile = accelaMobileInternal;
+	AMLoginView(AccelaMobile accelaMobile) {
+		this(accelaMobile.ownerContext);
+		this.accelaMobile = accelaMobile;
 		// init data
 		this.agency = this.accelaMobile.getAgency();
-		this.environment = this.accelaMobile.getEnvironment().name();
+		this.environment = this.accelaMobile.environment.name();
 		// Get screen height and width
 		DisplayMetrics displayMetrics = new DisplayMetrics();   
-		((Activity) accelaMobileInternal.ownerContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		((Activity) accelaMobile.ownerContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		screenWidth = displayMetrics.widthPixels;
 		screenHeight = displayMetrics.heightPixels;	
 		// Check whether the current device is Pad or not (Phone)
 		isDevicePad = isRunningOnTabletDevice();
 		
-		this.isUserProfileRemebered = accelaMobile.getAuthorizationManager().amIsRemember;
+		this.isUserProfileRemebered = this.accelaMobile.getAuthorizationManager().amIsRemember;
 	}
 	
 	/**

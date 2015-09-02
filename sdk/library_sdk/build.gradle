@@ -28,7 +28,6 @@ dependencies {
 
     compile 'com.android.support:support-v4:21+'
 
-
     // Unit test dependency
     def powerMockVersion = '1.6.1'
 
