@@ -1,17 +1,10 @@
 package com.accela.mobile.http;
 
-import android.os.AsyncTask;
-import android.os.Looper;
-import android.os.Message;
 import android.os.SystemClock;
 
 import com.accela.mobile.AMDocumentManager;
 import com.accela.mobile.AMError;
-import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMRequestDelegate;
-import com.accela.mobile.AccelaMobile;
-import com.accela.mobile.http.volley.AuthFailureError;
-import com.accela.mobile.http.volley.Cache;
 import com.accela.mobile.http.volley.DefaultRetryPolicy;
 import com.accela.mobile.http.volley.Legacy.BasicHeader;
 import com.accela.mobile.http.volley.Legacy.BasicHttpEntity;
@@ -19,13 +12,11 @@ import com.accela.mobile.http.volley.Legacy.BasicHttpResponse;
 import com.accela.mobile.http.volley.Legacy.BasicStatusLine;
 import com.accela.mobile.http.volley.Legacy.Header;
 import com.accela.mobile.http.volley.Legacy.HttpEntity;
-import com.accela.mobile.http.volley.Legacy.HttpResponse;
 import com.accela.mobile.http.volley.Legacy.HttpStatus;
 import com.accela.mobile.http.volley.Legacy.ProtocolVersion;
 import com.accela.mobile.http.volley.Legacy.StatusLine;
 import com.accela.mobile.http.volley.NetworkResponse;
 import com.accela.mobile.http.volley.Request;
-import com.accela.mobile.http.volley.Response;
 import com.accela.mobile.http.volley.ServerError;
 import com.accela.mobile.http.volley.VolleyLog;
 import com.accela.mobile.http.volley.toolbox.ByteArrayPool;
@@ -36,15 +27,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;

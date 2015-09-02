@@ -61,14 +61,14 @@ public class AccelaMobile {
 	 *
 	 * @since 3.0
 	 */
-	protected String amAuthHost = AMSetting.AM_OAUTH_HOST;
+	public String amAuthHost = AMSetting.AM_OAUTH_HOST;
 
 	/**
 	 * The URL of API host. For example: https://apis.accela.com
 	 *
 	 * @since 3.0
 	 */
-	protected String amApisHost = AMSetting.AM_API_HOST;
+	public String amApisHost = AMSetting.AM_API_HOST;
 
 
 	/**
@@ -99,14 +99,14 @@ public class AccelaMobile {
 	 *
 	 * @since 1.0
 	 */
-	String appId;
+	public String appId;
 
 	/**
 	 * The security string of the application registered on developer portal.
 	 *
 	 * @since 3.0
 	 */
-	String appSecret ;
+	public String appSecret ;
 
 
 	/**

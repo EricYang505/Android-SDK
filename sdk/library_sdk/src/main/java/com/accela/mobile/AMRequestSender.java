@@ -122,8 +122,6 @@ public class AMRequestSender {
      * Uploads a set of binary files as an asynchronous operation.
      *
      * @param path The path to the Accela Construct API endpoint.
-     * @param postData The array of file's JSON object is posted together with attachments.
-     * 									 Note file's JSON object contains keys "serviceProviderCode","fileName","type",and "description".
      * @param fileInformation The file collection of key-value pairs.
      * 									 Note the key name is "fileName", and the value is file's full path.
      * @param customHttpHeader The HTTP header fields in key value pairs.

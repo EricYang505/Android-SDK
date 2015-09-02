@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.accela.mobile.AMRequest.HTTPMethod;
 import com.accela.mobile.http.RequestParams;

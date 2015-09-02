@@ -4,19 +4,11 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 
-import com.accela.mobile.http.AMMultiPartRequest;
 import com.accela.mobile.http.DocumentRequest;
-import com.accela.mobile.http.volley.Cache;
-import com.accela.mobile.http.volley.Legacy.HttpStatus;
 import com.accela.mobile.http.volley.NetworkResponse;
 import com.accela.mobile.http.volley.ServerError;
-import com.accela.mobile.http.volley.toolbox.HttpHeaderParser;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 

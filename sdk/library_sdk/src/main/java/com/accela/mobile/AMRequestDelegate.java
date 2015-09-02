@@ -30,7 +30,6 @@ import com.accela.mobile.AMRequest.HTTPMethod;
 import com.accela.mobile.http.AsyncHttpResponseHandler;
 import com.accela.mobile.http.RequestParams;
 import com.accela.mobile.http.volley.AuthFailureError;
-import com.accela.mobile.http.volley.Legacy.Header;
 
 /**
  *  Request delegate, defines the methods which will be called during the lifecycle of a request. 

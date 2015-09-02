@@ -11,7 +11,6 @@ import com.accela.mobile.http.volley.RequestQueue;
 import com.accela.mobile.http.volley.Response;
 import com.accela.mobile.http.volley.VolleyError;
 import com.accela.mobile.http.volley.toolbox.ImageLoader;
-import com.accela.mobile.http.volley.toolbox.ImageRequest;
 
 import java.util.Map;
 

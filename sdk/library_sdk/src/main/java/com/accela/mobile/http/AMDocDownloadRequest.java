@@ -19,9 +19,6 @@ import com.accela.mobile.http.volley.NetworkResponse;
 import com.accela.mobile.http.volley.ServerError;
 import com.accela.mobile.http.volley.toolbox.HttpHeaderParser;
 
-import org.json.JSONException;
-
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;

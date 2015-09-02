@@ -1,20 +1,10 @@
 package com.accela.mobile.http;
 
-import com.accela.mobile.http.volley.AuthFailureError;
-import com.accela.mobile.http.volley.Cache;
-import com.accela.mobile.http.volley.NetworkResponse;
-import com.accela.mobile.http.volley.ParseError;
 import com.accela.mobile.http.volley.Response;
-import com.accela.mobile.http.volley.VolleyLog;
-import com.accela.mobile.http.volley.toolbox.HttpHeaderParser;
-import com.accela.mobile.http.volley.toolbox.JsonRequest;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by eyang on 8/20/15.

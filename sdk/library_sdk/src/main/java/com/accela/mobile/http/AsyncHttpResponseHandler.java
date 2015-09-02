@@ -3,29 +3,14 @@ package com.accela.mobile.http;
 /**
  * Created by eyang on 8/20/15.
  */
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 
 import com.accela.mobile.AMError;
-import com.accela.mobile.AMLogger;
-import com.accela.mobile.AMSetting;
-
-
 
 
 public abstract class AsyncHttpResponseHandler {

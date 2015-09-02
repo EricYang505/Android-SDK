@@ -6,7 +6,6 @@ import android.widget.ImageView;
 import com.accela.mobile.AMError;
 import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMRequestDelegate;
-import com.accela.mobile.http.volley.Request;
 import com.accela.mobile.http.volley.Response;
 import com.accela.mobile.http.volley.VolleyError;
 
@@ -14,9 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

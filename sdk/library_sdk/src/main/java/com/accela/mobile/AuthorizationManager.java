@@ -324,7 +324,7 @@ public class AuthorizationManager {
 	 * 
 	 * @since 3.0
 	 */
-	void clearAuthorizationAndToken(Boolean clearSessionStore) {
+	public void clearAuthorizationAndToken(Boolean clearSessionStore) {
 		// Clear the values of authorization code and access token.
 		this.authorizationCode = null;
 		this.accessToken = null;

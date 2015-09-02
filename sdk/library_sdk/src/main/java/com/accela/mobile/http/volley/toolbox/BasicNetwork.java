@@ -17,7 +17,6 @@
 package com.accela.mobile.http.volley.toolbox;
 
 import android.os.SystemClock;
-import android.text.format.DateUtils;
 
 import com.accela.mobile.http.volley.AuthFailureError;
 import com.accela.mobile.http.volley.Cache;
