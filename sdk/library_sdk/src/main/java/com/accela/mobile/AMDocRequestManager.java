@@ -15,28 +15,32 @@ import java.util.concurrent.BlockingQueue;
 /**
  * Created by eyang on 8/26/15.
  */
-public class AMDocumentManager {
+public class AMDocRequestManager {
     public final static int IOEXCEPTION_ERROR = 1;
     public final static int SERVEREXCEPTION_ERROR = 2;
-
-    private static AMDocumentManager mInstance;
+    private final static int DOWNLOAD_STATUS_LOADING = 128;
+    private final static int DOWNLOAD_STATUS_IDLE = 256;
+    private int mStatus = DOWNLOAD_STATUS_IDLE;
+    private static AMDocRequestManager mInstance;
     private final BlockingQueue<DocumentRequest> mBlockingQueue = new ArrayBlockingQueue(100);
 
-    private AMDocumentManager(){}
+    private AMDocRequestManager(){}
 
-    public static synchronized AMDocumentManager getAMDocumentManager(Context context) {
+    public static synchronized AMDocRequestManager getAMDocumentManager(Context context) {
         if (mInstance == null) {
-            mInstance = new AMDocumentManager();
+            mInstance = new AMDocRequestManager();
         }
         return mInstance;
     }
 
-    public AMDocumentManager addRequest(DocumentRequest task){
+    public AMDocRequestManager addRequest(DocumentRequest task){
         mBlockingQueue.add(task);
         return this;
     }
 
     public void startRequest(){
+        if (mStatus == DOWNLOAD_STATUS_LOADING)
+            return;
         if (!mBlockingQueue.isEmpty()){
             DocumentRequest task = mBlockingQueue.poll();
             new DocumentTask().execute(task);
@@ -48,6 +52,7 @@ public class AMDocumentManager {
         DocumentRequest mTask;
         @Override
         protected NetworkResponse doInBackground(DocumentRequest... task) {
+            mStatus = DOWNLOAD_STATUS_LOADING;
             NetworkResponse response = null;
             if (task!=null) {
                 long requestStart = SystemClock.elapsedRealtime();
@@ -67,6 +72,7 @@ public class AMDocumentManager {
         @Override
         protected void onPostExecute(NetworkResponse networkResponse) {
             mTask.handleResponse(networkResponse);
+            mStatus = DOWNLOAD_STATUS_IDLE;
             startRequest();
         }
 

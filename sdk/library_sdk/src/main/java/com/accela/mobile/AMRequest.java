@@ -380,7 +380,7 @@ public class AMRequest {
     public AMRequest downloadDocument(RequestParams paramData, String localFilePath, AMDocDownloadRequest.AMDownloadDelegate downloadRequest){
         HashMap<String, String> httpHeader = generateHttpHeader();
         String serializeURL = assembleUrlWithParams(this.serviceURL, this.urlParams);
-        AMDocumentManager documentManager = AMDocumentManager.getAMDocumentManager(this.ownerContext);
+        AMDocRequestManager documentManager = AMDocRequestManager.getAMDocumentManager(this.ownerContext);
         documentManager.addRequest(AMRequestFactory.createAMDocDownloadRequest(serializeURL, httpHeader, paramData, localFilePath, downloadRequest));
         documentManager.startRequest();
         return this;
@@ -429,7 +429,7 @@ public class AMRequest {
                         mRequest = AMRequestFactory.createLoginRequest(serializeURL, Request.Method.POST, httpHeader, postParams.getAuthBody(), false, this.requestDelegate);
                         requestQueue.addToRequestQueue(mRequest);
                     } else if (RequestType.MULTIPART.equals(this.requestType)){
-                        AMDocumentManager documentManager = AMDocumentManager.getAMDocumentManager(this.ownerContext);
+                        AMDocRequestManager documentManager = AMDocRequestManager.getAMDocumentManager(this.ownerContext);
                         documentManager.addRequest(AMRequestFactory.createAMMultiPartRequests(serializeURL, httpHeader, postParams, this.requestDelegate));
                         documentManager.startRequest();
 					} else {

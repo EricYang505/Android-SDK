@@ -4,7 +4,7 @@ import android.os.SystemClock;
 import android.support.v4.BuildConfig;
 import android.util.Log;
 
-import com.accela.mobile.AMDocumentManager;
+import com.accela.mobile.AMDocRequestManager;
 import com.accela.mobile.AMError;
 import com.accela.mobile.AMLogger;
 import com.accela.mobile.http.volley.Legacy.BasicHeader;
@@ -119,17 +119,17 @@ public class AMDocDownloadRequest implements DocumentRequest {
         }
 
         int statusCode = networkResponse.statusCode;
-        if (statusCode == AMDocumentManager.IOEXCEPTION_ERROR){
+        if (statusCode == AMDocRequestManager.IOEXCEPTION_ERROR){
             if (networkResponse.headers==null) {
-                mDownloadDelegate.onFailure(new AMError(AMDocumentManager.IOEXCEPTION_ERROR, "", "", "", "IO EXCEPTION ERROR!"));
+                mDownloadDelegate.onFailure(new AMError(AMDocRequestManager.IOEXCEPTION_ERROR, "", "", "", "IO EXCEPTION ERROR!"));
             }
-            mDownloadDelegate.onFailure(new AMError(AMDocumentManager.IOEXCEPTION_ERROR, "", "", networkResponse.headers.toString(), "IO EXCEPTION ERROR!"));
+            mDownloadDelegate.onFailure(new AMError(AMDocRequestManager.IOEXCEPTION_ERROR, "", "", networkResponse.headers.toString(), "IO EXCEPTION ERROR!"));
             return;
-        }else if(statusCode == AMDocumentManager.SERVEREXCEPTION_ERROR){
+        }else if(statusCode == AMDocRequestManager.SERVEREXCEPTION_ERROR){
             if (networkResponse.headers==null) {
-                mDownloadDelegate.onFailure(new AMError(AMDocumentManager.IOEXCEPTION_ERROR, "", "", "", "IO EXCEPTION ERROR!"));
+                mDownloadDelegate.onFailure(new AMError(AMDocRequestManager.IOEXCEPTION_ERROR, "", "", "", "IO EXCEPTION ERROR!"));
             }
-            mDownloadDelegate.onFailure(new AMError(AMDocumentManager.SERVEREXCEPTION_ERROR, "", "", networkResponse.headers.toString(), "SERVER EXCEPTION ERROR!"));
+            mDownloadDelegate.onFailure(new AMError(AMDocRequestManager.SERVEREXCEPTION_ERROR, "", "", networkResponse.headers.toString(), "SERVER EXCEPTION ERROR!"));
             return;
         }
         if (statusCode == HttpStatus.SC_OK)

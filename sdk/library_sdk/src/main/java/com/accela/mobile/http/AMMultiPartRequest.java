@@ -2,10 +2,9 @@ package com.accela.mobile.http;
 
 import android.os.SystemClock;
 
-import com.accela.mobile.AMDocumentManager;
+import com.accela.mobile.AMDocRequestManager;
 import com.accela.mobile.AMError;
 import com.accela.mobile.AMRequestDelegate;
-import com.accela.mobile.http.volley.DefaultRetryPolicy;
 import com.accela.mobile.http.volley.Legacy.BasicHeader;
 import com.accela.mobile.http.volley.Legacy.BasicHttpEntity;
 import com.accela.mobile.http.volley.Legacy.BasicHttpResponse;
@@ -27,11 +26,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -144,11 +141,11 @@ public class AMMultiPartRequest implements DocumentRequest{
             return;
         }
         int statusCode = networkResponse.statusCode;
-        if (statusCode == AMDocumentManager.IOEXCEPTION_ERROR){
-            mRequestDelegate.onFailure(new AMError(AMDocumentManager.IOEXCEPTION_ERROR, null, null, networkResponse.headers.toString(), "IO EXCEPTION ERROR!"));
+        if (statusCode == AMDocRequestManager.IOEXCEPTION_ERROR){
+            mRequestDelegate.onFailure(new AMError(AMDocRequestManager.IOEXCEPTION_ERROR, null, null, networkResponse.headers.toString(), "IO EXCEPTION ERROR!"));
             return;
-        }else if(statusCode == AMDocumentManager.SERVEREXCEPTION_ERROR){
-            mRequestDelegate.onFailure(new AMError(AMDocumentManager.SERVEREXCEPTION_ERROR, null, null, networkResponse.headers.toString(), "SERVER EXCEPTION ERROR!"));
+        }else if(statusCode == AMDocRequestManager.SERVEREXCEPTION_ERROR){
+            mRequestDelegate.onFailure(new AMError(AMDocRequestManager.SERVEREXCEPTION_ERROR, null, null, networkResponse.headers.toString(), "SERVER EXCEPTION ERROR!"));
             return;
         }
         String jsonString = null;
