@@ -42,6 +42,10 @@ import java.util.TreeMap;
  * Created by eyang on 8/26/15.
  */
 public class AMMultiPartRequest implements DocumentRequest{
+
+    private final int READ_TIME_OUT = 10*1000;
+    private final int CONNECTION_TIME_OUT = 3*1000;
+
     protected static final String PROTOCOL_CHARSET = "utf-8";
     public final static int MAX_BUFFER_SIZE = 1024*2;
     private final String MULTIPART_SEPARATOR_LINE = "---------------------------7de1a0c22082";
@@ -54,6 +58,8 @@ public class AMMultiPartRequest implements DocumentRequest{
     private Map<String, String> mHttpHeader = new HashMap<String, String>();
     private HttpEntity mHttpEntity;
     private AMRequestDelegate mRequestDelegate;
+    private DataOutputStream outputStream;
+    private HttpURLConnection connection;
 
     public AMMultiPartRequest(String url, HashMap<String, String> customHttpHeader, HttpEntity httpEntity, final AMRequestDelegate requestDelegate) throws MalformedURLException {
         mUrl = new URL(url);
@@ -68,7 +74,7 @@ public class AMMultiPartRequest implements DocumentRequest{
         long requestStart = SystemClock.elapsedRealtime();
         NetworkResponse networkResponse = null;
 
-            HttpURLConnection connection = openConnection();
+            connection = openConnection();
             for (String headerName : mHttpHeader.keySet()) {
                 connection.addRequestProperty(headerName, mHttpHeader.get(headerName));
             }
@@ -78,7 +84,7 @@ public class AMMultiPartRequest implements DocumentRequest{
             connection.setRequestProperty("User-Agent", "Accela-Mobile-SDK");
             connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + MULTIPART_SEPARATOR_LINE);
 
-            DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+            outputStream = new DataOutputStream(connection.getOutputStream());
 //            FileInputStream fileInputStream = new FileInputStream(mFileWrapper.mfile);
             mHttpEntity.writeTo(outputStream);
 //            copy(mHttpEntity.getContent(), outputStream);
@@ -104,16 +110,13 @@ public class AMMultiPartRequest implements DocumentRequest{
                 }
             }
 //            fileInputStream.close();
-            outputStream.flush();
-            outputStream.close();
-            outputStream = null;
-
             networkResponse = new NetworkResponse(responseCode, entityToBytes(response.getEntity()), convertHeaders(response.getAllHeaders()), false,
                     SystemClock.elapsedRealtime() - requestStart);
             return networkResponse;
     }
 
     public void handleResponse(NetworkResponse networkResponse){
+
         if (networkResponse==null){
             mRequestDelegate.onFailure(new AMError(0, null, null, null, "handleResponse: response is empty!"));
             return;
@@ -128,6 +131,12 @@ public class AMMultiPartRequest implements DocumentRequest{
         }
         String jsonString = null;
         try {
+            outputStream.flush();
+            outputStream.close();
+            outputStream = null;
+            if (connection != null) {
+                connection.disconnect();
+            }
             jsonString = new String(networkResponse.data, HttpHeaderParser.parseCharset(networkResponse.headers, PROTOCOL_CHARSET));
 
             if (statusCode == HttpStatus.SC_OK)
@@ -137,6 +146,8 @@ public class AMMultiPartRequest implements DocumentRequest{
         } catch (UnsupportedEncodingException e) {
             mRequestDelegate.onFailure(new AMError(statusCode, null, null, networkResponse.headers.toString(), e.toString()));
         } catch (JSONException e) {
+            mRequestDelegate.onFailure(new AMError(statusCode, null, null, networkResponse.headers.toString(), e.toString()));
+        } catch (IOException e) {
             mRequestDelegate.onFailure(new AMError(statusCode, null, null, networkResponse.headers.toString(), e.toString()));
         }
 
@@ -170,10 +181,8 @@ public class AMMultiPartRequest implements DocumentRequest{
 
     private HttpURLConnection openConnection() throws IOException {
         HttpURLConnection connection = (HttpURLConnection)mUrl.openConnection();
-
-        int timeoutMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
-        connection.setConnectTimeout(timeoutMs);
-        connection.setReadTimeout(timeoutMs);
+        connection.setConnectTimeout(CONNECTION_TIME_OUT);
+        connection.setReadTimeout(READ_TIME_OUT);
         connection.setUseCaches(false);
         connection.setDoInput(true);
         connection.setDoOutput(true);

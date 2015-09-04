@@ -82,7 +82,10 @@ public class AMRequestFactory {
     public static AMDocDownloadRequest createAMDocDownloadRequest(String url, HashMap<String, String> customHttpHeader, RequestParams requestParams, String localFilePath, final AMDocDownloadRequest.AMDownloadDelegate downloadDelegate){
         AMDocDownloadRequest request = null;
         try {
-            request = new AMDocDownloadRequest(url, customHttpHeader, requestParams.getStringBody(), localFilePath, downloadDelegate);
+            String stringBody = null;
+            if (requestParams!=null)
+                    stringBody = requestParams.getStringBody();
+            request = new AMDocDownloadRequest(url, customHttpHeader, stringBody, localFilePath, downloadDelegate);
         } catch (MalformedURLException e) {
             AMLogger.logError(e.toString());
         }

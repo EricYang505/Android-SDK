@@ -55,10 +55,10 @@ public class AMDocumentManager {
                     this.mTask = task[0];
                     response = mTask.request();
                 } catch (IOException e) {
-                    new NetworkResponse(IOEXCEPTION_ERROR, null, null, false,
+                    response = new NetworkResponse(IOEXCEPTION_ERROR, null, null, false,
                             SystemClock.elapsedRealtime() - requestStart);
                 } catch (ServerError serverError) {
-                    new NetworkResponse(SERVEREXCEPTION_ERROR, null, null, false,
+                    response = new NetworkResponse(SERVEREXCEPTION_ERROR, null, null, false,
                             SystemClock.elapsedRealtime() - requestStart);                }
             }
             return response;

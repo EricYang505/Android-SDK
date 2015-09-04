@@ -131,10 +131,10 @@ public class AMRequestSender {
      *
      * @since 1.0
      */
-    public AMRequest uploadAttachments(String path, RequestParams urlParams, Map<String, String> fileInformation,  Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {
+    public AMRequest uploadAttachments(String path, RequestParams urlParams, RequestParams postParams, Map<String, String> fileInformation,  Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {
         AMRequest amRequest = new AMRequest(AccelaMobile.getInstance().amApisHost + path,  urlParams, null, AMRequest.HTTPMethod.POST);
         amRequest.setHttpHeader(customHttpHeader);
-        return amRequest.uploadAttachments(fileInformation, requestDelegate);
+        return amRequest.uploadAttachments(postParams, fileInformation, requestDelegate);
     }
 
 

@@ -489,15 +489,14 @@ public class AMRequest {
 	 *
 	 * @since 4.0
 	 */
-	public AMRequest uploadAttachments(Map<String, String> attachmentInfo, AMRequestDelegate requestDelegate) {
-        RequestParams postData = new RequestParams();
+	public AMRequest uploadAttachments(RequestParams postParams, Map<String, String> attachmentInfo, AMRequestDelegate requestDelegate) {
 		for (Map.Entry<String, String> entry : attachmentInfo.entrySet()) {
 			String fileName = entry.getKey();
 			String filePath = entry.getValue();
 			File file = new File(filePath);
 			if (file.exists()) {
 				try {
-					postData.put(fileName, file);
+					postParams.put(fileName, file);
 				} catch (FileNotFoundException e) {
 					AMLogger.logError("In AMRequest.sendRequest(): FileNotFoundException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
 				}
@@ -505,11 +504,10 @@ public class AMRequest {
 				AMLogger.logError("AMRequest.uploadAttachment(): " +  stringLoader.getString("Log_FILE_NOT_FOUND"), filePath);
 			}
 		}
-
 		// Send request.
         // Send request.
         this.requestType = RequestType.MULTIPART;
-        this.postParams = postData;
+        this.postParams = postParams;
         try {
             this.sendRequest(requestDelegate);
         } catch (JSONException e) {

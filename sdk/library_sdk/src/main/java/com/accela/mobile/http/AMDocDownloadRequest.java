@@ -7,7 +7,6 @@ import android.util.Log;
 import com.accela.mobile.AMDocumentManager;
 import com.accela.mobile.AMError;
 import com.accela.mobile.AMLogger;
-import com.accela.mobile.http.volley.DefaultRetryPolicy;
 import com.accela.mobile.http.volley.Legacy.BasicHeader;
 import com.accela.mobile.http.volley.Legacy.BasicHttpResponse;
 import com.accela.mobile.http.volley.Legacy.BasicStatusLine;
@@ -17,14 +16,12 @@ import com.accela.mobile.http.volley.Legacy.ProtocolVersion;
 import com.accela.mobile.http.volley.Legacy.StatusLine;
 import com.accela.mobile.http.volley.NetworkResponse;
 import com.accela.mobile.http.volley.ServerError;
-import com.accela.mobile.http.volley.toolbox.HttpHeaderParser;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -40,7 +37,8 @@ import javax.net.ssl.SSLSession;
  * Created by eyang on 8/28/15.
  */
 public class AMDocDownloadRequest implements DocumentRequest {
-
+    private final int READ_TIME_OUT = 10*1000;
+    private final int CONNECTION_TIME_OUT = 3*1000;
     protected static final String PROTOCOL_CHARSET = "utf-8";
     private final URL mUrl;
     private final HashMap<String, String> mHttpHeader;
@@ -62,6 +60,9 @@ public class AMDocDownloadRequest implements DocumentRequest {
         long requestStart = SystemClock.elapsedRealtime();
         NetworkResponse networkResponse = null;
         HttpsURLConnection httpsConn = openConnection();
+        for (String headerName : mHttpHeader.keySet()) {
+            httpsConn.addRequestProperty(headerName, mHttpHeader.get(headerName));
+        }
         HostnameVerifier hostnameVerifier = new HostnameVerifier() {
             @Override
             public boolean verify(String hostname, SSLSession session) {
@@ -89,11 +90,11 @@ public class AMDocDownloadRequest implements DocumentRequest {
                     response.addHeader(h);
                 }
             }
+            networkResponse = new NetworkResponse(responseCode, null, convertHeaders(response.getAllHeaders()), false,
+                    SystemClock.elapsedRealtime() - requestStart);
             if (responseCode >= 400) {
                 String encoding = httpsConn.getContentEncoding();
                 isr = httpsConn.getErrorStream();
-                networkResponse = new NetworkResponse(responseCode, null, convertHeaders(response.getAllHeaders()), false,
-                        SystemClock.elapsedRealtime() - requestStart);
                 return networkResponse;
             }
             isr = httpsConn.getInputStream();
@@ -102,6 +103,9 @@ public class AMDocDownloadRequest implements DocumentRequest {
             throw e;
         } finally {
             closeStreams(isr);
+            if (httpsConn != null) {
+                httpsConn.disconnect();
+            }
         }
 //      handler.sendSuccessMessage(new File(localFile));
         return networkResponse;
@@ -110,29 +114,28 @@ public class AMDocDownloadRequest implements DocumentRequest {
     @Override
     public void handleResponse(NetworkResponse networkResponse) {
         if (networkResponse==null){
-            mDownloadDelegate.onFailure(new AMError(0, null, null, null, "handleResponse: response is empty!"));
+            mDownloadDelegate.onFailure(new AMError(0, "", "", "", "handleResponse: response is empty!"));
             return;
         }
+
         int statusCode = networkResponse.statusCode;
         if (statusCode == AMDocumentManager.IOEXCEPTION_ERROR){
-            mDownloadDelegate.onFailure(new AMError(AMDocumentManager.IOEXCEPTION_ERROR, null, null, networkResponse.headers.toString(), "IO EXCEPTION ERROR!"));
+            if (networkResponse.headers==null) {
+                mDownloadDelegate.onFailure(new AMError(AMDocumentManager.IOEXCEPTION_ERROR, "", "", "", "IO EXCEPTION ERROR!"));
+            }
+            mDownloadDelegate.onFailure(new AMError(AMDocumentManager.IOEXCEPTION_ERROR, "", "", networkResponse.headers.toString(), "IO EXCEPTION ERROR!"));
             return;
         }else if(statusCode == AMDocumentManager.SERVEREXCEPTION_ERROR){
-            mDownloadDelegate.onFailure(new AMError(AMDocumentManager.SERVEREXCEPTION_ERROR, null, null, networkResponse.headers.toString(), "SERVER EXCEPTION ERROR!"));
+            if (networkResponse.headers==null) {
+                mDownloadDelegate.onFailure(new AMError(AMDocumentManager.IOEXCEPTION_ERROR, "", "", "", "IO EXCEPTION ERROR!"));
+            }
+            mDownloadDelegate.onFailure(new AMError(AMDocumentManager.SERVEREXCEPTION_ERROR, "", "", networkResponse.headers.toString(), "SERVER EXCEPTION ERROR!"));
             return;
         }
-        String jsonString = null;
-        try {
-            jsonString = new String(networkResponse.data, HttpHeaderParser.parseCharset(networkResponse.headers, PROTOCOL_CHARSET));
-
-            if (statusCode == HttpStatus.SC_OK)
-                this.mDownloadDelegate.onSuccess(new File(mLocalFilePath));
-            else
-                mDownloadDelegate.onFailure(new AMError(statusCode, null, null, networkResponse.headers.toString(), null));
-        } catch (UnsupportedEncodingException e) {
-            mDownloadDelegate.onFailure(new AMError(statusCode, null, null, networkResponse.headers.toString(), e.toString()));
-        }
-
+        if (statusCode == HttpStatus.SC_OK)
+            this.mDownloadDelegate.onSuccess(new File(mLocalFilePath));
+        else
+            mDownloadDelegate.onFailure(new AMError(statusCode, "", "", networkResponse.headers.toString(), null));
     }
 
     private Map<String, String> convertHeaders(Header[] headers) {
@@ -146,9 +149,8 @@ public class AMDocDownloadRequest implements DocumentRequest {
      private HttpsURLConnection openConnection() throws IOException {
         HttpsURLConnection connection = (HttpsURLConnection)mUrl.openConnection();
 
-        int timeoutMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
-        connection.setConnectTimeout(timeoutMs);
-        connection.setReadTimeout(timeoutMs);
+        connection.setConnectTimeout(CONNECTION_TIME_OUT);
+        connection.setReadTimeout(READ_TIME_OUT);
         connection.setUseCaches(false);
         connection.setDoInput(true);
         return connection;
