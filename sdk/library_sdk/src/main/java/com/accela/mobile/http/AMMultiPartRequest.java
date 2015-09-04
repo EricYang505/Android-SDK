@@ -26,9 +26,12 @@ import com.accela.mobile.http.volley.toolbox.PoolingByteArrayOutputStream;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -88,6 +91,22 @@ public class AMMultiPartRequest implements DocumentRequest{
 //            FileInputStream fileInputStream = new FileInputStream(mFileWrapper.mfile);
             mHttpEntity.writeTo(outputStream);
 //            copy(mHttpEntity.getContent(), outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+        InputStream responseStream = new BufferedInputStream(connection.getInputStream());
+
+//        BufferedReader responseStreamReader = new BufferedReader(new InputStreamReader(responseStream));
+//        String line = "";
+//        StringBuilder stringBuilder = new StringBuilder();
+//        while ((line = responseStreamReader.readLine()) != null)
+//        {
+//            stringBuilder.append(line).append("\n");
+//        }
+//        responseStreamReader.close();
+
+//        String stringResponse = stringBuilder.toString();
+
 
             // Initialize HttpResponse with data from the HttpURLConnection.
             ProtocolVersion protocolVersion = new ProtocolVersion("HTTP", 1, 1);
@@ -112,6 +131,9 @@ public class AMMultiPartRequest implements DocumentRequest{
 //            fileInputStream.close();
             networkResponse = new NetworkResponse(responseCode, entityToBytes(response.getEntity()), convertHeaders(response.getAllHeaders()), false,
                     SystemClock.elapsedRealtime() - requestStart);
+        if (connection != null) {
+            connection.disconnect();
+        }
             return networkResponse;
     }
 
@@ -182,7 +204,7 @@ public class AMMultiPartRequest implements DocumentRequest{
     private HttpURLConnection openConnection() throws IOException {
         HttpURLConnection connection = (HttpURLConnection)mUrl.openConnection();
         connection.setConnectTimeout(CONNECTION_TIME_OUT);
-        connection.setReadTimeout(READ_TIME_OUT);
+//        connection.setReadTimeout(READ_TIME_OUT);
         connection.setUseCaches(false);
         connection.setDoInput(true);
         connection.setDoOutput(true);

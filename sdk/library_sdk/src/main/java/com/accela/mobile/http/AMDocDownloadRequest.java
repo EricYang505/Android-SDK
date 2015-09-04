@@ -150,7 +150,7 @@ public class AMDocDownloadRequest implements DocumentRequest {
         HttpsURLConnection connection = (HttpsURLConnection)mUrl.openConnection();
 
         connection.setConnectTimeout(CONNECTION_TIME_OUT);
-        connection.setReadTimeout(READ_TIME_OUT);
+//        connection.setReadTimeout(READ_TIME_OUT);
         connection.setUseCaches(false);
         connection.setDoInput(true);
         return connection;

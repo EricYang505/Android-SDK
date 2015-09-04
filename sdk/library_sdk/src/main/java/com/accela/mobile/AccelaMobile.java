@@ -22,6 +22,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.text.TextUtils;
+
+import com.accela.mobile.http.AMRequestQueueManager;
+
 import java.util.ResourceBundle;
 
 
@@ -168,7 +171,7 @@ public class AccelaMobile {
 	 */
 	public void initialize(Context ownerContext, String appId, String appSecret, Environment environment) {
 		// Initialize instance properties.
-        initialize(ownerContext,appId, appSecret, environment, null);
+        initialize(ownerContext, appId, appSecret, environment, null);
 	}
 
 	/**
@@ -216,6 +219,23 @@ public class AccelaMobile {
 
         this.requestSender = new AMRequestSender();
 	}
+
+	public void initialize(Context ownerContext, String appId, String appSecret, Environment environment, AMSessionDelegate sessionDelegate, String authHost, String apisHost,
+						   int netWorkThreadPoolSize, int diskCacheSize) {
+		this.amAuthHost = (authHost !=null) ? authHost : AMSetting.AM_OAUTH_HOST;
+		this.amApisHost = (apisHost !=null) ? apisHost : AMSetting.AM_API_HOST;
+		// Initialize instance properties.
+		this.ownerContext = ownerContext;
+		this.appId = appId;
+		this.appSecret = appSecret;
+		this.environment = environment;
+		AMRequestQueueManager.buildAMRequestQueue(this.ownerContext, netWorkThreadPoolSize, diskCacheSize);
+		this.authorizationManager = new AuthorizationManager();
+		this.authorizationManager.setSessionDelegate(sessionDelegate==null ? defaultSessionDelegate : sessionDelegate);
+
+		this.requestSender = new AMRequestSender();
+	}
+
 
 	public AuthorizationManager getAuthorizationManager() {
 		return this.authorizationManager;

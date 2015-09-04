@@ -37,7 +37,7 @@ public class AMDocumentManager {
     }
 
     public void startRequest(){
-        while (!mBlockingQueue.isEmpty()){
+        if (!mBlockingQueue.isEmpty()){
             DocumentRequest task = mBlockingQueue.poll();
             new DocumentTask().execute(task);
         }
@@ -67,6 +67,7 @@ public class AMDocumentManager {
         @Override
         protected void onPostExecute(NetworkResponse networkResponse) {
             mTask.handleResponse(networkResponse);
+            startRequest();
         }
 
     }

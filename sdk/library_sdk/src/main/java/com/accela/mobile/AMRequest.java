@@ -37,7 +37,7 @@ import com.accela.mobile.http.AMDocDownloadRequest;
 import com.accela.mobile.http.AMHttpRequest;
 import com.accela.mobile.http.AMImageLoader;
 import com.accela.mobile.http.AMRequestFactory;
-import com.accela.mobile.http.AMRequestQueue;
+import com.accela.mobile.http.AMRequestQueueManager;
 import com.accela.mobile.http.RequestParams;
 import com.accela.mobile.http.volley.Request;
 
@@ -230,7 +230,7 @@ public class AMRequest {
 	 */
 	private ResourceBundle stringLoader = AMSetting.getStringResourceBundle();
 
-    private AMRequestQueue requestQueue;
+    private AMRequestQueueManager requestQueue;
 
     private Map<String, String> requestHttpHeader = new HashMap<String, String>();
 
@@ -253,7 +253,7 @@ public class AMRequest {
         this.postParams = postParams;
 		this.httpMethod = httpMethod;
 		this.tag = String.valueOf(new Random().nextInt(100));
-        requestQueue = AMRequestQueue.getAMRequestQueue(this.ownerContext);
+        requestQueue = AMRequestQueueManager.buildAMRequestQueue(this.ownerContext);
 	}
 
 	/**
