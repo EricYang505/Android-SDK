@@ -91,20 +91,6 @@ public class AMMultiPartRequest implements DocumentRequest{
             outputStream.flush();
             outputStream.close();
 
-        InputStream responseStream = new BufferedInputStream(connection.getInputStream());
-
-//        BufferedReader responseStreamReader = new BufferedReader(new InputStreamReader(responseStream));
-//        String line = "";
-//        StringBuilder stringBuilder = new StringBuilder();
-//        while ((line = responseStreamReader.readLine()) != null)
-//        {
-//            stringBuilder.append(line).append("\n");
-//        }
-//        responseStreamReader.close();
-
-//        String stringResponse = stringBuilder.toString();
-
-
             // Initialize HttpResponse with data from the HttpURLConnection.
             ProtocolVersion protocolVersion = new ProtocolVersion("HTTP", 1, 1);
             int responseCode = connection.getResponseCode();
@@ -313,3 +299,17 @@ public class AMMultiPartRequest implements DocumentRequest{
 //        outputStream.writeBytes(lineEnd);
 //        outputStream.writeBytes(MULTIPART_SEPARATOR_LINE + twoHyphens + lineEnd);
 
+
+
+//        InputStream responseStream = new BufferedInputStream(connection.getInputStream());
+
+//        BufferedReader responseStreamReader = new BufferedReader(new InputStreamReader(responseStream));
+//        String line = "";
+//        StringBuilder stringBuilder = new StringBuilder();
+//        while ((line = responseStreamReader.readLine()) != null)
+//        {
+//            stringBuilder.append(line).append("\n");
+//        }
+//        responseStreamReader.close();
+
+//        String stringResponse = stringBuilder.toString();

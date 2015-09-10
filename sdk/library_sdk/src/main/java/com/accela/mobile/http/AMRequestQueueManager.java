@@ -12,6 +12,7 @@ import com.accela.mobile.http.volley.toolbox.BasicNetwork;
 import com.accela.mobile.http.volley.toolbox.DiskBasedCache;
 import com.accela.mobile.http.volley.toolbox.HurlStack;
 import com.accela.mobile.http.volley.toolbox.ImageLoader;
+import com.accela.mobile.http.volley.toolbox.NoCache;
 
 /**
  * Created by eyang on 8/20/15.
@@ -21,8 +22,6 @@ public class AMRequestQueueManager {
     private RequestQueue mRequestQueue;
     private static Context mCtx;
 
-    /** Default maximum disk usage in bytes. */
-    private static final int DEFAULT_DISK_USAGE_BYTES = 5 * 1024 * 1024;
     /** Number of network request dispatcher threads to start. */
     private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 4;
     private static int mPoolSize = -1;
@@ -53,7 +52,7 @@ public class AMRequestQueueManager {
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
-            Cache cache = new DiskBasedCache(mCtx.getCacheDir(), mDiskCacheSize>0 ? mDiskCacheSize : DEFAULT_DISK_USAGE_BYTES);
+            Cache cache = new NoCache();
             Network network = new BasicNetwork(new HurlStack());
             // Instantiate the RequestQueue with the cache and network.
             mRequestQueue = new RequestQueue(cache, network, mPoolSize>0 ? mPoolSize : DEFAULT_NETWORK_THREAD_POOL_SIZE);
