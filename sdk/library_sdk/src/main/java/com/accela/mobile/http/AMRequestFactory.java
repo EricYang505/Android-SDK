@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import com.accela.mobile.AMError;
 import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMRequestDelegate;
+import com.accela.mobile.http.volley.NetworkResponse;
 import com.accela.mobile.http.volley.Response;
 import com.accela.mobile.http.volley.VolleyError;
 
@@ -34,14 +35,18 @@ public class AMRequestFactory {
                         } else if(jsonResponse instanceof JSONArray) {
                             requestDelegate.onSuccess((JSONArray) jsonResponse);
                         } else{
-                            requestDelegate.onFailure(new AMError(0, null, null, "JsonHttpResponseHandler: unknown json type!", null));
+                            requestDelegate.onFailure(new AMError(200, null, null, "JsonHttpResponseHandler: unknown json type!", null));
                         }                    }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
-                        requestDelegate.onFailure(new AMError(0, null, null, error.getLocalizedMessage(), null));
+                        NetworkResponse response = error.networkResponse;
+                        String traceId = "";
+                        if (response.headers!=null){
+                            traceId = response.headers.get("x-accela-traceId");
+                        }
+                        requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, error.getLocalizedMessage(), response.headers.toString()));
                     }
                 });
         jsonRequest.setShouldCache(shouldCache);
@@ -68,8 +73,12 @@ public class AMRequestFactory {
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
-
-                            requestDelegate.onFailure(new AMError(0, null, null, error.getLocalizedMessage(), null));
+                            NetworkResponse response = error.networkResponse;
+                            String traceId = "";
+                            if (response.headers!=null){
+                                traceId = response.headers.get("x-accela-traceId");
+                            }
+                            requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, error.getLocalizedMessage(), response.headers.toString()));
                         }
                     });
             loginRequest.setShouldCache(shouldCache);

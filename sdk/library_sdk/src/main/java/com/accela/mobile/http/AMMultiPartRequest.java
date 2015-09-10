@@ -126,6 +126,7 @@ public class AMMultiPartRequest implements DocumentRequest{
             mRequestDelegate.onFailure(new AMError(0, null, null, null, "handleResponse: response is empty!"));
             return;
         }
+
         int statusCode = networkResponse.statusCode;
         if (statusCode == AMDocRequestManager.IOEXCEPTION_ERROR){
             mRequestDelegate.onFailure(new AMError(AMDocRequestManager.IOEXCEPTION_ERROR, null, null, networkResponse.headers.toString(), "IO EXCEPTION ERROR!"));
