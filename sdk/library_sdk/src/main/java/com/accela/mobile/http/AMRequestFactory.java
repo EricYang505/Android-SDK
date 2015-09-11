@@ -74,11 +74,17 @@ public class AMRequestFactory {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             NetworkResponse response = error.networkResponse;
-                            String traceId = "";
-                            if (response.headers!=null){
-                                traceId = response.headers.get("x-accela-traceId");
+                            if (response==null){
+                                requestDelegate.onFailure(new AMError(0, null, null, error.getLocalizedMessage(), null));
+                                return;
                             }
+                            if (response.headers==null){
+                                requestDelegate.onFailure(new AMError(response.statusCode, null, null, error.getLocalizedMessage(), null));
+                                return;
+                            }
+                            String traceId = response.headers.get("x-accela-traceId");
                             requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, error.getLocalizedMessage(), response.headers.toString()));
+
                         }
                     });
             loginRequest.setShouldCache(shouldCache);
