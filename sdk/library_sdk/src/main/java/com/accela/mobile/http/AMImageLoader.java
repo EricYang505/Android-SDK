@@ -33,7 +33,7 @@ public class AMImageLoader extends ImageLoader {
     public static synchronized AMImageLoader getAMImageLoader(Context context){
         if (mImageLoader==null){
             ImageCache imageCache = new AMLruCache(AMLruCache.getCacheSize(context));
-            mImageLoader = new AMImageLoader(AMRequestQueueManager.buildAMRequestQueue(context).getRequestQueue(), imageCache);
+            mImageLoader = new AMImageLoader(AMRequestQueueManager.buildAMRequestQueue().getRequestQueue(), imageCache);
         }
         return mImageLoader;
     }

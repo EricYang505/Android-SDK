@@ -42,6 +42,11 @@ public class AMRequestFactory {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         NetworkResponse response = error.networkResponse;
+<<<<<<< HEAD
+                        if (response==null){
+                            requestDelegate.onFailure(new AMError(0, null, null, error.getLocalizedMessage(), null));
+                            return;
+=======
                         String traceId = "";
                         if (response==null){
                             requestDelegate.onFailure(new AMError(0, null, null, error.getLocalizedMessage(), null));
@@ -49,7 +54,13 @@ public class AMRequestFactory {
                         }
                         if (response.headers!=null){
                             traceId = response.headers.get("x-accela-traceId");
+>>>>>>> origin/NewSDK
                         }
+                        if (response.headers==null){
+                            requestDelegate.onFailure(new AMError(response.statusCode, null, null, error.getLocalizedMessage(), null));
+                            return;
+                        }
+                        String traceId = response.headers.get("x-accela-traceId");
                         requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, error.getLocalizedMessage(), response.headers.toString()));
                     }
                 });

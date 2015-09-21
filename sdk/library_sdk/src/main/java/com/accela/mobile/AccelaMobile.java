@@ -229,7 +229,7 @@ public class AccelaMobile {
 		this.appId = appId;
 		this.appSecret = appSecret;
 		this.environment = environment;
-		AMRequestQueueManager.buildAMRequestQueue(this.ownerContext, netWorkThreadPoolSize, diskCacheSize);
+		AMRequestQueueManager.buildAMRequestQueue(netWorkThreadPoolSize, diskCacheSize);
 		this.authorizationManager = new AuthorizationManager();
 		this.authorizationManager.setSessionDelegate(sessionDelegate==null ? defaultSessionDelegate : sessionDelegate);
 

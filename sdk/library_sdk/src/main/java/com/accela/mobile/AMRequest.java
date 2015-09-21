@@ -253,7 +253,7 @@ public class AMRequest {
         this.postParams = postParams;
 		this.httpMethod = httpMethod;
 		this.tag = String.valueOf(new Random().nextInt(100));
-        requestQueue = AMRequestQueueManager.buildAMRequestQueue(this.ownerContext);
+        requestQueue = AMRequestQueueManager.buildAMRequestQueue();
 	}
 
 	/**

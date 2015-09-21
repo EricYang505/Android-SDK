@@ -69,7 +69,7 @@ public class AMMultiPartRequest implements DocumentRequest{
         mPool = new ByteArrayPool(DEFAULT_POOL_SIZE);
     }
 
-
+    @Override
     public NetworkResponse request() throws IOException, ServerError {
         long requestStart = SystemClock.elapsedRealtime();
         NetworkResponse networkResponse = null;
@@ -120,6 +120,7 @@ public class AMMultiPartRequest implements DocumentRequest{
             return networkResponse;
     }
 
+    @Override
     public void handleResponse(NetworkResponse networkResponse){
 
         if (networkResponse==null){

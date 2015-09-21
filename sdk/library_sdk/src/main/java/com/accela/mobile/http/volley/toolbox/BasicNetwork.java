@@ -38,10 +38,9 @@ import com.accela.mobile.http.volley.VolleyError;
 import com.accela.mobile.http.volley.VolleyLog;
 
 
-import org.apache.http.conn.ConnectTimeoutException;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
@@ -139,7 +138,7 @@ public class BasicNetwork implements Network {
                         SystemClock.elapsedRealtime() - requestStart);
             } catch (SocketTimeoutException e) {
                 attemptRetryOnException("socket", request, new TimeoutError());
-            } catch (ConnectTimeoutException e) {
+            } catch (InterruptedIOException e) {
                 attemptRetryOnException("connection", request, new TimeoutError());
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Bad URL " + request.getUrl(), e);

@@ -20,32 +20,30 @@ import com.accela.mobile.http.volley.toolbox.NoCache;
 public class AMRequestQueueManager {
     private static AMRequestQueueManager mInstance;
     private RequestQueue mRequestQueue;
-    private static Context mCtx;
 
     /** Number of network request dispatcher threads to start. */
     private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 4;
     private static int mPoolSize = -1;
     private static int mDiskCacheSize = -1;
 
-    private AMRequestQueueManager(Context context) {
+    private AMRequestQueueManager() {
         // getApplicationContext() is key, it keeps you from leaking the
         // Activity or BroadcastReceiver if someone passes one in.
-        mCtx = context.getApplicationContext();
         mRequestQueue = getRequestQueue();
 
         mRequestQueue.start();
     }
 
-    public static synchronized AMRequestQueueManager buildAMRequestQueue(Context context, int netWorkThreadPoolSize, int diskCacheSize) {
+    public static synchronized AMRequestQueueManager buildAMRequestQueue(int netWorkThreadPoolSize, int diskCacheSize) {
         mPoolSize = netWorkThreadPoolSize;
         mDiskCacheSize = diskCacheSize;
-        return buildAMRequestQueue(context);
+        return buildAMRequestQueue();
     }
 
 
-    public static synchronized AMRequestQueueManager buildAMRequestQueue(Context context) {
+    public static synchronized AMRequestQueueManager buildAMRequestQueue() {
         if (mInstance == null) {
-            mInstance = new AMRequestQueueManager(context);
+            mInstance = new AMRequestQueueManager();
         }
         return mInstance;
     }
