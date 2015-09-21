@@ -43,6 +43,10 @@ public class AMRequestFactory {
                     public void onErrorResponse(VolleyError error) {
                         NetworkResponse response = error.networkResponse;
                         String traceId = "";
+                        if (response==null){
+                            requestDelegate.onFailure(new AMError(0, null, null, error.getLocalizedMessage(), null));
+                            return;
+                        }
                         if (response.headers!=null){
                             traceId = response.headers.get("x-accela-traceId");
                         }
