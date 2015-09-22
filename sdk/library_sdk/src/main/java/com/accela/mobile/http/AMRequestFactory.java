@@ -54,6 +54,7 @@ public class AMRequestFactory {
                         if (response.headers!=null){
                             traceId = response.headers.get("x-accela-traceId");
                         }
+                        AMLogger.logError("Request Failed" + response.headers.toString());
                         requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, error.getLocalizedMessage(), response.headers.toString()));
                     }
                 });
@@ -90,6 +91,7 @@ public class AMRequestFactory {
                                 requestDelegate.onFailure(new AMError(response.statusCode, null, null, error.getLocalizedMessage(), null));
                                 return;
                             }
+                            AMLogger.logError("Request Failed" + response.headers.toString());
                             String traceId = response.headers.get("x-accela-traceId");
                             requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, error.getLocalizedMessage(), response.headers.toString()));
 

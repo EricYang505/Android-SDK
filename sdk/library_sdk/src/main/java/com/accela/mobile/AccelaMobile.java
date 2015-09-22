@@ -210,7 +210,7 @@ public class AccelaMobile {
 		this.amAuthHost = (authHost !=null) ? authHost : AMSetting.AM_OAUTH_HOST;
 		this.amApisHost = (apisHost !=null) ? apisHost : AMSetting.AM_API_HOST;
         // Initialize instance properties.
-        this.ownerContext = ownerContext;
+        this.ownerContext = ownerContext.getApplicationContext(); //use application context to make sure no memory leak
         this.appId = appId;
         this.appSecret = appSecret;
         this.environment = environment;
@@ -225,7 +225,7 @@ public class AccelaMobile {
 		this.amAuthHost = (authHost !=null) ? authHost : AMSetting.AM_OAUTH_HOST;
 		this.amApisHost = (apisHost !=null) ? apisHost : AMSetting.AM_API_HOST;
 		// Initialize instance properties.
-		this.ownerContext = ownerContext;
+		this.ownerContext = ownerContext; ////use application context to make sure no memory leak
 		this.appId = appId;
 		this.appSecret = appSecret;
 		this.environment = environment;
