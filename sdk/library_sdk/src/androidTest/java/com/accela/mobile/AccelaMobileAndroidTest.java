@@ -83,7 +83,8 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
         super.setUp();
         context = InstrumentationRegistry.getContext();
         Log.d(TAG, "setUp");
-        accelaMobile = new AccelaMobile(InstrumentationRegistry.getContext(), appId, appSecret, sessionDelegate, authHost, apiHost);
+        accelaMobile = AccelaMobile.getInstance();
+        accelaMobile.initialize(InstrumentationRegistry.getContext(), appId, appSecret, AccelaMobile.Environment.PROD, sessionDelegate, authHost, apiHost);
         login();
     }
 
@@ -95,7 +96,7 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
 
     private void login() {
         signal = new CountDownLatch(1);
-        accelaMobile.authenticate("", userName, password, appScopesCitizen);
+        accelaMobile.getAuthorizationManager().authenticate("", userName, password, AccelaMobile.Environment.PROD, appScopesCitizen);
 
         try {
             signal.await(30, TimeUnit.SECONDS);
@@ -125,7 +126,7 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
         headerParams.put("x-accela-agencies", "All");
         headerParams.put("x-accela-environment", "PROD");
         signal = new CountDownLatch(1);
-        accelaMobile.request("/v4/records/mine", requestParams, headerParams, new AMRequestDelegate() {
+        accelaMobile.getRequestSender().sendRequest("/v4/records/mine", requestParams, headerParams, new AMRequestDelegate() {
             @Override
             public void onSuccess(JSONObject response) {
                 Log.d(TAG, "testGetRecord successfully" + response.toString());
@@ -163,20 +164,22 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
         requestParams.put("lang", "en_US");
 
         Map<String, String> headerParams = new HashMap<String, String>();
-        headerParams.put(accelaMobile.AGENCY_NAME, "OAKLAND-APPS");
-        headerParams.put(accelaMobile.ENVIRONMENT_NAME, "PROD");
+        headerParams.put(AMRequest.HEADER_X_ACCELA_AGENCY, "OAKLAND-APPS");
+        headerParams.put(AMRequest.HEADER_X_ACCELA_ENVIRONMENT, "PROD");
         signal = new CountDownLatch(1);
-        accelaMobile.request("/v4/records/OAKLAND-15CAP-00000-07298/inspections", requestParams, headerParams, new AMRequestDelegate() {
+        accelaMobile.getRequestSender().sendRequest("/v4/records/OAKLAND-15CAP-00000-07298/inspections", requestParams, headerParams, new AMRequestDelegate() {
             @Override
             public void onSuccess(JSONObject response) {
                 Log.d(TAG, "testGetInspection successfully" + response.toString());
                 signal.countDown();
                 assertTrue(true);
             }
+
             @Override
             public void onStart() {
 
             }
+
             @Override
             public void onFailure(AMError error) {
                 Log.d(TAG, "testGetInspection failed: " + error.getMessage());
@@ -197,7 +200,7 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
     public void testLogout() {
         Log.d(TAG, "testLogout start");
         signal = new CountDownLatch(1);
-        accelaMobile.logout();
+        accelaMobile.getAuthorizationManager().logout();
         try {
             signal.await(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
