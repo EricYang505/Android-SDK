@@ -32,8 +32,6 @@ public class AMRequestFactory {
                         Object jsonResponse = response;
                         if(jsonResponse instanceof JSONObject) {
                             requestDelegate.onSuccess((JSONObject) jsonResponse);
-                        } else if(jsonResponse instanceof JSONArray) {
-                            requestDelegate.onSuccess((JSONArray) jsonResponse);
                         } else{
                             requestDelegate.onFailure(new AMError(200, null, null, "JsonHttpResponseHandler: unknown json type!", null));
                         }                    }
@@ -73,8 +71,6 @@ public class AMRequestFactory {
                             Object jsonResponse = response;
                             if(jsonResponse instanceof JSONObject) {
                                 requestDelegate.onSuccess((JSONObject) jsonResponse);
-                            } else if(jsonResponse instanceof JSONArray) {
-                                requestDelegate.onSuccess((JSONArray) jsonResponse);
                             } else{
                                 requestDelegate.onFailure(new AMError(0, null, null, "JsonHttpResponseHandler: unknown json type!", null));
                             }                    }

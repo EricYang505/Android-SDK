@@ -36,8 +36,6 @@ public abstract class AMRequestDelegate extends HttpResponseLogHandler {
 
 	public void onSuccess(JSONObject content) {}
 
-	public void onSuccess(JSONArray content) {}
-
 	public void onSuccess(Bitmap bitmap) {}
 
 	/**
