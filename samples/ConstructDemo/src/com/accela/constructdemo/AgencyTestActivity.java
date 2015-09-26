@@ -62,19 +62,18 @@ import android.widget.Toast;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.accela.mobile.AMError;
+import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMLoginView;
 import com.accela.mobile.AMLoginViewDelegate;
-import com.accela.mobile.AccelaMobile;
-import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMRequest;
-import com.accela.mobile.AMRequest.HTTPMethod;
-import com.accela.mobile.AccelaMobile.AuthorizationStatus;
-import com.accela.mobile.http.RequestParams;
-import com.accela.mobile.AMError;
 import com.accela.mobile.AMRequestDelegate;
 import com.accela.mobile.AMSessionDelegate;
 import com.accela.mobile.AMSetting;
+import com.accela.mobile.AccelaMobile;
+import com.accela.mobile.http.RequestParams;
 import com.accela.testcase.R;
+
 
 public class AgencyTestActivity extends Activity implements OnClickListener {
 	private static final String APP_ID= "635442545792218073";
@@ -128,7 +127,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 
 		if ((hasFocus)
 				&& (accelaMobile != null)
-				&& (accelaMobile.getAuthorizationStatus() == AuthorizationStatus.AUTHORIZED)) {
+				&& (accelaMobile.getAuthorizationStatus() == AccelaMobile.AuthorizationStatus.AUTHORIZED)) {
 			accessTokenProgressDialog = ProgressDialog.show(this, null,
 					this.getString(R.string.msg_login), true, true);
 		}
@@ -154,7 +153,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 		String recordId = "14CAP-00000-000CT";
 		switch (view.getId()) {
 		case R.id.btnAgencyNativeLogin:
-			accelaMobile.getAuthorizationManager().authorizeAgent(permissions4Authorization, this.loginDialogDelegate);
+			//accelaMobile.getAuthorizationManager().authorizeAgent(permissions4Authorization, this.loginDialogDelegate);
 			break;
 
 		case R.id.btnAgencyEmbeddedWebLogin:
@@ -172,7 +171,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 						getDateRangeBeforeAndAfter(7, 7)); // From 7 days before
 															// to 7 days after
 				currentRequest = accelaMobile.request(servicePath,
-						requestParams, recordListRequestDelegate);
+						requestParams, null, recordListRequestDelegate);
 			}
 			break;
 		case R.id.btnAgencyGetRecordsSync:
@@ -185,7 +184,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 				requestParams.put("limit", "10");
 				requestParams.put("offset", "0");
 				JSONObject responseJson = accelaMobile.fetch(
-						servicePath, requestParams, HTTPMethod.GET, null);
+						servicePath, requestParams, AMRequest.HTTPMethod.GET, null);
 				String alertMessage;
 				if (responseJson == null) {
 					alertMessage = this.getResources().getString(
@@ -206,7 +205,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 			if (isSessionValid()) {
 				servicePath = SERVICE_URI_RECORD_SEARCH.replace("{recordIds}",
 						recordId);
-				currentRequest = accelaMobile.request(servicePath, null,
+				currentRequest = accelaMobile.request(servicePath, null, null,
 						requestDelegate);
 			}
 			break;
@@ -217,7 +216,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 				JSONObject recordJson = populateRecordJson();
 				RequestParams postData = new RequestParams(recordJson);
 				currentRequest = accelaMobile.request(servicePath, null,
-						HTTPMethod.POST, postData, requestDelegate);
+						AMRequest.HTTPMethod.POST, postData, requestDelegate);
 			}
 			break;
 		case R.id.btnAgencyGetInspections:
@@ -242,7 +241,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 				// asynchronous request, put requestDelegate for handling
 				// results
 				currentRequest = accelaMobile.request(servicePath,
-						requestParams, requestDelegate);
+						requestParams, null, requestDelegate);
 			}
 			break;
 		case R.id.btnAgencyUploadAttachmentWithProgress:
@@ -263,8 +262,8 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 						fileInformationMap);
 				// Populate the post data.
 				String fileInfoJsonArrayStr = fileInfoJsonArray.toString();
-				RequestParams postParams = new RequestParams("fileInfo",
-						fileInfoJsonArrayStr);
+                RequestParams postParams = new RequestParams();
+                postParams.put("fileInfo", fileInfoJsonArrayStr);
 				// Invoke cloud API to upload the files.
 				currentRequest = accelaMobile.uploadAttachments(
 						servicePath, postParams, fileInformationMap,
@@ -284,7 +283,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 								R.string.msg_request_being_processed), true,
 						true);
 				currentRequest = accelaMobile.request(servicePath,
-						requestParams, HTTPMethod.GET, null,
+						requestParams, AMRequest.HTTPMethod.GET, null,
 						attachmentListRequestDelegate);
 				waitingView.dismiss();
 			}
@@ -320,7 +319,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 			
 			requestParams = new RequestParams();
 			currentRequest = accelaMobile.request(servicePath,
-					requestParams, customHttpHeader, HTTPMethod.GET, null, requestDelegate);
+					requestParams, customHttpHeader, AMRequest.HTTPMethod.GET, null, requestDelegate);
 			break;
 		case R.id.btnAgencyLogout:
 			if (isSessionValid()) {
@@ -438,7 +437,7 @@ public class AgencyTestActivity extends Activity implements OnClickListener {
 				imageView.setImageBitmap(BitmapFactory
 						.decodeStream(fileInputStream));
 				AMLogger.logInfo("File's length = %d, fileInputStream = %s",
-						file.length(), fileInputStream.toString());
+                        file.length(), fileInputStream.toString());
 			} catch (FileNotFoundException e) {
 				AMLogger.logError(
 						"Failed to load the image because of non-existent file path or invalid image extension.\nFile path: %s",

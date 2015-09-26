@@ -1,0 +1,4 @@
+include ':app'
+
+include ':library_sdk'
+project(':library_sdk').projectDir = new File(settingsDir, '../../sdk/library_sdk')

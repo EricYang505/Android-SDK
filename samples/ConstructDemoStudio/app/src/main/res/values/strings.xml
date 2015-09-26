@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name and screen titles -->
+    <string name="app_name">TestCase</string>
+    <string name="main_view_title">Accela Mobile SDK Test Case</string>
+    <string name="citizen_test_title">Citizen App Test</string>
+    <string name="agency_test_title">Agency App Test</string>
+    <string name="image_preview_title">Image Preview (touch to dismiss)</string>
+    
+    <!-- Menus (buttons) -->
+    <string name="Menu_CitizenAppTest">Citizen App Test</string>
+    <string name="Menu_AgencyAppTest">Agency App Test</string>    
+    <string name="Menu_CivicWebLogin">Auth(Web Browser)</string>  
+    <string name="Menu_CivicEmbeddedWebLogin">Auth(Embedded Web View)</string>    
+    <string name="Menu_AgencyWebLogin">Auth(Web Browser)</string>
+    <string name="Menu_AgencyNativeLogin">Native Login</string>
+    <string name="Menu_AgencyEmbeddedWebLogin">Wrapped Web Login</string>
+    <string name="Menu_CustomizeLogin">Customized Auth</string>
+    <string name="Menu_SearchRecord">Search Record</string>
+    <string name="Menu_GetRecords">Get Records</string>
+   	<string name="Menu_GetRecordsSync">Get Records Sync</string>
+    <string name="Menu_GetSpecificRecord">Get A Specific Record</string>
+    <string name="Menu_GetInspections">Get Inspections</string>
+    <string name="Menu_CreateRecord">Create Record</string>
+    <string name="Menu_CreateRecordWithAttachments">Create Record With Attachments</string>
+    <string name="Menu_DownloadAttachmentList">Download Attachment List</string>
+    <string name="Menu_DownloadAttachmentWithProgress">Download Attachment With Progress</string>
+    <string name="Menu_UploadAttachmentWithProgress">Upload Attachment With Progress</string> 
+    <string name="Menu_AppSettings">Get AppSettings</string> 
+    <string name="Menu_Logout">Logout</string>
+    <string name="Menu_UploadAttachment">Upload Attachment</string>    
+    <string name="Menu_Back">Back To Homepage</string>
+    
+    <!-- Alert messages -->    
+    <string name="msg_login">Login request is being processed.\nPlease wait.</string>
+    <string name="msg_not_logged_in">Not logged in yet.</string>
+    <string name="msg_logged_in">Logged in successfully.</string>
+    <string name="msg_login_failed">Failed to login due to error.</string>
+    <string name="msg_logged_out">Logged out successfully.</string>
+    <string name="msg_request_being_processed">Request is being processed.</string>  
+    
+    <string name="error_request_timeout_title">Request Timeout</string>
+    <string name="error_request_timeout_message">The request timed out.\nPlease try later.</string>
+    <string name="error_request_failed_title">Request Failed</string>
+    <string name="error_request_failed_message">Failed to process the reqeust due to error</string>    
+    <string name="msg_request_completed_title">Request Completed</string>
+    <string name="msg_request_completed_message">Server returned Json data</string>   
+    <string name="error_image_preview">\n\nFailed to load the image because of non-existent file path\n or invalid image extension.</string>
+    
+    
+    
+</resources>
