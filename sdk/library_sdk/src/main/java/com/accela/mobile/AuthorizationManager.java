@@ -138,13 +138,6 @@ public class AuthorizationManager {
 	private String apisServer;
 
 	/**
-	 * The agency for authorization.
-	 * 
-	 * @since 3.0
-	 */
-	private String agency;
-
-	/**
 	 * The user's name (or civic ID) for authorization.
 	 * 
 	 * @since 3.0
@@ -259,7 +252,7 @@ public class AuthorizationManager {
 		// Load access token stored locally.
 		this.accessToken = sessionStorePrefs.getString(TOKEN_KEY_IN_PREF_FILE,null);
 		this.refreshToken = sessionStorePrefs.getString(REFRESH_TOKEN_KEY_IN_PREF_FILE,null);
-		this.agency = sessionStorePrefs.getString(AGENCY_KEY_IN_PREF_FILE, null);
+		accelaMobile.agency = sessionStorePrefs.getString(AGENCY_KEY_IN_PREF_FILE, null);
 		this.user = sessionStorePrefs.getString(USER_KEY_IN_PREF_FILE, null);
 		if (accelaMobile.environment==null && sessionStorePrefs.getString(ENVIRONMENT_KEY_IN_PREF_FILE, null)!=null)
 			accelaMobile.environment = AccelaMobile.Environment.valueOf(sessionStorePrefs.getString(ENVIRONMENT_KEY_IN_PREF_FILE, null));
@@ -271,7 +264,7 @@ public class AuthorizationManager {
 	}
 
     public AMRequest authenticate(String agency, String user, String password, AccelaMobile.Environment environment, String[] permissions) {
-        this.agency = agency;
+        accelaMobile.agency = agency;
         this.setClientInfo(agency, accelaMobile.amAuthHost, accelaMobile.amApisHost);
         this.setIsRememberToken(amIsRemember);
         this.setSessionDelegate(this.sessionDelegate);
@@ -290,6 +283,7 @@ public class AuthorizationManager {
      */
     public void logout() {
         // Clear token.
+		accelaMobile.reset();
         clearAuthorizationAndToken(true);
 
         // Call session delegate.
@@ -423,7 +417,7 @@ public class AuthorizationManager {
 	 * @since 3.0
 	 */
 	public String getAgency() {
-		return this.agency;
+		return accelaMobile.agency;
 	}
 
 	/**
@@ -546,7 +540,7 @@ public class AuthorizationManager {
 	 * @since 3.0
 	 */
 	public void setClientInfo(String agency, String authServer, String apisServer) {
-		this.agency = agency;
+		accelaMobile.agency = agency;
 		this.authorizationServer = authServer;
 		this.apisServer = apisServer;
 	}
@@ -571,7 +565,7 @@ public class AuthorizationManager {
 	private AMRequest getAuthorizeCode4Private(AMLoginView loginDialog, String agency,
 			String user, String password, String[] permissions, Boolean is4Civic) {
 		this.loginDialog = loginDialog;
-		this.agency = agency;
+		accelaMobile.agency = agency;
 		this.user = user;
 		this.password = password;
 		this.permissions = permissions;
@@ -645,8 +639,8 @@ public class AuthorizationManager {
 		authorizationInfo.put("scope",
 				convertStringArray2StringWithSpaceSeparator(this.permissions));
 		authorizationInfo.put("response_type", "code");
-		if (this.agency != null) {
-			authorizationInfo.put("agency_name", this.agency);
+		if (accelaMobile.agency != null) {
+			authorizationInfo.put("agency_name", accelaMobile.agency);
 		}
 		RequestParams params = new RequestParams();
         params.setUrlParams(authorizationInfo);
@@ -698,7 +692,7 @@ public class AuthorizationManager {
 		Uri uri = webIntent.getData();
 		String action = uri.getHost();
 		this.authorizationCode = uri.getQueryParameter("code");
-		this.agency = uri.getQueryParameter("agency_name");
+		accelaMobile.agency = uri.getQueryParameter("agency_name");
 		accelaMobile.environment = AccelaMobile.Environment.valueOf(uri.getQueryParameter("environment"));
 		// Send request to get access token.
 		if (("authorize".equalsIgnoreCase(action)) && (this.authorizationCode != null)) {
@@ -740,8 +734,8 @@ public class AuthorizationManager {
 			prefsWriter.putString(ENVIRONMENT_KEY_IN_PREF_FILE,
 					accelaMobile.environment.name());
 		}
-		if (this.agency != null) {
-			prefsWriter.putString(AGENCY_KEY_IN_PREF_FILE, this.agency);
+		if (accelaMobile.agency != null) {
+			prefsWriter.putString(AGENCY_KEY_IN_PREF_FILE, accelaMobile.agency);
 		}
 		if (this.user != null) {
 			prefsWriter.putString(USER_KEY_IN_PREF_FILE, this.user);
@@ -831,8 +825,8 @@ public class AuthorizationManager {
 			}
 			customTokenPostParam.put("client_id", this.accelaMobile.appId);
 			customTokenPostParam.put("client_secret", this.accelaMobile.appSecret);
-			if (this.agency != null) { // Optional for Civic ID
-				customTokenPostParam.put("agency_name", this.agency);
+			if (accelaMobile.agency != null) { // Optional for Civic ID
+				customTokenPostParam.put("agency_name", accelaMobile.agency);
 			}
 			customTokenPostParam.put("environment", accelaMobile.environment.name());
 		} else { // For authorization done through web view
@@ -967,8 +961,8 @@ public class AuthorizationManager {
 					broadcastIntent.putExtra(ENVIRONMENT_KEY_IN_PREF_FILE,
 							accelaMobile.environment);
 				}
-				if (agency != null) {
-					broadcastIntent.putExtra(AGENCY_KEY_IN_PREF_FILE, agency);
+				if (accelaMobile.agency != null) {
+					broadcastIntent.putExtra(AGENCY_KEY_IN_PREF_FILE, accelaMobile.agency);
 				}
 				broadcastIntent.putExtra(USER_KEY_IN_PREF_FILE, user);
 				broadcastIntent.putExtra(TOKEN_KEY_IN_PREF_FILE, accessToken);

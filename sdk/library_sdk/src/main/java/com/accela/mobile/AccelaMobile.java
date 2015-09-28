@@ -117,7 +117,7 @@ public class AccelaMobile {
 	 *
 	 * @since 1.0
 	 */
-	private String agency ;
+	String agency ;
 
 	/**
 	 * The environment to which user logs in.
@@ -149,6 +149,11 @@ public class AccelaMobile {
     	}
     	return instance;
     }
+
+	public synchronized void reset(){
+		this.agency = null;
+		environment = Environment.PROD;
+	}
 
 
 	/**
