@@ -20,7 +20,7 @@ public class AMRetryPolicy implements RetryPolicy {
     private final float mBackoffMultiplier;
 
     /** The default socket timeout in milliseconds */
-    public static final int DEFAULT_TIMEOUT_MS = 1000*30;//2500*4; //prolong to 10s for QA environment, the networking is very slow
+    public static final int DEFAULT_TIMEOUT_MS = 1000*60;//2500*4; //prolong to 10s for QA environment, the networking is very slow
 
     /** The default number of retries */
     public static final int DEFAULT_MAX_RETRIES = 1;
