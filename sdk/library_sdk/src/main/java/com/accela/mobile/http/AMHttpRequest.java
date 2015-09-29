@@ -40,6 +40,7 @@ public class AMHttpRequest extends Request<JSONObject> {
         this.customHttpHeader = customHttpHeader;
         mRequestBody = stringRequestBody;
         mListener = listener;
+        this.setRetryPolicy(new AMRetryPolicy());
     }
 
     @Override
@@ -51,7 +52,7 @@ public class AMHttpRequest extends Request<JSONObject> {
     @Override
     protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
         try {
-            Map<String, String> responseHeaders = response.headers;
+            responseHeader = response.headers;
             Cache.Entry entry = HttpHeaderParser.parseCacheHeaders(response);
             this.responseStatus = response.statusCode;
             String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));

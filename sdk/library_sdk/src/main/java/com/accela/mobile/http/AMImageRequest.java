@@ -36,6 +36,7 @@ public class AMImageRequest extends ImageRequest{
     public AMImageRequest(String url, Map<String, String> customHttpHeader, Response.Listener<Bitmap> listener, int maxWidth, int maxHeight, ImageView.ScaleType scaleType, Bitmap.Config decodeConfig, Response.ErrorListener errorListener) {
         super(url, listener, maxWidth, maxHeight, scaleType, decodeConfig, errorListener);
         this.customHttpHeader = customHttpHeader;
+        this.setRetryPolicy(new AMRetryPolicy());
     }
 
     @Override

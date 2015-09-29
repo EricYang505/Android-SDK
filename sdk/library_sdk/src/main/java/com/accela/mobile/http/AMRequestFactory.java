@@ -42,18 +42,18 @@ public class AMRequestFactory {
                         NetworkResponse response = error.networkResponse;
                         String traceId = "";
                             if (response==null){
-                            requestDelegate.onFailure(new AMError(0, null, null, error.getLocalizedMessage(), null));
+                            requestDelegate.onFailure(new AMError(0, null, null, error.toString(), null));
                             return;
                         }
                         if (response.headers==null){
-                            requestDelegate.onFailure(new AMError(response.statusCode, null, null, error.getLocalizedMessage(), null));
+                            requestDelegate.onFailure(new AMError(response.statusCode, null, null, error.toString(), null));
                             return;
                         }
                         if (response.headers!=null){
                             traceId = response.headers.get("x-accela-traceId");
                         }
                         AMLogger.logError("Request Failed" + response.headers.toString());
-                        requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, error.getLocalizedMessage(), response.headers.toString()));
+                        requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, error.toString(), response.headers.toString()));
                     }
                 });
         jsonRequest.setShouldCache(shouldCache);
