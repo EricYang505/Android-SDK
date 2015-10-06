@@ -75,14 +75,14 @@ public class AMRequest {
 	 *
 	 * @since 3.0
 	 */
-	protected static final String HEADER_X_ACCELA_TRACEID = "x-accela-traceid";
+	public static final String HEADER_X_ACCELA_TRACEID = "x-accela-traceid";
 
 	/**
 	 * Response Message header name in HTTP/HTTPS response headers.
 	 *
 	 * @since 3.0
 	 */
-	protected static final String HEADER_X_ACCELA_RESP_MESSAGE = "x-accela-resp-message";
+	public static final String HEADER_X_ACCELA_RESP_MESSAGE = "x-accela-resp-message";
 
 	/**
 	 * Environment header name in HTTP/HTTPS request headers.

@@ -7,6 +7,7 @@ import android.util.Log;
 import com.accela.mobile.AMDocRequestManager;
 import com.accela.mobile.AMError;
 import com.accela.mobile.AMLogger;
+import com.accela.mobile.AMRequest;
 import com.accela.mobile.http.volley.Legacy.BasicHeader;
 import com.accela.mobile.http.volley.Legacy.BasicHttpResponse;
 import com.accela.mobile.http.volley.Legacy.BasicStatusLine;
@@ -113,29 +114,25 @@ public class AMDocDownloadRequest implements DocumentRequest {
 
     @Override
     public void handleResponse(NetworkResponse networkResponse) {
-        if (networkResponse==null){
-            mDownloadDelegate.onFailure(new AMError(0, "", "", "", "handleResponse: response is empty!"));
+        if (networkResponse==null || networkResponse.headers==null){
+            mDownloadDelegate.onFailure(new AMError(0, null, null, "handleResponse: response is empty!", null));
             return;
         }
-
         int statusCode = networkResponse.statusCode;
+        String traceId = networkResponse.headers.get(AMRequest.HEADER_X_ACCELA_TRACEID);
+        String errorMessage = networkResponse.headers.get(AMRequest.HEADER_X_ACCELA_RESP_MESSAGE);
+
         if (statusCode == AMDocRequestManager.IOEXCEPTION_ERROR){
-            if (networkResponse.headers==null) {
-                mDownloadDelegate.onFailure(new AMError(AMDocRequestManager.IOEXCEPTION_ERROR, "", "", "", "IO EXCEPTION ERROR!"));
-            }
-            mDownloadDelegate.onFailure(new AMError(AMDocRequestManager.IOEXCEPTION_ERROR, "", "", networkResponse.headers.toString(), "IO EXCEPTION ERROR!"));
+            mDownloadDelegate.onFailure(new AMError(AMDocRequestManager.IOEXCEPTION_ERROR, null, traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), "IO EXCEPTION ERROR!"));
             return;
         }else if(statusCode == AMDocRequestManager.SERVEREXCEPTION_ERROR){
-            if (networkResponse.headers==null) {
-                mDownloadDelegate.onFailure(new AMError(AMDocRequestManager.IOEXCEPTION_ERROR, "", "", "", "IO EXCEPTION ERROR!"));
-            }
-            mDownloadDelegate.onFailure(new AMError(AMDocRequestManager.SERVEREXCEPTION_ERROR, "", "", networkResponse.headers.toString(), "SERVER EXCEPTION ERROR!"));
+            mDownloadDelegate.onFailure(new AMError(AMDocRequestManager.SERVEREXCEPTION_ERROR, null, traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), "SERVER EXCEPTION ERROR!"));
             return;
         }
         if (statusCode == HttpStatus.SC_OK)
             this.mDownloadDelegate.onSuccess(new File(mLocalFilePath));
         else
-            mDownloadDelegate.onFailure(new AMError(statusCode, "", "", networkResponse.headers.toString(), null));
+            mDownloadDelegate.onFailure(new AMError(statusCode, "", traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), null));
     }
 
     private Map<String, String> convertHeaders(Header[] headers) {

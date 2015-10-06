@@ -4,6 +4,8 @@ import android.os.SystemClock;
 
 import com.accela.mobile.AMDocRequestManager;
 import com.accela.mobile.AMError;
+import com.accela.mobile.AMLogger;
+import com.accela.mobile.AMRequest;
 import com.accela.mobile.AMRequestDelegate;
 import com.accela.mobile.http.volley.Legacy.BasicHeader;
 import com.accela.mobile.http.volley.Legacy.BasicHttpEntity;
@@ -122,18 +124,19 @@ public class AMMultiPartRequest implements DocumentRequest{
 
     @Override
     public void handleResponse(NetworkResponse networkResponse){
-
-        if (networkResponse==null){
-            mRequestDelegate.onFailure(new AMError(0, null, null, null, "handleResponse: response is empty!"));
+        if (networkResponse==null || networkResponse.headers==null){
+            mRequestDelegate.onFailure(new AMError(0, null, null, "handleResponse: response is empty!", null));
             return;
         }
-
         int statusCode = networkResponse.statusCode;
+        String traceId = networkResponse.headers.get(AMRequest.HEADER_X_ACCELA_TRACEID);
+        String errorMessage = networkResponse.headers.get(AMRequest.HEADER_X_ACCELA_RESP_MESSAGE);
+
         if (statusCode == AMDocRequestManager.IOEXCEPTION_ERROR){
-            mRequestDelegate.onFailure(new AMError(AMDocRequestManager.IOEXCEPTION_ERROR, null, null, networkResponse.headers.toString(), "IO EXCEPTION ERROR!"));
+            mRequestDelegate.onFailure(new AMError(AMDocRequestManager.IOEXCEPTION_ERROR, null, traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), "IO EXCEPTION ERROR!"));
             return;
         }else if(statusCode == AMDocRequestManager.SERVEREXCEPTION_ERROR){
-            mRequestDelegate.onFailure(new AMError(AMDocRequestManager.SERVEREXCEPTION_ERROR, null, null, networkResponse.headers.toString(), "SERVER EXCEPTION ERROR!"));
+            mRequestDelegate.onFailure(new AMError(AMDocRequestManager.SERVEREXCEPTION_ERROR, null, traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), "SERVER EXCEPTION ERROR!"));
             return;
         }
         String jsonString = null;
@@ -149,20 +152,14 @@ public class AMMultiPartRequest implements DocumentRequest{
             if (statusCode == HttpStatus.SC_OK)
                 this.mRequestDelegate.onSuccess(new JSONObject(jsonString));
             else
-                mRequestDelegate.onFailure(new AMError(statusCode, null, null, networkResponse.headers.toString(), null));
+                mRequestDelegate.onFailure(new AMError(statusCode, null, traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), null));
         } catch (UnsupportedEncodingException e) {
-            mRequestDelegate.onFailure(new AMError(statusCode, null, null, networkResponse.headers.toString(), e.toString()));
+            mRequestDelegate.onFailure(new AMError(statusCode, null, traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), e.toString()));
         } catch (JSONException e) {
-            mRequestDelegate.onFailure(new AMError(statusCode, null, null, networkResponse.headers.toString(), e.toString()));
+            mRequestDelegate.onFailure(new AMError(statusCode, null, traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), e.toString()));
         } catch (IOException e) {
-            mRequestDelegate.onFailure(new AMError(statusCode, null, null, networkResponse.headers.toString(), e.toString()));
+            mRequestDelegate.onFailure(new AMError(statusCode, null, traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), e.toString()));
         }
-
-//    } catch (ServerError serverError) {
-//        mRequestDelegate.onFailure(new AMError(statusCode, null, null, networkResponse.headers.toString(), serverError.toString()));
-//    } catch (IOException e) {
-//        mRequestDelegate.onFailure(new AMError(statusCode, null, null, networkResponse.headers.toString(), e.toString()));
-//    }
     }
 
     public  int  copy(InputStream input, DataOutputStream output) throws IOException {

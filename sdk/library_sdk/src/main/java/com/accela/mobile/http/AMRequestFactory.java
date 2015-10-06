@@ -5,6 +5,7 @@ import android.widget.ImageView;
 
 import com.accela.mobile.AMError;
 import com.accela.mobile.AMLogger;
+import com.accela.mobile.AMRequest;
 import com.accela.mobile.AMRequestDelegate;
 import com.accela.mobile.http.volley.NetworkResponse;
 import com.accela.mobile.http.volley.Response;
@@ -40,7 +41,6 @@ public class AMRequestFactory {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         NetworkResponse response = error.networkResponse;
-                        String traceId = "";
                             if (response==null){
                             requestDelegate.onFailure(new AMError(0, null, null, error.toString(), null));
                             return;
@@ -49,11 +49,13 @@ public class AMRequestFactory {
                             requestDelegate.onFailure(new AMError(response.statusCode, null, null, error.toString(), null));
                             return;
                         }
+                        String traceId = "", errorMessage=null;
                         if (response.headers!=null){
-                            traceId = response.headers.get("x-accela-traceId");
+                            traceId = response.headers.get(AMRequest.HEADER_X_ACCELA_TRACEID);
+                            errorMessage = response.headers.get(AMRequest.HEADER_X_ACCELA_RESP_MESSAGE);
                         }
                         AMLogger.logError("Request Failed" + response.headers.toString());
-                        requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, error.toString(), response.headers.toString()));
+                        requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, errorMessage!=null ? errorMessage : error.toString(), response.headers.toString()));
                     }
                 });
         jsonRequest.setShouldCache(shouldCache);
@@ -89,7 +91,9 @@ public class AMRequestFactory {
                             }
                             AMLogger.logError("Request Failed" + response.headers.toString());
                             String traceId = response.headers.get("x-accela-traceId");
-                            requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, error.getLocalizedMessage(), response.headers.toString()));
+                            String errorMessage = response.headers.get(AMRequest.HEADER_X_ACCELA_RESP_MESSAGE);
+
+                            requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, errorMessage!=null ? errorMessage : error.toString(), response.headers.toString()));
 
                         }
                     });
