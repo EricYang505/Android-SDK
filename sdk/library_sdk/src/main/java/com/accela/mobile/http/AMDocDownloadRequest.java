@@ -1,5 +1,6 @@
 package com.accela.mobile.http;
 
+import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v4.BuildConfig;
 import android.util.Log;
@@ -47,6 +48,7 @@ public class AMDocDownloadRequest implements DocumentRequest {
     private final String mStringBody;
     private final static int MAX_BUFFER_SIZE = 1024*4;
     private final String mLocalFilePath;
+    private AsyncTask mAsyncTask;
 
     public  AMDocDownloadRequest(String url, HashMap<String, String> customHttpHeader, String stringBody, String localFilePath, final AMDownloadDelegate downloadDelegate) throws MalformedURLException {
         mUrl = new URL(url);
@@ -57,7 +59,8 @@ public class AMDocDownloadRequest implements DocumentRequest {
     }
 
     @Override
-    public NetworkResponse request() throws IOException, ServerError {
+    public NetworkResponse request(AsyncTask asyncTask) throws IOException, ServerError {
+        mAsyncTask = asyncTask;
         long requestStart = SystemClock.elapsedRealtime();
         NetworkResponse networkResponse = null;
         HttpsURLConnection httpsConn = openConnection();
@@ -133,6 +136,11 @@ public class AMDocDownloadRequest implements DocumentRequest {
             this.mDownloadDelegate.onSuccess(new File(mLocalFilePath));
         else
             mDownloadDelegate.onFailure(new AMError(statusCode, "", traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), null));
+    }
+
+    @Override
+    public void cancel() {
+        mAsyncTask.cancel(true);
     }
 
     private Map<String, String> convertHeaders(Header[] headers) {

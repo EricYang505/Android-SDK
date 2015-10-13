@@ -1,5 +1,6 @@
 package com.accela.mobile.http;
 
+import android.os.AsyncTask;
 import android.os.SystemClock;
 
 import com.accela.mobile.AMDocRequestManager;
@@ -62,6 +63,7 @@ public class AMMultiPartRequest implements DocumentRequest{
     private AMRequestDelegate mRequestDelegate;
     private DataOutputStream outputStream;
     private HttpURLConnection connection;
+    private AsyncTask mAsyncTask;
 
     public AMMultiPartRequest(String url, HashMap<String, String> customHttpHeader, HttpEntity httpEntity, final AMRequestDelegate requestDelegate) throws MalformedURLException {
         mUrl = new URL(url);
@@ -72,7 +74,8 @@ public class AMMultiPartRequest implements DocumentRequest{
     }
 
     @Override
-    public NetworkResponse request() throws IOException, ServerError {
+    public NetworkResponse request(AsyncTask asyncTask) throws IOException, ServerError {
+        mAsyncTask = asyncTask;
         long requestStart = SystemClock.elapsedRealtime();
         NetworkResponse networkResponse = null;
 
@@ -160,6 +163,11 @@ public class AMMultiPartRequest implements DocumentRequest{
         } catch (IOException e) {
             mRequestDelegate.onFailure(new AMError(statusCode, null, traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), e.toString()));
         }
+    }
+
+    @Override
+    public void cancel() {
+        mAsyncTask.cancel(true);
     }
 
     public  int  copy(InputStream input, DataOutputStream output) throws IOException {

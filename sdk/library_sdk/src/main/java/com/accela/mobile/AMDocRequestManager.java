@@ -2,6 +2,7 @@ package com.accela.mobile;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.os.SystemClock;
 
 import com.accela.mobile.http.DocumentRequest;
@@ -39,6 +40,8 @@ public class AMDocRequestManager {
     }
 
     public void startRequest(){
+//        if (Looper.myLooper() != Looper.getMainLooper())
+//            throw new RuntimeException("Please send request on Main Thread!");
         if (mStatus == DOWNLOAD_STATUS_LOADING)
             return;
         if (!mBlockingQueue.isEmpty()){
@@ -58,7 +61,7 @@ public class AMDocRequestManager {
                 long requestStart = SystemClock.elapsedRealtime();
                 try {
                     this.mTask = task[0];
-                    response = mTask.request();
+                    response = mTask.request(this);
                 } catch (IOException e) {
                     response = new NetworkResponse(IOEXCEPTION_ERROR, null, null, false,
                             SystemClock.elapsedRealtime() - requestStart);

@@ -38,6 +38,7 @@ import com.accela.mobile.http.AMHttpRequest;
 import com.accela.mobile.http.AMImageLoader;
 import com.accela.mobile.http.AMRequestFactory;
 import com.accela.mobile.http.AMRequestQueueManager;
+import com.accela.mobile.http.DocumentRequest;
 import com.accela.mobile.http.RequestParams;
 import com.accela.mobile.http.volley.Request;
 
@@ -235,6 +236,8 @@ public class AMRequest {
     private Map<String, String> requestHttpHeader = new HashMap<String, String>();
 
     protected AMHttpRequest mRequest;
+
+	protected DocumentRequest mDocRequest;
 	/**
 	 * Constructor with the given parameters.
 	 *
@@ -283,6 +286,8 @@ public class AMRequest {
 	public void cancelRequest() {
 		if(mRequest !=null)
             mRequest.cancel();
+		if (mDocRequest !=null )
+			mDocRequest.cancel();
 	}
 
 	/**
@@ -381,7 +386,8 @@ public class AMRequest {
         HashMap<String, String> httpHeader = generateHttpHeader();
         String serializeURL = assembleUrlWithParams(this.serviceURL, this.urlParams);
         AMDocRequestManager documentManager = AMDocRequestManager.getAMDocumentManager(this.ownerContext);
-        documentManager.addRequest(AMRequestFactory.createAMDocDownloadRequest(serializeURL, httpHeader, paramData, localFilePath, downloadRequest));
+		mDocRequest = AMRequestFactory.createAMDocDownloadRequest(serializeURL, httpHeader, paramData, localFilePath, downloadRequest);
+        documentManager.addRequest(mDocRequest);
         documentManager.startRequest();
         return this;
     }
@@ -430,7 +436,8 @@ public class AMRequest {
                         requestQueue.addToRequestQueue(mRequest);
                     } else if (RequestType.MULTIPART.equals(this.requestType)){
                         AMDocRequestManager documentManager = AMDocRequestManager.getAMDocumentManager(this.ownerContext);
-                        documentManager.addRequest(AMRequestFactory.createAMMultiPartRequests(serializeURL, httpHeader, postParams, this.requestDelegate));
+						mDocRequest = AMRequestFactory.createAMMultiPartRequests(serializeURL, httpHeader, postParams, this.requestDelegate);
+                        documentManager.addRequest(mDocRequest);
                         documentManager.startRequest();
 					} else {
                         mRequest = AMRequestFactory.createJsonRequest(serializeURL, Request.Method.POST, httpHeader, postParams.getStringBody(), false, this.requestDelegate);
