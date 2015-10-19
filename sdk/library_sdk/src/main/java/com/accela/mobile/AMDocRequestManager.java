@@ -23,7 +23,7 @@ public class AMDocRequestManager {
     private final static int DOWNLOAD_STATUS_IDLE = 256;
     private int mStatus = DOWNLOAD_STATUS_IDLE;
     private static AMDocRequestManager mInstance;
-    private final BlockingQueue<DocumentRequest> mBlockingQueue = new ArrayBlockingQueue(100);
+    private final BlockingQueue<DocumentRequest> mBlockingQueue = new ArrayBlockingQueue(128);
 
     private AMDocRequestManager(){}
 
