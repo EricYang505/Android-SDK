@@ -17,6 +17,8 @@
   */
 package com.accela.mobile;
 
+import android.util.Log;
+
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -102,6 +104,8 @@ public final class AMSetting {
 			stringResourceBundle = ResourceBundle.getBundle(bundleName);
 		} catch (MissingResourceException e) {
 			stringResourceBundle = ResourceBundle.getBundle(bundleName, Locale.US);
+		} catch (ArithmeticException e) {
+			AMLogger.logError(e.toString());
 		}
 		
 		return stringResourceBundle;

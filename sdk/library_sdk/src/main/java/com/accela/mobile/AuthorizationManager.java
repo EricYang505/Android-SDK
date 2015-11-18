@@ -344,14 +344,16 @@ public class AuthorizationManager {
         }
         // Return directly if internet permission is not granted in AndroidManifest.xml file.
         else if (accelaMobile.ownerContext.checkCallingOrSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-            new AlertDialog.Builder(accelaMobile.ownerContext)
-                    .setTitle(null)
-                    .setMessage(stringLoader.getString("Error_Require_Internet_Permission"))
-                    .setNegativeButton(stringLoader.getString("Button_OK"), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            // Do nothing except closing the alert dialog.
-                        }
-                    }).create().show();
+			if (stringLoader!=null) {
+				new AlertDialog.Builder(accelaMobile.ownerContext)
+						.setTitle(null)
+						.setMessage(stringLoader.getString("Error_Require_Internet_Permission"))
+						.setNegativeButton(stringLoader.getString("Button_OK"), new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int whichButton) {
+								// Do nothing except closing the alert dialog.
+							}
+						}).create().show();
+			}
             return;
         }
 

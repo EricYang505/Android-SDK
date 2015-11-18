@@ -87,12 +87,15 @@ public abstract class HttpResponseLogHandler {
             serviceURL += "?" + urlParams.toString();
         }
         AMRequest.HTTPMethod httpMethod = request.getHttpMethod();
-        AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestStarted_URL"), request.getTag(), httpMethod, serviceURL);
-        AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestStarted_Header"), request.getTag(), httpMethod, requestHeader.toString());
+        if (stringLoader!=null) {
+            AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestStarted_URL"), request.getTag(), httpMethod, serviceURL);
+            AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestStarted_Header"), request.getTag(), httpMethod, requestHeader.toString());
+        }
         if ((AMRequest.HTTPMethod.POST.equals(httpMethod)) || (AMRequest.HTTPMethod.PUT.equals(httpMethod))) {
             RequestParams postParams = request.getPostParams();
             String postParamsString = (postParams != null) ? postParams.getStringBody() : "null";
-            AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestStarted_Body"),request.getTag(), httpMethod, postParamsString);
+            if (stringLoader!=null)
+                AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestStarted_Body"),request.getTag(), httpMethod, postParamsString);
         }
     }
 
@@ -125,18 +128,24 @@ public abstract class HttpResponseLogHandler {
                 authorizationManager.clearAuthorizationAndToken(true);
             }
             // Populate error
-            this.amError = new AMError(AMError.ERROR_CODE_Unauthorized,
-                    AMError.ERROR_CODE_TOKEN_EXPIRED,
-                    traceId, errorMessage,stringLoader.getString("Error_AMRequestDelegate_Unauthorized"));
+            if (stringLoader!=null) {
+                this.amError = new AMError(AMError.ERROR_CODE_Unauthorized,
+                        AMError.ERROR_CODE_TOKEN_EXPIRED,
+                        traceId, errorMessage, stringLoader.getString("Error_AMRequestDelegate_Unauthorized"));
+            }
 
         } else if (responseStatusCode == AMError.ERROR_CODE_Forbidden) {// HTTP error 403
             // Populate error
-            this.amError = new AMError(AMError.ERROR_CODE_Forbidden,
-                    AMError.ERROR_CODE_ACCESS_FORBIDDEN,traceId, errorMessage,stringLoader.getString("Error_AMRequestDelegate_Forbidden"));
+            if (stringLoader!=null) {
+                this.amError = new AMError(AMError.ERROR_CODE_Forbidden,
+                        AMError.ERROR_CODE_ACCESS_FORBIDDEN, traceId, errorMessage, stringLoader.getString("Error_AMRequestDelegate_Forbidden"));
+            }
         } else if (responseStatusCode >= AMError.ERROR_CODE_HTTP_MINIMUM) {// Other HTTP errors
             // Populate error
-            this.amError = new AMError(responseStatusCode,
-                    AMError.ERROR_CODE_OTHER_ERROR,traceId, errorMessage,stringLoader.getString("Error_AMRequestDelegate_Forbidden"));
+            if (stringLoader!=null) {
+                this.amError = new AMError(responseStatusCode,
+                        AMError.ERROR_CODE_OTHER_ERROR, traceId, errorMessage, stringLoader.getString("Error_AMRequestDelegate_Forbidden"));
+            }
         }
         // Send broadcast for error
         if (this.amError != null) {
@@ -151,7 +160,9 @@ public abstract class HttpResponseLogHandler {
         if (AMSetting.DebugMode) {
             String responseBody;
             AMRequest.HTTPMethod httpMethod = request.getHttpMethod();
-            AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestDidReceiveResponse_Header"),request.getTag(), httpMethod, httpResponse.toString());
+            if (stringLoader!=null) {
+                AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestDidReceiveResponse_Header"), request.getTag(), httpMethod, httpResponse.toString());
+            }
 //			AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestDidReceiveResponse_Body"),request.getTag(), httpMethod, responseBody);
         }
     }
@@ -168,7 +179,8 @@ public abstract class HttpResponseLogHandler {
      */
     public void amRequestDidFailWithError(AMRequest request, AMError error) {
         if (AMSetting.DebugMode) {
-            AMLogger.logError(stringLoader.getString("Log_AMRequestDelegate_amRequestDidFailWithError_Body"),request.getTag(), request.getHttpMethod(),error.getMessage());
+            if (stringLoader!=null)
+                AMLogger.logError(stringLoader.getString("Log_AMRequestDelegate_amRequestDidFailWithError_Body"),request.getTag(), request.getHttpMethod(),error.getMessage());
         }
     }
 
@@ -187,7 +199,8 @@ public abstract class HttpResponseLogHandler {
      */
     public void amRequestDidLoad(AMRequest request, JSONObject result) {
         if (AMSetting.DebugMode) {
-            AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestDidLoad_Body"),request.getTag(), request.getHttpMethod(),result.toString());
+            if (stringLoader!=null)
+                AMLogger.logInfo(stringLoader.getString("Log_AMRequestDelegate_amRequestDidLoad_Body"),request.getTag(), request.getHttpMethod(),result.toString());
         }
     }
 

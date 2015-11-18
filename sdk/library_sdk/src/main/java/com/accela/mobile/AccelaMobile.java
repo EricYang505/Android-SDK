@@ -281,7 +281,8 @@ public class AccelaMobile {
         	pkg = ownerContext.getPackageManager().getPackageInfo(ownerContext.getPackageName(), 0);
             appVersion = pkg.versionName;
         } catch (NameNotFoundException e) {
-        	AMLogger.logError("In AMRequest.getAppVersion(): NameNotFoundException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
+			if (stringLoader!=null)
+        		AMLogger.logError("In AMRequest.getAppVersion(): NameNotFoundException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
         }
         return appVersion;
      }
@@ -332,20 +333,25 @@ public class AccelaMobile {
     private AMSessionDelegate defaultSessionDelegate = new AMSessionDelegate() {
 
         public void amDidCancelLogin() {
-            AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidCancelLogin"));
+			if (stringLoader!=null)
+            	AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidCancelLogin"));
         }
         public void amDidLogin() {
-            AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLogin"));
+			if (stringLoader!=null)
+            	AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLogin"));
         }
         public void amDidLoginFailure(AMError error) {
-            AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLoginFailure"), error.toString());
+			if (stringLoader!=null)
+            	AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLoginFailure"), error.toString());
         }
 
         public void amDidLogout() {
-            AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLogout"));
+			if (stringLoader!=null)
+            	AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidLogout"));
         }
         public void amDidSessionInvalid(AMError error) {
-            AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidSessionInvalid"), error.toString());
+			if (stringLoader!=null)
+            	AMLogger.logInfo(stringLoader.getString("Log_AMSessionDelegate_amDidSessionInvalid"), error.toString());
         }
     };
 

@@ -505,10 +505,12 @@ public class AMRequest {
 				try {
 					postParams.put(fileName, file);
 				} catch (FileNotFoundException e) {
-					AMLogger.logError("In AMRequest.sendRequest(): FileNotFoundException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
+					if (stringLoader!=null)
+						AMLogger.logError("In AMRequest.sendRequest(): FileNotFoundException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
 				}
 			} else {
-				AMLogger.logError("AMRequest.uploadAttachment(): " +  stringLoader.getString("Log_FILE_NOT_FOUND"), filePath);
+				if (stringLoader!=null)
+					AMLogger.logError("AMRequest.uploadAttachment(): " +  stringLoader.getString("Log_FILE_NOT_FOUND"), filePath);
 			}
 		}
 		// Send request.

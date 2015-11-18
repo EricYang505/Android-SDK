@@ -126,7 +126,8 @@ public class RequestParams {
                         jsonObject.put(entry.getKey(), entry.getValue());
                         stringBody = jsonObject.toString();
                     } catch (JSONException e) {
-                        AMLogger.logError("In RequestParams.getStringEntity(): JSONException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
+                        if (stringLoader!=null)
+                            AMLogger.logError("In RequestParams.getStringEntity(): JSONException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
                         if (AMSetting.DebugMode) {
                             e.printStackTrace();
                         }
@@ -191,7 +192,8 @@ public class RequestParams {
             try {
                 entity = new UrlEncodedFormEntity(getParamsList(), ENCODING);
             } catch (UnsupportedEncodingException e) {
-                AMLogger.logError("In RequestParams.getEntity(): UnsupportedEncodingException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
+                if (stringLoader!=null)
+                    AMLogger.logError("In RequestParams.getEntity(): UnsupportedEncodingException " + stringLoader.getString("Log_Exception_Occured"), e.getMessage());
                 if (AMSetting.DebugMode) {
                     e.printStackTrace();
                 }
