@@ -33,7 +33,7 @@ import com.accela.mobile.http.RequestParams;
  */
 
 public class AMBatchSession {
-	private String path = "/batch";
+	private String path = "/v4/batch";
 	private List<AMRequest> requests;
 
 	/**
@@ -89,13 +89,13 @@ public class AMBatchSession {
 			HTTPMethod httpMethod = request.getHttpMethod();
 			String method = httpMethod.toString();
 			AMBatchRequestModel model = new AMBatchRequestModel();
-			model.setUrl(url);
+			model.setRelativeUrl(url);
 			model.setMethod(method);
 			if ((httpMethod == HTTPMethod.POST || httpMethod == HTTPMethod.PUT)
 				&& request.getPostParams() != null) {
 				model.setBody(request.getPostParams());
 			}else if(httpMethod == HTTPMethod.GET) {		
-				model.setUrl(request.assembleUrlWithParams(url, request.getUrlParams()));
+				model.setRelativeUrl(request.assembleUrlWithParams(url, request.getUrlParams()));
 			}
 
 			models.add(model);

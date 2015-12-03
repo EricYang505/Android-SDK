@@ -27,7 +27,7 @@ import org.json.JSONObject;
  */
 
 public class AMBatchRequestModel {
-	private String url;
+	private String relativeUrl;
 	private String method;
 	private Object body;
 	
@@ -39,22 +39,20 @@ public class AMBatchRequestModel {
 	 *
 	 * @since 4.0
 	 */
-	public String getUrl() {
-		return url;
+	public String getRelativeUrl() {
+		return relativeUrl;
 	}
 	
 	/**
 	 *
 	 * Set the value of property url.
 	 *
-	 * @param status The new url value.
-	 *
 	 * @return Void.
 	 *
 	 * @since 4.0
 	 */
-	public void setUrl(String url) {
-		this.url = url;
+	public void setRelativeUrl(String url) {
+		this.relativeUrl = url;
 	}
 	
 	/**
@@ -121,7 +119,7 @@ public class AMBatchRequestModel {
 	public JSONObject toJsonObject() {
 		JSONObject json = new JSONObject();
 		try {
-			json.put("url", url);
+			json.put("relativeUrl", relativeUrl);
 			json.put("method", method);
 			json.put("body", body);
 		} catch (JSONException e) {
