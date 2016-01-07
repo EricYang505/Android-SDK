@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -39,9 +40,7 @@ import javax.net.ssl.SSLSession;
  * Created by eyang on 8/28/15.
  */
 public class AMDocDownloadRequest implements DocumentRequest {
-    private final int READ_TIME_OUT = 10*1000;
-    private final int CONNECTION_TIME_OUT = 3*1000;
-    protected static final String PROTOCOL_CHARSET = "utf-8";
+    private final int CONNECTION_TIME_OUT = 30*1000;
     private final URL mUrl;
     private final HashMap<String, String> mHttpHeader;
     private final AMDownloadDelegate mDownloadDelegate;
@@ -75,6 +74,19 @@ public class AMDocDownloadRequest implements DocumentRequest {
             }
         };
         httpsConn.setHostnameVerifier(hostnameVerifier);
+        if (mStringBody != null && mStringBody.length() > 0) {
+            OutputStream os = null;
+            try {
+                os = httpsConn.getOutputStream();
+                os.write(mStringBody.getBytes("UTF-8"));
+                os.flush();
+            } catch (Exception e) {
+                throw e;
+            } finally {
+                closeStreams(os);
+            }
+        }
+
         InputStream isr = null;
         try {
             // Initialize HttpResponse with data from the HttpURLConnection.
@@ -131,6 +143,7 @@ public class AMDocDownloadRequest implements DocumentRequest {
         }else if(statusCode == AMDocRequestManager.SERVEREXCEPTION_ERROR){
             mDownloadDelegate.onFailure(new AMError(AMDocRequestManager.SERVEREXCEPTION_ERROR, null, traceId, errorMessage!=null ? errorMessage : networkResponse.headers.toString(), "SERVER EXCEPTION ERROR!"));
             return;
+
         }
         if (statusCode == HttpStatus.SC_OK)
             this.mDownloadDelegate.onSuccess(new File(mLocalFilePath));
@@ -155,9 +168,13 @@ public class AMDocDownloadRequest implements DocumentRequest {
         HttpsURLConnection connection = (HttpsURLConnection)mUrl.openConnection();
 
         connection.setConnectTimeout(CONNECTION_TIME_OUT);
-//        connection.setReadTimeout(READ_TIME_OUT);
+//        connection.setReadTimeout(READ_TIME_OUT); //no read timeout
         connection.setUseCaches(false);
         connection.setDoInput(true);
+         if (mStringBody!=null && mStringBody.length()>0){
+             connection.setDoOutput(true);
+             connection.setRequestProperty("Content-Type", "application/json");
+         }
         return connection;
     }
 
