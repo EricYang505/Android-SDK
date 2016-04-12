@@ -17,17 +17,6 @@
   */
 package com.accela.mobile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.ResourceBundle;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.view.ViewGroup;
@@ -41,6 +30,17 @@ import com.accela.mobile.http.AMRequestQueueManager;
 import com.accela.mobile.http.DocumentRequest;
 import com.accela.mobile.http.RequestParams;
 import com.accela.mobile.http.volley.Request;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
+import java.util.ResourceBundle;
 
 
 /**
@@ -134,6 +134,10 @@ public class AMRequest {
 	 * @since 3.0
 	 */
 	public static final String HEADER_X_ACCELA_AGENCIES = "x-accela-agencies";
+
+	public static final String IS_ALL_AGENCIES = "is_all_agencies";
+	public static final String AGENCY_NAME = "agency_name";
+	public static final String ENVIRONMENT_NAME = "environment_name";
 
 	/**
 	 * The context which processes the request.
@@ -313,16 +317,17 @@ public class AMRequest {
         httpHeader.put(HEADER_X_ACCELA_AGENCY, accelaMobile.getAgency());
         httpHeader.put("Accept", "*/*");
 
-//        if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.IS_ALL_AGENCIES)!=null){
-//            httpHeader.put(HEADER_X_ACCELA_AGENCIES, requestHttpHeader.get(AccelaMobile.IS_ALL_AGENCIES));
-//        }else if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.AGENCY_NAME)!=null){
-//            httpHeader.put(HEADER_X_ACCELA_AGENCY, requestHttpHeader.get(AccelaMobile.AGENCY_NAME).toUpperCase());
-//        }
-//
-//        if(requestHttpHeader!=null && requestHttpHeader.get(AccelaMobile.ENVIRONMENT_NAME)!=null){
-//            httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, requestHttpHeader.get(AccelaMobile.ENVIRONMENT_NAME));
-//        }else{
-        httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.environment.name());
+        if(requestHttpHeader!=null && requestHttpHeader.get(AMRequest.IS_ALL_AGENCIES)!=null){
+            httpHeader.put(HEADER_X_ACCELA_AGENCIES, requestHttpHeader.get(AMRequest.IS_ALL_AGENCIES));
+        }else if(requestHttpHeader!=null && requestHttpHeader.get(AMRequest.AGENCY_NAME)!=null){
+            httpHeader.put(HEADER_X_ACCELA_AGENCY, requestHttpHeader.get(AMRequest.AGENCY_NAME).toUpperCase());
+        }
+
+        if(requestHttpHeader!=null && requestHttpHeader.get(AMRequest.ENVIRONMENT_NAME)!=null){
+            httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, requestHttpHeader.get(AMRequest.ENVIRONMENT_NAME));
+        }else {
+			httpHeader.put(HEADER_X_ACCELA_ENVIRONMENT, accelaMobile.environment.name());
+		}
 
 
         httpHeader.put(HEADER_X_ACCELA_APPPLATFORM, accelaMobile.getAppPlatform());

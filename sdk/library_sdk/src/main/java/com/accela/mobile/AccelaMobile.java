@@ -131,9 +131,7 @@ public class AccelaMobile {
 //	 *
 //	 * @since 4.0
 //	 */
-//	public static final String IS_ALL_AGENCIES = "is_all_agencies";
-//	public static final String AGENCY_NAME = "agency_name";
-//	public static final String ENVIRONMENT_NAME = "environment_name";
+
 
 	/**
 	 *

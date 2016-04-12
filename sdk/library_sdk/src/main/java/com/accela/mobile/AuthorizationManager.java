@@ -17,13 +17,6 @@
   */
 package com.accela.mobile;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -32,9 +25,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+
 import com.accela.mobile.AMRequest.HTTPMethod;
 import com.accela.mobile.AMRequest.RequestType;
 import com.accela.mobile.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 
 /**
@@ -558,7 +559,7 @@ public class AuthorizationManager {
 	 * @param permissions The array of access permissions. 
 	 * For example, search_records,get_single_record create_record
 	 * @param is4Civic Flag which indicates whether the authorization is for civic
-	 *            user or not(agency user).
+	 *       ‰     user or not(agency user).
 	 * 
 	 * @return The AMRequest object corresponding to this API call.
 	 * 
