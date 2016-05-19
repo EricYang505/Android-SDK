@@ -12,8 +12,10 @@ import com.accela.mobile.http.volley.Response;
 import com.accela.mobile.http.volley.VolleyError;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +56,26 @@ public class AMRequestFactory {
                             traceId = response.headers.get(AMRequest.HEADER_X_ACCELA_TRACEID);
                             errorMessage = response.headers.get(AMRequest.HEADER_X_ACCELA_RESP_MESSAGE);
                         }
+                        //get error message
+                        String jsonString = null;
+                        try {
+                            jsonString = new String(response.data, AMHttpRequest.PROTOCOL_CHARSET);
+                        } catch (UnsupportedEncodingException e) {
+
+                        }
+                        if(jsonString!= null) {
+                            try {
+                                JSONObject responseJson = new JSONObject(jsonString);
+                                JSONArray results = responseJson.getJSONArray("result");
+                                if(results.length()>0) {
+                                    JSONObject result = results.getJSONObject(0);
+                                    errorMessage = result.optString("message", errorMessage);
+                                }
+                            } catch (JSONException e) {
+
+                            }
+                        }
+
                         AMLogger.logError("Request Failed" + response.headers.toString());
                         requestDelegate.onFailure(new AMError(response.statusCode, null, traceId, errorMessage!=null ? errorMessage : error.toString(), response.headers.toString()));
                     }
