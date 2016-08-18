@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/com.accela.mobile.eclipse.wizard_4.0.0.v268879.jar" id="com.accela.mobile.eclipse.wizard" version="4.0.0.v268879">
-      <category name="Accela Inc."/>
-   </feature>
-   <category-def name="Accela Inc." label="Accela Inc."/>
-</site>
