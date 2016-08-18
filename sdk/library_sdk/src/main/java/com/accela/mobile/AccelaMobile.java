@@ -84,7 +84,7 @@ public class AccelaMobile {
     private AMRequestSender requestSender;
 
 	/**
-	 * The Android context (usually an Activity) which creates the current AccelaMobile instance.
+	 * The Android Application context which creates the current AccelaMobile instance.
 	 *
 	 * @since 1.0
 	 */
