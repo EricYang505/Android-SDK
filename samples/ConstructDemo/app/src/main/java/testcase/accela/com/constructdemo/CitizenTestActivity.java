@@ -73,6 +73,12 @@ public class CitizenTestActivity extends AppCompatActivity implements OnClickLis
         // Initialize content view.
         setContentView(R.layout.activity_citizen_test);
         initContentView();
+
+        // Create an AccelaMobile instance with the App ID and App Secret of the
+        // registered app.
+        this.accelaMobile = AccelaMobile.getInstance();
+        this.accelaMobile.initialize(getApplicationContext(), this.AppID, this.AppSecret, AccelaMobile.Environment.PROD, sessionDelegate);
+
     }
 
     public void onClick(View view) {
@@ -148,11 +154,6 @@ public class CitizenTestActivity extends AppCompatActivity implements OnClickLis
         this.btnSearchRecord.setOnClickListener(this);
         this.btnCivicLogout.setOnClickListener(this);
         this.btnBack.setOnClickListener(this);
-
-        // Create an AccelaMobile instance with the App ID and App Secret of the
-        // registered app.
-        this.accelaMobile = AccelaMobile.getInstance();
-        this.accelaMobile.initialize(getApplicationContext(), this.AppID, this.AppSecret, AccelaMobile.Environment.PROD, sessionDelegate);
     }
 
     // Create and show an alert dialog

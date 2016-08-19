@@ -11,10 +11,7 @@
     <string name="Menu_CitizenAppTest">Citizen App Test</string>
     <string name="Menu_AgencyAppTest">Agency App Test</string>
     <string name="Menu_CivicWebLogin">Login</string>
-    <string name="Menu_CivicEmbeddedWebLogin">Auth(Embedded Web View)</string>
-    <string name="Menu_AgencyWebLogin">Auth(Web Browser)</string>
-    <string name="Menu_AgencyNativeLogin">Native Login</string>
-    <string name="Menu_AgencyEmbeddedWebLogin">Wrapped Web Login</string>
+    <string name="Menu_AgencyEmbeddedWebLogin">Login</string>
     <string name="Menu_CustomizeLogin">Customized Auth</string>
     <string name="Menu_SearchRecord">Search Record</string>
     <string name="Menu_GetRecords">Get Records</string>
