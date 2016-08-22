@@ -57,7 +57,7 @@ public class AccelaMobile {
 	 *
 	 * @since 3.0
 	 */
-	private static AccelaMobile instance;
+	private volatile static AccelaMobile instance;
 
 	/**
 	 * The URL of authorization host. For example: https://auth.accela.com
@@ -141,9 +141,13 @@ public class AccelaMobile {
 	 *
 	 * @since 3.0
 	 */
-	public synchronized static AccelaMobile getInstance() {
+	public static AccelaMobile getInstance() {
     	if (instance == null)  {
-    		instance = new AccelaMobile();
+			synchronized (AccelaMobile.class) {
+				if (instance == null) {
+					instance = new AccelaMobile();
+				}
+			}
     	}
     	return instance;
     }
