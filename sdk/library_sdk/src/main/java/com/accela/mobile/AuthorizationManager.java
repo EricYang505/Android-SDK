@@ -20,6 +20,7 @@ package com.accela.mobile;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -336,7 +337,7 @@ public class AuthorizationManager {
     /**
      * public method, used to show login web view in an independent web browser or a native dialog.
      */
-    public void showAuthorizationWebView(String[] permissions, String urlSchema, String agency, boolean isWrappedWebView) {
+    public void showAuthorizationWebView(Context context, String[]permissions, String urlSchema, String agency) {
         // Return directly if the authorization manager has access token (loaded from local store)
         if ((getAccessToken() != null) && (sessionDelegate != null))
         {
@@ -346,7 +347,7 @@ public class AuthorizationManager {
         // Return directly if internet permission is not granted in AndroidManifest.xml file.
         else if (accelaMobile.ownerContext.checkCallingOrSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
 			if (stringLoader!=null) {
-				new AlertDialog.Builder(accelaMobile.ownerContext)
+				new AlertDialog.Builder(context)
 						.setTitle(null)
 						.setMessage(stringLoader.getString("Error_Require_Internet_Permission"))
 						.setNegativeButton(stringLoader.getString("Button_OK"), new DialogInterface.OnClickListener() {
@@ -369,7 +370,7 @@ public class AuthorizationManager {
             redirectUrl += "&agency=" + agency;
         }
         String authorizationURL = this.getAuthorizeUrl4WebLogin(redirectUrl, permissions);
-        AMLoginDialogWrapper amLoginDialogWrapper = new AMLoginDialogWrapper(authorizationURL);
+        AMLoginDialogWrapper amLoginDialogWrapper = new AMLoginDialogWrapper(context, authorizationURL);
         getAuthorizeCode4Public(amLoginDialogWrapper, redirectUrl, permissions);
 
     }

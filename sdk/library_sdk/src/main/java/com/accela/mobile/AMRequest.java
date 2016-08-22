@@ -357,7 +357,8 @@ public class AMRequest {
         }
         HashMap<String, String> httpHeader = generateHttpHeader();
         String serializeURL = assembleUrlWithParams(this.serviceURL, this.urlParams);
-        AMImageLoader.getAMImageLoader(ownerContext).loadImage(serializeURL, httpHeader, this.requestDelegate, maxWidth, maxHeight, scaleType);
+		this.requestDelegate.onStart();
+		AMImageLoader.getAMImageLoader(ownerContext).loadImage(serializeURL, httpHeader, this.requestDelegate, maxWidth, maxHeight, scaleType);
         return this;
     }
 
@@ -370,7 +371,8 @@ public class AMRequest {
         }
         HashMap<String, String> httpHeader = generateHttpHeader();
         String serializeURL = assembleUrlWithParams(this.serviceURL, this.urlParams);
-        AMImageLoader.getAMImageLoader(ownerContext).loadImage(serializeURL, httpHeader, this.requestDelegate, maxWidth, maxHeight);
+		this.requestDelegate.onStart();
+		AMImageLoader.getAMImageLoader(ownerContext).loadImage(serializeURL, httpHeader, this.requestDelegate, maxWidth, maxHeight);
         return this;
     }
 
@@ -383,6 +385,7 @@ public class AMRequest {
         }
         HashMap<String, String> httpHeader = generateHttpHeader();
         String serializeURL = assembleUrlWithParams(this.serviceURL, this.urlParams);
+		this.requestDelegate.onStart();
         AMImageLoader.getAMImageLoader(ownerContext).loadImage(serializeURL, httpHeader, this.requestDelegate);
         return this;
     }
@@ -393,7 +396,8 @@ public class AMRequest {
         AMDocRequestManager documentManager = AMDocRequestManager.getAMDocumentManager(this.ownerContext);
 		mDocRequest = AMRequestFactory.createAMDocDownloadRequest(serializeURL, httpHeader, paramData, localFilePath, downloadRequest);
         documentManager.addRequest(mDocRequest);
-        documentManager.startRequest();
+		downloadRequest.onStart();
+		documentManager.startRequest();
         return this;
     }
 
@@ -413,7 +417,7 @@ public class AMRequest {
 		} else {
 			this.requestDelegate = defaultRequestDelegate;
 		}
-
+		this.requestDelegate.onStart();
         HashMap<String, String> httpHeader = generateHttpHeader();
 
 		String serializeURL = assembleUrlWithParams(this.serviceURL, this.urlParams);

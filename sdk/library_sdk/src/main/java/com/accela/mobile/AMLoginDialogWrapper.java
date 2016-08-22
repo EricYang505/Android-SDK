@@ -21,16 +21,20 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -46,6 +50,7 @@ import android.widget.LinearLayout;
 
 public class AMLoginDialogWrapper extends Dialog {
 	private int colorBackground = 0x88000000;
+    private Context mContext;
 	/**
 	 * Private WebViewClient class, used by the web view control.
 	 */	
@@ -116,8 +121,9 @@ public class AMLoginDialogWrapper extends Dialog {
 	 *
 	 * @since 3.0
      */
-    public AMLoginDialogWrapper(String url) {
-    	super(AccelaMobile.getInstance().ownerContext, android.R.style.Theme_Translucent_NoTitleBar);
+    public AMLoginDialogWrapper(Context context, String url) {
+    	super(context, android.R.style.Theme_Translucent_NoTitleBar);
+        this.mContext = context;
         this.accelaMobile = AccelaMobile.getInstance();
         this.url = url;
     }
@@ -155,7 +161,7 @@ public class AMLoginDialogWrapper extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         displayMetrics = new DisplayMetrics();   
-	    ((Activity) accelaMobile.ownerContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+	    ((Activity)this.mContext ).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         spinner = new ProgressDialog(getContext());
         spinner.setCancelable(false);
         spinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -171,7 +177,25 @@ public class AMLoginDialogWrapper extends Dialog {
         addContentView(contentFrameLayout,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         contentFrameLayout.setBackgroundColor(colorBackground);
         
-    }    
+    }
+
+    private void clearCookies(Context context)
+    {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().removeAllCookies(null);
+            CookieManager.getInstance().flush();
+        } else
+        {
+            CookieSyncManager cookieSyncMngr=CookieSyncManager.createInstance(context);
+            cookieSyncMngr.startSync();
+            CookieManager cookieManager=CookieManager.getInstance();
+            cookieManager.removeAllCookie();
+            cookieManager.removeSessionCookie();
+            cookieSyncMngr.stopSync();
+            cookieSyncMngr.sync();
+        }
+    }
     
     /**
 	 * Private method, used to initialize the web view control.
@@ -185,6 +209,8 @@ public class AMLoginDialogWrapper extends Dialog {
         webView.setHorizontalScrollBarEnabled(false);
         webView.setWebViewClient(new DialogWebViewClient());        
         webView.getSettings().setJavaScriptEnabled(true);
+        clearCookies(getContext());
+
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         layoutParams.setMargins(margin, margin, margin, margin);
         webView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
