@@ -33,7 +33,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import recordviewer.accela.com.recordviewer.model.AddressModel;
 import recordviewer.accela.com.recordviewer.model.RecordModel;
@@ -78,10 +80,11 @@ public class RecordService {
 		if(clearExistRecord) {
 			listRecord.clear();
 		}
-		//requestParams.put("inspectorIds", inspectorId);
-		requestParams.put("limit", "15");
-		requestParams.put("offset", String.format("%d", listRecord.size()));
-		requestParams.put("expand","addresses");
+		Map<String, String> urlParamMap = new HashMap<>();
+		urlParamMap.put("limit", "15");
+		urlParamMap.put("offset", String.format("%d", listRecord.size()));
+		urlParamMap.put("expand","addresses");
+		requestParams.setUrlParams(urlParamMap);
 
 		RequestParams postParams = new RequestParams();
 		//postParams.put("module", "Building");
