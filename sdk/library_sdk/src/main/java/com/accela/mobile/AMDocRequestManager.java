@@ -43,21 +43,35 @@ public class AMDocRequestManager {
 
     private AMDocRequestManager(){}
 
-    public static synchronized AMDocRequestManager getAMDocumentManager(Context context) {
+    static synchronized AMDocRequestManager getAMDocumentManager(Context context) {
         if (mInstance == null) {
             mInstance = new AMDocRequestManager();
         }
         return mInstance;
     }
-
-    public AMDocRequestManager addRequest(DocumentRequest task){
+    /**
+     *
+     * Add task to the queue for further execute
+     *
+     * @param task based on DocumentRequest interface
+     *
+     * @return AMDocRequestManager.
+     *
+     * @since 4.1
+     */
+    AMDocRequestManager addRequest(DocumentRequest task){
         mBlockingQueue.add(task);
         return this;
     }
-
-    public void startRequest(){
-//        if (Looper.myLooper() != Looper.getMainLooper())
-//            throw new RuntimeException("Please send request on Main Thread!");
+    /**
+     *
+     * Pulling task from BlockingQueue and execute one by one
+     *
+     * @return Void.
+     *
+     * @since 4.1
+     */
+    void startRequest(){
         if (mStatus == DOWNLOAD_STATUS_LOADING)
             return;
         if (!mBlockingQueue.isEmpty()){
@@ -92,7 +106,7 @@ public class AMDocRequestManager {
         protected void onPostExecute(NetworkResponse networkResponse) {
             mTask.handleResponse(networkResponse);
             mStatus = DOWNLOAD_STATUS_IDLE;
-            startRequest();
+            startRequest(); // after finish a task, start to poll a new task again.
         }
 
     }

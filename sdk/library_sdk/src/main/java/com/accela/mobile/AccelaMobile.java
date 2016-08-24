@@ -126,12 +126,6 @@ public class AccelaMobile {
 	 */
 	public Environment environment = Environment.PROD ;	// Default value
 
-//	/**
-//	 * Used to support multiple agency
-//	 *
-//	 * @since 4.0
-//	 */
-
 
 	/**
 	 *

@@ -33,7 +33,11 @@ import java.util.Map;
  * Created by eyang on 8/31/15.
  */
 
-
+/**
+ *  AccelaMobile http request class, use to send all different types of http methods and documents list download/upload.
+ *
+ * @since 1.0
+ */
 
 public class AMRequestSender {
     /**
@@ -124,7 +128,21 @@ public class AMRequestSender {
         return amRequest;
     }
 
-
+    /**
+     * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+     *
+     * @param path The path to the Accela Construct API end point.
+     * @param urlParams The collection of parameters associated with the specific URL.
+     * @param customHttpHeader The HTTP header fields in key value pairs.
+     * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
+     * @param maxWidth The maximum width of the returned image
+     * @param maxHeight The maximum height of the returned image
+     * @param scaleType The ScaleType of the image returned for display in a imageView.
+     *
+     * @return The AMRequest object corresponding to this Accela Construct API end point call.
+     *
+     * @since 4.1
+     */
     public AMRequest loadImage(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate, int maxWidth, int maxHeight, ImageView.ScaleType scaleType) {
         AMRequest amRequest = new AMRequest(AccelaMobile.getInstance().amApisHost + path, urlParams, null, AMRequest.HTTPMethod.GET);
         amRequest.setHttpHeader(customHttpHeader);
@@ -133,6 +151,20 @@ public class AMRequestSender {
         return amRequest;
     }
 
+    /**
+     * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+     *
+     * @param path The path to the Accela Construct API end point.
+     * @param urlParams The collection of parameters associated with the specific URL.
+     * @param customHttpHeader The HTTP header fields in key value pairs.
+     * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
+     * @param maxWidth The maximum width of the returned image
+     * @param maxHeight The maximum height of the returned image
+     *
+     * @return The AMRequest object corresponding to this Accela Construct API end point call.
+     *
+     * @since 4.1
+     */
     public AMRequest loadImage(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate, int maxWidth, int maxHeight) {
         AMRequest amRequest = new AMRequest(AccelaMobile.getInstance().amApisHost + path, urlParams, null, AMRequest.HTTPMethod.GET);
         amRequest.setHttpHeader(customHttpHeader);
@@ -141,6 +173,18 @@ public class AMRequestSender {
         return amRequest;
     }
 
+    /**
+     * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+     *
+     * @param path The path to the Accela Construct API end point.
+     * @param urlParams The collection of parameters associated with the specific URL.
+     * @param customHttpHeader The HTTP header fields in key value pairs.
+     * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
+     *
+     * @return The AMRequest object corresponding to this Accela Construct API end point call.
+     *
+     * @since 4.1
+     */
     public AMRequest loadImage(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {
         AMRequest amRequest = new AMRequest(AccelaMobile.getInstance().amApisHost + path, urlParams, null, AMRequest.HTTPMethod.GET);
         amRequest.setHttpHeader(customHttpHeader);
@@ -172,7 +216,7 @@ public class AMRequestSender {
 
 
     /**
-     *
+     * Download a set of binary files to local disk
      * @param path The path to the Accela Construct API endpoint.
      * @param urlParams The collection of parameters associated with the specific URL.
      * @param localFile The path for file.

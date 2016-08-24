@@ -63,7 +63,3 @@ class AMLruCache extends LruCache<String, Bitmap> implements ImageLoader.ImageCa
         return screenBytes * 3;
     }
 }
-
-//        RequestQueue mRequestQueue; // assume this exists.
-//        ImageLoader mImageLoader = new ImageLoader(mRequestQueue, new LruBitmapCache(
-//        LruBitmapCache.getCacheSize()));
