@@ -32,8 +32,22 @@ import java.util.Map;
 /**
  * Created by eyang on 8/31/15.
  */
-public class AMRequestSender {
 
+
+
+public class AMRequestSender {
+    /**
+     * Makes a request to the Accela Construct API endpoint with the given parameters using the given HTTP method as an asynchronous operation. This request transfer method is default for Get.
+     *
+     * @param path The path to the Accela Construct API endpoint.
+     * @param urlParams The collection of parameters associated with the specific URL.
+     * @param customHttpHeader The HTTP header fields in key value pairs.
+     * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
+     *
+     * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
+     *
+     * @since 4.1
+     */
     public AMRequest sendRequest(String path, RequestParams urlParams, Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {
         AMRequest amRequest = new AMRequest(AccelaMobile.getInstance().amApisHost + path, urlParams, null, AMRequest.HTTPMethod.GET);
         amRequest.setHttpHeader(customHttpHeader);
@@ -71,12 +85,13 @@ public class AMRequestSender {
     }
 
     /**
+     * Makes a batch request to the Accela Construct API endpoint with the given parameters using the given HTTP method as an asynchronous operation.
      *
-     * @param batchSession
-     * @param path
-     * @param urlParams
-     * @param customHttpHeader
-     * @param requestDelegate
+     * @param batchSession This contains the list of request which going to make
+     * @param path  The path to the Accela Construct API endpoint.
+     * @param urlParams The collection of parameters associated with the specific URL.
+     * @param customHttpHeader The HTTP header fields in key value pairs.
+     * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
      * @return
      *
      * @since 4.0

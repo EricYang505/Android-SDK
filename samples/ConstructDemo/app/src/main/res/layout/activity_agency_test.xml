@@ -31,6 +31,9 @@
         <Button android:id="@+id/btnAgencyDownloadAttachmentList"
             android:text="@string/Menu_DownloadAttachmentList" android:layout_width="fill_parent"
             android:layout_height="40dp" android:background="@drawable/blue_button" />
+        <Button android:id="@+id/btnAgencyLoadAttachmentList"
+            android:text="@string/Menu_LoadAttachmentList" android:layout_width="fill_parent"
+            android:layout_height="40dp" android:background="@drawable/blue_button" />
         <Button android:id="@+id/btnAgencyDownloadAttachmentWithProgress"
             android:text="@string/Menu_DownloadAttachmentWithProgress"
             android:layout_width="fill_parent" android:layout_height="wrap_content"

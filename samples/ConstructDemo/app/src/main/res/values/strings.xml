@@ -21,6 +21,7 @@
     <string name="Menu_CreateRecord">Create Record</string>
     <string name="Menu_CreateRecordWithAttachments">Create Record With Attachments</string>
     <string name="Menu_DownloadAttachmentList">Download Attachment List</string>
+    <string name="Menu_LoadAttachmentList">Load Image</string>
     <string name="Menu_DownloadAttachmentWithProgress">Download Attachment With Progress</string>
     <string name="Menu_UploadAttachmentWithProgress">Upload Attachment With Progress</string>
     <string name="Menu_AppSettings">Get AppSettings</string>

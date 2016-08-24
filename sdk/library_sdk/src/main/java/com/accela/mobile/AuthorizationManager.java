@@ -19,7 +19,6 @@ package com.accela.mobile;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -238,6 +237,7 @@ public class AuthorizationManager {
     String mUrlSchema;
 	private Map<String, String> customTokenPostParam;
 
+
 	/**
 	 * Constructor.
 	 * 
@@ -260,6 +260,19 @@ public class AuthorizationManager {
 			accelaMobile.environment = AccelaMobile.Environment.valueOf(sessionStorePrefs.getString(ENVIRONMENT_KEY_IN_PREF_FILE, null));
 	}
 
+	/**
+	 * Authenticate for the user with their credentials.
+	 *
+	 * @param agency The agency name for authentication
+	 * @param user The user name for authentication
+	 * @param password The password for authentication
+	 * @param environment The Accela Environment for authentication, including PROD, TEST, DEV, STAGE, CONFIG and SUPP options.
+	 * @param permissions This is the Accela construct api scopes, for details please reference https://developer.accela.com/docs/
+	 *
+	 * @return AMRequest.
+	 *
+	 * @since 4.0
+	 */
 	public AMRequest authenticate(String agency, String user, String password, AccelaMobile.Environment environment, String[] permissions, Map<String, String> customPostParam) {
 		this.customTokenPostParam = customPostParam;
 		return authenticate(agency, user, password, environment, permissions);
@@ -374,43 +387,6 @@ public class AuthorizationManager {
         getAuthorizeCode4Public(amLoginDialogWrapper, redirectUrl, permissions);
 
     }
-//	/**
-//	 * Force login with Civic ID
-//	 * @param permissions
-//	 *
-//	 * @since 4.1
-//	 */
-//	public void authorizeCivicId(String[] permissions, AMLoginViewDelegate loginViewDelegate) {
-//		this.loginDialog = (this.loginDialog == null) ?
-//				new CivicLoginDialog(this.accelaMobile, permissions) :
-//					this.loginDialog;
-//
-//		this.loginDialog.amLoginViewDelegate = loginViewDelegate;
-//		// Show the login view
-//		View parentView = ((Activity) this.ownerContext).findViewById(android.R.id.content).getRootView();
-//		this.loginDialog.showAtLocation(parentView, Gravity.CENTER, 0, 0);
-//		this.loginDialog.setFocusable(true);
-//	}
-//
-//	/**
-//	 * Force login with agent authentication
-//	 * @param permissions
-//	 *
-//	 * @since 4.1
-//	 */
-//	public void authorizeAgent(String[] permissions, AMLoginViewDelegate loginViewDelegate) {
-//		this.loginDialog = (this.loginDialog == null) ?
-//							new AgencyLoginDialog(this.accelaMobile, permissions) :
-//								this.loginDialog;
-//		this.loginDialog.amLoginViewDelegate = loginViewDelegate;
-//
-//		// Show the login view
-//		View parentView = ((Activity) this.ownerContext).findViewById(android.R.id.content).getRootView();
-//		this.loginDialog.showAtLocation(parentView, Gravity.CENTER, 0, 0);
-//		this.loginDialog.setFocusable(true);
-//	}
-	
-
 
 	/**
 	 * 
@@ -708,21 +684,11 @@ public class AuthorizationManager {
 		}
 	}
 	
-	public void setUser(String user){
-		this.user = user;
-	}
-	
+
 	public void setRedirectUrl(String url){
 		this.redirectUrl = url;
 	}
 	
-	public void setAuthorizationCode(String code){
-		this.authorizationCode = code;
-	}
-	
-	public void setAuthorizationState(String state){
-		this.authorizationState = state;
-	}
 
 	/**
 	 * 
@@ -753,15 +719,6 @@ public class AuthorizationManager {
 		prefsWriter.commit();
 	}
 	
-	//save the username from webview login
-	public void saveUserName(String user){
-		this.user = user;
-		SharedPreferences.Editor prefsWriter = sessionStorePrefs.edit();
-		if (this.user != null) {
-			prefsWriter.putString(USER_KEY_IN_PREF_FILE, this.user);
-		}
-		prefsWriter.commit();
-	}
 
 	/**
 	 * 
@@ -885,12 +842,6 @@ public class AuthorizationManager {
 		@Override
 		public void onFailure(AMError error) {
 			amRequestDidReceiveResponse(currentRequest);
-			// Dismiss the process waiting view
-			ProgressDialog progressDialog = currentRequest
-					.getRequestWaitingView();
-			if ((progressDialog != null) && (progressDialog.isShowing())) {
-				progressDialog.dismiss();
-			}
 			// Invoke session delegate
 			if ((sessionDelegate != null) && (!isLoginErrorHandled)) {				
 				sessionDelegate.amDidLoginFailure(error);
@@ -904,20 +855,12 @@ public class AuthorizationManager {
 			// Reset the previous token data.
 			accessToken = null;
 			refreshToken = null;
-			// Show progress waiting view
-			// currentRequest.setOwnerView(processIndicatorHolderView,
-			// stringLoader.getString("Msg_Request_AccessToken"));
+
 		}
 
 		@Override
 		public void onSuccess(JSONObject response) {
 			amRequestDidLoad(currentRequest, response);
-			// Dismiss the process waiting view
-			ProgressDialog progressDialog = currentRequest
-					.getRequestWaitingView();
-			if ((progressDialog != null) && (progressDialog.isShowing())) {
-				progressDialog.dismiss();
-			}
 			// Get value of access token.
 			if (response.has("access_token")) { // Found the token value
 				// Get access token
@@ -970,8 +913,6 @@ public class AuthorizationManager {
 				}
 				broadcastIntent.putExtra(USER_KEY_IN_PREF_FILE, user);
 				broadcastIntent.putExtra(TOKEN_KEY_IN_PREF_FILE, accessToken);
-//				LocalBroadcastManager.getInstance(ownerContext).sendBroadcast(
-//						broadcastIntent);
 			}
 		}
 	};

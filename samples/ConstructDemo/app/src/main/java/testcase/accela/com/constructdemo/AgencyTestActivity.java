@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
@@ -106,13 +107,14 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
     private final int PICK_IMAGE_REQUEST = 1;
 
     private Button btnAgencyEmbeddedWebLogin, btnGetRecords, btnGetSpecificRecord, btnCreateRecord, btnGetInspections,
-            btnDownloadAttachmentList, btnDownloadAttachmentWithProgress, btnUploadAttachment,
+            btnDownloadAttachmentList, btnLoadImage, btnDownloadAttachmentWithProgress, btnUploadAttachment,
             btnAppSettings, btnAgencyLogout, btnBack;
     private ArrayList<String> attachmentIds = new ArrayList<String>();
     private AccelaMobile accelaMobile;
 
 
     private ProgressDialog accessTokenProgressDialog = null;
+    private ProgressDialog progressDialog;
     private ViewGroup mainLayout = null;
     private AMRequest currentRequest = null;
 
@@ -286,6 +288,24 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
                     }
                 }
                 break;
+            case R.id.btnAgencyLoadAttachmentList:
+                if (isSessionValid()) {
+                    // Get an attachment ID if attachment list has been requested.
+                    if (this.attachmentIds.size() > 0) {
+                        String attachmentId = this.attachmentIds.get(0);
+
+                        servicePath = SERVICE_URI_RECORD_AttachmentDownload
+                                .replace("{documentId}", attachmentId);
+                        currentRequest = request.loadImage(servicePath, null, null, loadDocumentRequestDelegate);
+                    } else {
+                        Toast toast = Toast.makeText(this,
+                                "Please get attachment list first.",
+                                Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+                    }
+                }
+                break;
             case R.id.btnAppSettings:
                 servicePath = SERVICE_URI_APP_SETTINGS;
                 HashMap<String, String> customHttpHeader = new HashMap<String, String>();
@@ -331,6 +351,8 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         this.btnAppSettings = (Button) this.findViewById(R.id.btnAppSettings);
 
         this.btnBack = (Button) this.findViewById(R.id.btnAgencyBack);
+        this.btnLoadImage = (Button) this.findViewById(R.id.btnAgencyLoadAttachmentList);
+
         // Set events for buttons.
         this.btnAgencyEmbeddedWebLogin.setOnClickListener(this);
         this.btnAgencyLogout.setOnClickListener(this);
@@ -343,7 +365,7 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         this.btnUploadAttachment.setOnClickListener(this);
         this.btnAppSettings.setOnClickListener(this);
         this.btnBack.setOnClickListener(this);
-
+        this.btnLoadImage.setOnClickListener(this);
     }
 
     private void initAccelaMobile() {
@@ -539,6 +561,17 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
                 }).create().show();
     }
 
+    private void dismissProgressDialog() {
+        // Dismiss the process waiting view
+        if ((progressDialog != null) && (progressDialog.isShowing())) {
+            progressDialog.dismiss();
+        }
+    }
+
+    private void showProgressDialog(String message) {
+        progressDialog = ProgressDialog.show(AgencyTestActivity.this, null, message);
+    }
+
     // Session delegate for Accela Mobile
     private AMLoginViewDelegate loginDialogDelegate = new AMLoginViewDelegate() {
         @Override
@@ -642,22 +675,15 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         public void onStart() {
             amRequestStarted(currentRequest);
             // Show progress waiting view
-            currentRequest.setOwnerView(
-                    AgencyTestActivity.this.mainLayout,
-                    AgencyTestActivity.this.getResources().getString(
-                            R.string.msg_request_being_processed));
+            showProgressDialog(AgencyTestActivity.this.getResources().getString(
+                    R.string.msg_request_being_processed));
         }
 
         @Override
         public void onSuccess(JSONObject responseJson) {
             amRequestDidReceiveResponse(currentRequest);
             amRequestDidLoad(currentRequest, responseJson);
-            // Dismiss the process waiting view
-            ProgressDialog progressDialog = currentRequest
-                    .getRequestWaitingView();
-            if ((progressDialog != null) && (progressDialog.isShowing())) {
-                progressDialog.dismiss();
-            }
+            dismissProgressDialog();
             // Show dialog with the retrured Json data
             createAlertDialog(
                     AgencyTestActivity.this.getResources().getString(
@@ -672,11 +698,7 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         public void onFailure(AMError error) {
             amRequestDidReceiveResponse(currentRequest);
             // Dismiss the process waiting view
-            ProgressDialog progressDialog = currentRequest
-                    .getRequestWaitingView();
-            if ((progressDialog != null) && (progressDialog.isShowing())) {
-                progressDialog.dismiss();
-            }
+            dismissProgressDialog();
             AMError amError = new AMError(error.getStatus(), errorMessage,
                     traceId, null, null);
             // Show dialog with the returned error
@@ -692,10 +714,7 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         public void onStart() {
             amRequestStarted(currentRequest);
             // Show progress waiting view
-            currentRequest.setOwnerView(
-                    AgencyTestActivity.this.mainLayout,
-                    AgencyTestActivity.this.getResources().getString(
-                            R.string.msg_request_being_processed));
+            showProgressDialog(AgencyTestActivity.this.getResources().getString(R.string.msg_request_being_processed));
         }
 
         @Override
@@ -703,12 +722,7 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
             amRequestDidReceiveResponse(currentRequest);
             this.amRequestDidLoad(currentRequest, responseJson);
             JSONArray recordsArray = responseJson.optJSONArray("result");
-            // Dismiss the process waiting view
-            ProgressDialog progressDialog = currentRequest
-                    .getRequestWaitingView();
-            if ((progressDialog != null) && (progressDialog.isShowing())) {
-                progressDialog.dismiss();
-            }
+            dismissProgressDialog();
             // Show dialog with the returned Json data
             if ((recordsArray != null) && (recordsArray.length() > 0)) {
                 createAlertDialog(
@@ -731,12 +745,7 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         public void onFailure(AMError error) {
             amRequestDidReceiveResponse(currentRequest);
             // Dismiss the process waiting view
-            ProgressDialog progressDialog = currentRequest
-                    .getRequestWaitingView();
-            if ((progressDialog != null) && (progressDialog.isShowing())) {
-                progressDialog.dismiss();
-            }
-
+            dismissProgressDialog();
             AMError amError = new AMError(error.getStatus(), errorMessage,
                     traceId, null, null);
             this.amRequestDidFailWithError(currentRequest, amError);
@@ -753,10 +762,7 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         public void onStart() {
             amRequestStarted(currentRequest);
             // Show progress waiting view
-            currentRequest.setOwnerView(
-                    AgencyTestActivity.this.mainLayout,
-                    AgencyTestActivity.this.getResources().getString(
-                            R.string.msg_request_being_processed));
+            showProgressDialog(AgencyTestActivity.this.getResources().getString(R.string.msg_request_being_processed));
         }
 
         @Override
@@ -782,12 +788,7 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
                 }
             }
 
-            // Dismiss the process waiting view
-            ProgressDialog progressDialog = currentRequest
-                    .getRequestWaitingView();
-            if ((progressDialog != null) && (progressDialog.isShowing())) {
-                progressDialog.dismiss();
-            }
+            dismissProgressDialog();
             // Show dialog with the returned Json data
             if ((attachmentsArray != null) && (attachmentsArray.length() > 0)) {
                 createAlertDialog(
@@ -810,11 +811,7 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         public void onFailure(AMError error) {
             amRequestDidReceiveResponse(currentRequest);
             // Dismiss the process waiting view
-            ProgressDialog progressDialog = currentRequest
-                    .getRequestWaitingView();
-            if ((progressDialog != null) && (progressDialog.isShowing())) {
-                progressDialog.dismiss();
-            }
+            dismissProgressDialog();
             AMError amError = new AMError(error.getStatus(), errorMessage,
                     traceId, null, null);
             this.amRequestDidFailWithError(currentRequest, amError);
@@ -831,10 +828,7 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         @Override
         public void onStart() {
             // Show progress waiting view
-            currentRequest.setOwnerView(
-                    AgencyTestActivity.this.mainLayout,
-                    AgencyTestActivity.this.getResources().getString(
-                            R.string.msg_request_being_processed));
+            showProgressDialog(AgencyTestActivity.this.getResources().getString(R.string.msg_request_being_processed));
         }
 
         @Override
@@ -843,7 +837,7 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
             String localFilePath = file.getAbsolutePath();
             Bundle dataBundle = new Bundle();
             dataBundle.putString("localPath", localFilePath);
-
+            dismissProgressDialog();
             // Show the photo preview in pop-up dialog
             Dialog photoPreviewDialog = AgencyTestActivity.this
                     .createImagePreviewDialog(dataBundle);
@@ -853,11 +847,33 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         @Override
         public void onFailure(AMError error) {
             // Dismiss the process waiting view
-            ProgressDialog progressDialog = currentRequest
-                    .getRequestWaitingView();
-            if ((progressDialog != null) && (progressDialog.isShowing())) {
-                progressDialog.dismiss();
-            }
+            dismissProgressDialog();
+
+            // Show dialog with the returned error
+            createAlertDialog(
+                    AgencyTestActivity.this.getResources().getString(
+                            R.string.error_request_failed_title),
+                    error.toString());
+        }
+    };
+
+    private AMRequestDelegate loadDocumentRequestDelegate = new AMRequestDelegate() {
+        @Override
+        public void onStart() {
+            // Show progress waiting view
+            showProgressDialog(AgencyTestActivity.this.getResources().getString(R.string.msg_request_being_processed));
+        }
+
+        public void onSuccess(Bitmap bitmap) {
+            dismissProgressDialog();
+            Toast.makeText(AgencyTestActivity.this, "load Image success", Toast.LENGTH_SHORT).show();
+        }
+
+
+        @Override
+        public void onFailure(AMError error) {
+            // Dismiss the process waiting view
+            dismissProgressDialog();
 
             // Show dialog with the returned error
             createAlertDialog(
@@ -872,21 +888,14 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         public void onStart() {
             amRequestStarted(currentRequest);
             // Show progress waiting view
-            currentRequest.setOwnerView(
-                    AgencyTestActivity.this.mainLayout,
-                    AgencyTestActivity.this.getResources().getString(
-                            R.string.msg_request_being_processed));
+            showProgressDialog(AgencyTestActivity.this.getResources().getString(R.string.msg_request_being_processed));
         }
 
         @Override
         public void onSuccess(JSONObject responseJson) {
             amRequestDidReceiveResponse(currentRequest);
             // Dismiss the process waiting view
-            ProgressDialog progressDialog = currentRequest
-                    .getRequestWaitingView();
-            if ((progressDialog != null) && (progressDialog.isShowing())) {
-                progressDialog.dismiss();
-            }
+            dismissProgressDialog();
             // Show dialog with the returned data
             createAlertDialog(
                     AgencyTestActivity.this.getResources().getString(
@@ -900,11 +909,7 @@ public class AgencyTestActivity extends AppCompatActivity implements View.OnClic
         public void onFailure(AMError error) {
             amRequestDidReceiveResponse(currentRequest);
             // Dismiss the process waiting view
-            ProgressDialog progressDialog = currentRequest
-                    .getRequestWaitingView();
-            if ((progressDialog != null) && (progressDialog.isShowing())) {
-                progressDialog.dismiss();
-            }
+            dismissProgressDialog();
             // There is a special case for document uploading because the API
             // won't return JSON.
             // So we display error dialog only when both trace ID and error

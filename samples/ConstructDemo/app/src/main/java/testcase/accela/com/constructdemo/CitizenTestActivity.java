@@ -66,6 +66,8 @@ public class CitizenTestActivity extends AppCompatActivity implements OnClickLis
     private ViewGroup mainLayout = null;
     private AMRequest currentRequest = null;
     private AccelaMobile accelaMobile = null;
+    private ProgressDialog progressDialog;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -224,6 +226,17 @@ public class CitizenTestActivity extends AppCompatActivity implements OnClickLis
         }
     };
 
+    private void dismissProgressDialog() {
+        // Dismiss the process waiting view
+        if ((progressDialog != null) && (progressDialog.isShowing())) {
+            progressDialog.dismiss();
+        }
+    }
+
+    private void showProgressDialog(String message) {
+        progressDialog = ProgressDialog.show(CitizenTestActivity.this, null, message);
+    }
+
     /**
      * private variable, defined the request delegate to be used by normal
      * request.
@@ -233,10 +246,7 @@ public class CitizenTestActivity extends AppCompatActivity implements OnClickLis
         public void onStart() {
             amRequestStarted(currentRequest);
             // Show progress waiting view
-            currentRequest.setOwnerView(
-                    CitizenTestActivity.this.mainLayout,
-                    CitizenTestActivity.this.getResources().getString(
-                            R.string.msg_request_being_processed));
+            showProgressDialog(CitizenTestActivity.this.getResources().getString(R.string.msg_request_being_processed));
         }
 
         @Override
@@ -244,11 +254,7 @@ public class CitizenTestActivity extends AppCompatActivity implements OnClickLis
             amRequestDidReceiveResponse(currentRequest);
             amRequestDidLoad(currentRequest, responseJson);
             // Dismiss the process waiting view
-            ProgressDialog progressDialog = currentRequest
-                    .getRequestWaitingView();
-            if ((progressDialog != null) && (progressDialog.isShowing())) {
-                progressDialog.dismiss();
-            }
+            dismissProgressDialog();
             // Show dialog with the retrured Json data
             createAlertDialog(
                     CitizenTestActivity.this.getResources().getString(
@@ -262,11 +268,7 @@ public class CitizenTestActivity extends AppCompatActivity implements OnClickLis
         public void onFailure(AMError error) {
             amRequestDidReceiveResponse(currentRequest);
             // Dismiss the process waiting view
-            ProgressDialog progressDialog = currentRequest
-                    .getRequestWaitingView();
-            if ((progressDialog != null) && (progressDialog.isShowing())) {
-                progressDialog.dismiss();
-            }
+            dismissProgressDialog();
             AMError amError = new AMError(error.getStatus(), errorMessage,
                     traceId, null, null);
             // Show dialog with the returned error
