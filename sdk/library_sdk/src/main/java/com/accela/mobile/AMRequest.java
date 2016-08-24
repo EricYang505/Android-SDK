@@ -17,9 +17,7 @@
   */
 package com.accela.mobile;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.accela.mobile.http.AMDocDownloadRequest;
@@ -192,20 +190,6 @@ public class AMRequest {
 	private String amUploadDestinationPath;
 
 	/**
-	 * The view which presents the waiting indicator while request is being processed.
-	 *
-	 * @since 1.0
-	 */
-	private ViewGroup ownerView;
-
-	/**
-	 * The waiting indicator which is shown while a request is being processed.
-	 *
-	 * @since 1.0
-	 */
-	private ProgressDialog requestWaitingView;
-
-	/**
 	 * The AccelaMobile instance which creates the request.
 	 *
 	 * @since 3.0
@@ -348,6 +332,18 @@ public class AMRequest {
         return httpHeader;
     }
 
+	/**
+	 * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+	 *
+	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
+	 * @param maxWidth The maximum width of the returned image
+	 * @param maxHeight The maximum height of the returned image
+	 * @param scaleType The ScaleType of the image returned for display in a imageView.
+	 *
+	 * @return The AMRequest object corresponding to this Accela Construct API end point call.
+	 *
+	 * @since 4.1
+	 */
     public AMRequest loadImage(AMRequestDelegate requestDelegate, int maxWidth, int maxHeight, ImageView.ScaleType scaleType){
         // Initialize request delegate
         if (requestDelegate != null) {
@@ -362,6 +358,17 @@ public class AMRequest {
         return this;
     }
 
+	/**
+	 * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+	 *
+	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
+	 * @param maxWidth The maximum width of the returned image
+	 * @param maxHeight The maximum height of the returned image
+	 *
+	 * @return The AMRequest object corresponding to this Accela Construct API end point call.
+	 *
+	 * @since 4.1
+	 */
     public AMRequest loadImage(AMRequestDelegate requestDelegate, int maxWidth, int maxHeight){
         // Initialize request delegate
         if (requestDelegate != null) {
@@ -376,6 +383,15 @@ public class AMRequest {
         return this;
     }
 
+	/**
+	 * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+	 *
+	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
+	 *
+	 * @return The AMRequest object corresponding to this Accela Construct API end point call.
+	 *
+	 * @since 4.1
+	 */
     public AMRequest loadImage(AMRequestDelegate requestDelegate){
         // Initialize request delegate
         if (requestDelegate != null) {
@@ -390,6 +406,14 @@ public class AMRequest {
         return this;
     }
 
+	/**
+	 * Download a set of binary files to local disk
+	 * @param paramData The collection of parameters associated with the specific URL.
+	 * @param localFilePath The path for file.
+	 * @param downloadRequest The request's delegate or null if it doesn't have a delegate.  See {@link AMDocDownloadRequest} for more information.
+	 * @return The AMRequest object corresponding to this Accela Construct API endpoint call.
+	 * @since 4.1
+	 */
     public AMRequest downloadDocument(RequestParams paramData, String localFilePath, AMDocDownloadRequest.AMDownloadDelegate downloadRequest){
         HashMap<String, String> httpHeader = generateHttpHeader();
         String serializeURL = assembleUrlWithParams(this.serviceURL, this.urlParams);
@@ -402,7 +426,7 @@ public class AMRequest {
     }
 
 	/**
-	 * Makes a request to the Accela Construct API endpoint with the given data using an HTTP POST method as an asynchronous operation.
+	 * Makes a request to the Accela Construct API endpoint with the given data using an HTTP methods as an asynchronous operation.
 	 *
 	 * @param requestDelegate The request's delegate.
 	 *
@@ -608,17 +632,6 @@ public class AMRequest {
 	}
 
 	/**
-	 * Get the value of property requestWaitingView.
-	 *
-	 * @return The value of property requestWaitingView.
-	 *
-	 * @since 1.0
-	 */
-	public ProgressDialog getRequestWaitingView() {
-		return this.requestWaitingView;
-	}
-
-	/**
 	 * Get the value of property serviceURL.
 	 *
      * @return The value of property serviceURL.
@@ -666,43 +679,6 @@ public class AMRequest {
 			return;
 
         requestHttpHeader = httpHeaders;
-	}
-
-
-	/**
-	 * Show a waiting indicator in the specified view.
-
-	 * Note: This method sets holder view for the current request and then show a progress dialog in it.
-	 * 			1.In asynchronous request, please call this method in the request delegate's onStart() method,
-	 * 			   then dismiss the progress dialog in the request delegate's onSuccess() method or onFailure() method.
-	 *			2.In synchronous request, please call this method just before the code line which sends out the request,
-	 * 			   then dismiss the progress dialog after that code line.
-	 *
-	 * @param ownerView The view which presents the waiting view.
-	 * @param labelText The message which is displayed in the waiting view.
-	 *
-	 * @return Void.
-	 *
-	 * @since 1.0
-	 */
-	public void setOwnerView(ViewGroup ownerView, String labelText) {
-		this.ownerView = ownerView;
-		if (this.ownerView != null) {
-			this.requestWaitingView = ProgressDialog.show(this.ownerView.getContext(), null, labelText, false, false);
-		}
-	}
-
-	/**
-	 * Set message content in the waiting indicator view.
-	 *
-	 * @param labelText The message text to be assigned.
-	 *
-	 * @return Void.
-	 *
-	 * @since 3.0
-	 */
-	public void setProgressLabelText(String labelText) {
-		this.requestWaitingView.setMessage(labelText);
 	}
 
 	/**

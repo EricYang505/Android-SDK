@@ -246,4 +246,6 @@ public class MainActivity extends ListActivity implements OnClickListener {
 			Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.msg_logged_out), Toast.LENGTH_SHORT).show();
 		}
 	};
+
+
 }

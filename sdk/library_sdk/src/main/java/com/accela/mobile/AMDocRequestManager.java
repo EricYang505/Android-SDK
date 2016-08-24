@@ -1,8 +1,24 @@
+/**
+ * Copyright 2015 Accela, Inc.
+ *
+ * You are hereby granted a non-exclusive, worldwide, royalty-free license to
+ * use, copy, modify, and distribute this software in source code or binary
+ * form for use in connection with the web services and APIs provided by
+ * Accela.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ *
+ */
 package com.accela.mobile;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Looper;
 import android.os.SystemClock;
 
 import com.accela.mobile.http.DocumentRequest;
@@ -16,6 +32,13 @@ import java.util.concurrent.BlockingQueue;
 /**
  * Created by eyang on 8/26/15.
  */
+
+/**
+ *  Document request management class for binary files download and upload.
+ *
+ * @since 4.1
+ */
+
 public class AMDocRequestManager {
     public final static int IOEXCEPTION_ERROR = 1;
     public final static int SERVEREXCEPTION_ERROR = 2;
@@ -27,21 +50,35 @@ public class AMDocRequestManager {
 
     private AMDocRequestManager(){}
 
-    public static synchronized AMDocRequestManager getAMDocumentManager(Context context) {
+    static synchronized AMDocRequestManager getAMDocumentManager(Context context) {
         if (mInstance == null) {
             mInstance = new AMDocRequestManager();
         }
         return mInstance;
     }
-
-    public AMDocRequestManager addRequest(DocumentRequest task){
+    /**
+     *
+     * Add task to the queue for further execute
+     *
+     * @param task based on DocumentRequest interface
+     *
+     * @return AMDocRequestManager.
+     *
+     * @since 4.1
+     */
+    AMDocRequestManager addRequest(DocumentRequest task){
         mBlockingQueue.add(task);
         return this;
     }
-
-    public void startRequest(){
-//        if (Looper.myLooper() != Looper.getMainLooper())
-//            throw new RuntimeException("Please send request on Main Thread!");
+    /**
+     *
+     * Pulling task from BlockingQueue and execute one by one
+     *
+     * @return Void.
+     *
+     * @since 4.1
+     */
+    void startRequest(){
         if (mStatus == DOWNLOAD_STATUS_LOADING)
             return;
         if (!mBlockingQueue.isEmpty()){
@@ -76,7 +113,7 @@ public class AMDocRequestManager {
         protected void onPostExecute(NetworkResponse networkResponse) {
             mTask.handleResponse(networkResponse);
             mStatus = DOWNLOAD_STATUS_IDLE;
-            startRequest();
+            startRequest(); // after finish a task, start to poll a new task again.
         }
 
     }
