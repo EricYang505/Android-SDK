@@ -32,6 +32,13 @@ import java.util.concurrent.BlockingQueue;
 /**
  * Created by eyang on 8/26/15.
  */
+
+/**
+ *  Document request management class for binary files download and upload.
+ *
+ * @since 4.1
+ */
+
 public class AMDocRequestManager {
     public final static int IOEXCEPTION_ERROR = 1;
     public final static int SERVEREXCEPTION_ERROR = 2;
