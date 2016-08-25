@@ -18,8 +18,6 @@
 package recordviewer.accela.com.recordviewer;
 
 
-import android.app.ProgressDialog;
-
 import com.accela.mobile.AMError;
 import com.accela.mobile.AMLogger;
 import com.accela.mobile.AMRequest;
@@ -104,6 +102,7 @@ public class RecordService {
 		this.delegate = delegate;
 	}
 
+
 	/**
 	 * Private variable, defines the request delegate used by inspection searching.
 	 */
@@ -119,11 +118,6 @@ public class RecordService {
 		@Override
 		public void onSuccess(JSONObject responseJson) {
 			amRequestDidReceiveResponse(currentRequest);
-			// Dismiss the process waiting view
-			ProgressDialog progressDialog = currentRequest.getRequestWaitingView();
-			if ((progressDialog != null) && (progressDialog.isShowing())) {
-				progressDialog.dismiss();
-			}
 			// Parse json data
 			JSONArray recordsArray = null;
 			try {
@@ -167,11 +161,6 @@ public class RecordService {
 		@Override
 		public void onFailure(AMError error) {
 			amRequestDidReceiveResponse(currentRequest);
-			// Dismiss the process waiting view
-			ProgressDialog progressDialog = currentRequest.getRequestWaitingView();
-			if ((progressDialog != null) && (progressDialog.isShowing())) {
-				progressDialog.dismiss();
-			}
 			// Show dialog with the returned error
 			if(delegate!=null) {
 				delegate.onLoadFailed();
