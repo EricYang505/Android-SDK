@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * <pre>
+ *
  *
  *  Accela Amobile
  *  File: RequestParams.java
@@ -53,10 +53,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *  Request parameters wrapper object, used to wrap parameters which will be sent together with HTTP GET/POST/PUT requests.
  *
 
- * <p>
+ *
  * For example:
- * <p>
- * <pre>
+ *
  * RequestParams params = new RequestParams();
  * params.put("username", "james");
  * params.put("password", "123456");
@@ -70,7 +69,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * 	@since 1.0
  *
- * </pre>
+ *
  */
 
 
@@ -92,7 +91,6 @@ public class RequestParams {
     /**
      * Constructor without parameters.
      *
-     * @return An initialized RequestParams instance.
      *
      * @since 1.0
      */
@@ -164,7 +162,6 @@ public class RequestParams {
      * @param key The key name for the new parameter.
      * @param file The file to add.
      *
-     * @return Void.
      *
      * @since 1.0
      */
@@ -223,7 +220,6 @@ public class RequestParams {
      *
      * @param key The key name for the parameter to remove.
      *
-     * @return Void.
      *
      * @since 1.0
      */
@@ -274,9 +270,8 @@ public class RequestParams {
 
 
     /**
-     * Convert the parameter list to string in format key1=value1&key2=value2.
-     *
-     * @return A text string which joins the parameter name and value with & symbol.
+     * Convert the parameter list to string in format key1=value1 key2=value2.
+     * @return A text string which joins the parameter name and value with symbol.
      *
      * @since 4.0
      */

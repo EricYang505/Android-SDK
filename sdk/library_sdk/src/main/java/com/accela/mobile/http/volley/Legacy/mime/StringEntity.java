@@ -80,7 +80,7 @@ public class StringEntity extends AbstractHttpEntity implements Cloneable {
      *
      * @param string content to be used. Not {@code null}.
      * @param mimeType MIME type to be used. May be {@code null}, in which case the default
-     *   is {@link org.apache.http.protocol.HTTP#PLAIN_TEXT_TYPE} i.e. "text/plain"
+     *   is org.apache.http.protocol.HTTP#PLAIN_TEXT_TYPE i.e. "text/plain"
      * @param charset character set to be used. May be {@code null}, in which case the default
      * @throws  java.io.UnsupportedEncodingException If the named charset is not supported.
      *

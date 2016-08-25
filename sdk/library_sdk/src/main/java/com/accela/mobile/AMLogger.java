@@ -70,8 +70,7 @@ public class AMLogger {
 	 * 						  For example: "Got  %d records with type %s "
 	 * @param args A list of variables.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public static void logError(String format, Object... args) {
@@ -91,8 +90,7 @@ public class AMLogger {
 	 * 						  For example: "Got  %d records with type %s "
 	 * @param args A list of variables.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public static void logInfo(String format, Object... args) {
@@ -111,8 +109,7 @@ public class AMLogger {
 	 * 						   For example: "Got  %d records with type %s "
 	 * @param args A list of variables.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public static void logVerbose(String format, Object... args) {
@@ -131,8 +128,7 @@ public class AMLogger {
 	 * 						   For example: "Got  %d records with type %s "
 	 * @param args A list of variables.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public static void logWarn(String format, Object... args) {
@@ -150,8 +146,7 @@ public class AMLogger {
 	 * 
 	 * @param level  One of enumeration values defined in AMEnumUtil.LogLevel .
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public static void setLogLevelr(AMLogLevel level) {		

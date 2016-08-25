@@ -81,7 +81,7 @@ public class UrlEncodedFormEntity extends StringEntity {
 
     /**
      * Constructs a new {@link com.accela.mobile.http.volley.Legacy.mime.UrlEncodedFormEntity} with the list
-     * of parameters with the default encoding of {@link org.apache.http.protocol.HTTP#DEFAULT_CONTENT_CHARSET}
+     * of parameters with the default encoding of
      *
      * @param parameters list of name/value pairs
      * @throws java.io.UnsupportedEncodingException if the default encoding isn't supported
@@ -93,7 +93,7 @@ public class UrlEncodedFormEntity extends StringEntity {
 
     /**
      * Constructs a new {@link com.accela.mobile.http.volley.Legacy.mime.UrlEncodedFormEntity} with the list
-     * of parameters with the default encoding of {@link org.apache.http.protocol.HTTP#DEFAULT_CONTENT_CHARSET}
+     * of parameters with the default encoding of
      *
      * @param parameters iterable collection of name/value pairs
      *

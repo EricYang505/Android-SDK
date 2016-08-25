@@ -157,7 +157,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     }
 
     /**
-     * @return this request's {@link com.android.volley.Response.ErrorListener}.
+     * @return this request's com.android.volley.Response.ErrorListener.
      */
     public Response.ErrorListener getErrorListener() {
         return mErrorListener;

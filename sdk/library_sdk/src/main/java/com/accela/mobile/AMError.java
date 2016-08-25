@@ -159,14 +159,13 @@ public class AMError {
 	/**
 	 * Constructor with the given parameters.
 	 * 
-	 * @param statuc The error status.
+	 * @param status The error status.
 	 * @param code The error code.
 	 * @param traceId The trace Id for debugging the error on mobile server.
 	 * @param message The error message string.
 	 * @param more The more detailed error message string.
 	 * 
-	 * @return An initialized AMError object.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public AMError(int status,String code,String traceId, String message, String more) {

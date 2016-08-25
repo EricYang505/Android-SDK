@@ -31,7 +31,7 @@ import com.accela.mobile.http.volley.Legacy.mime.Immutable;
 
 /**
  * Interface for formatting elements of the HEAD section of an HTTP message.
- * This is the complement to {@link LineParser}.
+ * This is the complement to LineParser.
  * There are individual methods for formatting a request line, a
  * status line, or a header line. The formatting does <i>not</i> include the
  * trailing line break sequence CR-LF.

@@ -117,7 +117,6 @@ public class AMLoginDialogWrapper extends Dialog {
      * @param url    The URL of the Web Dialog to display; no validation is done on this URL, but it should
      *                be a valid URL.
      *                
-     * @return An initialized AMLoginDialogWrapper instance.
 	 *
 	 * @since 3.0
      */

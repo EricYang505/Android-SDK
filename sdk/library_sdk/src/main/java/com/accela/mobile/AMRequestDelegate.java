@@ -17,10 +17,9 @@
   */
 package com.accela.mobile;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.graphics.Bitmap;
+
+import org.json.JSONObject;
 //import android.support.v4.content.LocalBroadcastManager;
 
 
@@ -28,7 +27,6 @@ public abstract class AMRequestDelegate extends HttpResponseLogHandler {
 	/**
 	 * Fired when the request is started, override to handle in your own code.
 	 *
-	 * @return Void.
 	 *
 	 * @since 1.0
 	 */
@@ -45,7 +43,6 @@ public abstract class AMRequestDelegate extends HttpResponseLogHandler {
 	 * @param error
 	 *            The underlying cause of the failure.
 	 *
-	 * @return Void.
 	 *
 	 * @since 1.0
 	 */

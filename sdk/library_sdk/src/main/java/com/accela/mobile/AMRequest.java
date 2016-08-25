@@ -232,7 +232,6 @@ public class AMRequest {
 	 * @param serviceURL The service's full path(including server host).
 	 * @param httpMethod One of HTTP method such as GET, POST, PUT or DELETE.
 	 *
-	 * @return An initialized AMRequest instance.
 	 *
 	 * @since 1.0
 	 */
@@ -254,7 +253,6 @@ public class AMRequest {
 	 * @param httpMethod One of HTTP method such as GET, POST, PUT or DELETE.
 	 * @param requestDelegate The delegate which manages the request's lifecycle.
 	 *
-	 * @return An initialized AMRequest instance.
 	 *
 	 * @since 4.0
 	 */
@@ -267,7 +265,6 @@ public class AMRequest {
 	/**
 	 * Cancel the current request.
 	 *
-	 * @return Void.
 	 *
 	 * @since 1.0
 	 */
@@ -281,7 +278,6 @@ public class AMRequest {
 	/**
 	 * Cancel the current request.
 	 *
-	 * @return Void.
 	 *
 	 * @since 3.0
 	 */
@@ -333,7 +329,7 @@ public class AMRequest {
     }
 
 	/**
-	 * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+	 * Download a resized image to a cache. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
 	 *
 	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
 	 * @param maxWidth The maximum width of the returned image
@@ -359,7 +355,7 @@ public class AMRequest {
     }
 
 	/**
-	 * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+	 * Download a resized image to a cache. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
 	 *
 	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
 	 * @param maxWidth The maximum width of the returned image
@@ -384,7 +380,7 @@ public class AMRequest {
     }
 
 	/**
-	 * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+	 * Download a resized image to a cache. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
 	 *
 	 * @param requestDelegate The request's delegate or null if it doesn't have a delegate.  See {@link AMRequestDelegate} for more information.
 	 *
@@ -670,7 +666,6 @@ public class AMRequest {
 	 *
 	 * @param httpHeaders Pairs of header key and value.
 	 *
-	 * @return Void.
 	 *
 	 * @since 3.0
      */
@@ -686,7 +681,6 @@ public class AMRequest {
 	 *
 	 * @param requestType The new value to be assigned.
 	 *
-     * @return Void.
 	 *
 	 * @since 3.0
 	 */
@@ -699,7 +693,6 @@ public class AMRequest {
 	 *
 	 * @param tag The new tag to be assigned.
 	 *
-     * @return The value of property tag.
 	 *
 	 * @since 4.0
 	 */

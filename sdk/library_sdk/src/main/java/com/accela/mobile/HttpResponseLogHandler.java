@@ -77,7 +77,6 @@ public abstract class HttpResponseLogHandler {
      *
      * @param request The AMRequest instance which is processing the current request.
      *
-     * @return Void.
      *
      * @since 1.0
      */
@@ -117,7 +116,6 @@ public abstract class HttpResponseLogHandler {
      *
      * @param request The AMRequest instance which is processing the current request.
      *
-     * @return Void.
      *
      * @since 1.0
      */
@@ -186,7 +184,6 @@ public abstract class HttpResponseLogHandler {
      * @param request The AMRequest instance which is processing the current request.
      * @param error The AMError instance which contains the error information.
      *
-     * @return Void.
      *
      * @since 1.0
      */
@@ -206,7 +203,6 @@ public abstract class HttpResponseLogHandler {
      * @param request The AMRequest instance which is processing the current request.
      * @param result The JSON object which contains the result data.
      *
-     * @return Void.
      *
      * @since 1.0
      */

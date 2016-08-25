@@ -74,7 +74,6 @@ public class AMDocRequestManager {
      *
      * Pulling task from BlockingQueue and execute one by one
      *
-     * @return Void.
      *
      * @since 4.1
      */

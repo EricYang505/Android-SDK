@@ -165,8 +165,7 @@ public class AccelaMobile {
 	 * @param ownerContext The Android context which creates the current AccelaMobile instance.
 	 * @param appId The Id string of the current application.
 	 * @param appSecret The secret string of the current application.
-	 *
-	 * @return An initialized AccelaMobile instance.
+	 * @param environment The Environment enum type
 	 *
 	 * @since 3.0
 	 */
@@ -182,9 +181,9 @@ public class AccelaMobile {
 	 * @param ownerContext The Android context which creates the current AccelaMobile instance.
 	 * @param appId The Id string of the current application.
 	 * @param appSecret The secret string of the current application.
+	 * @param environment The Environment enum type
 	 * @param sessionDelegate The receiever's delegate or null if it doesn't have a delegate.  See {@link AMSessionDelegate} for more information.
 	 *
-	 * @return An initialized AccelaMobile instance.
 	 *
 	 * @since 3.0
 	 */
@@ -203,7 +202,6 @@ public class AccelaMobile {
 	 * @param authHost The URL of cloud server for user authorization.
 	 * @param apisHost The URL of cloud server for service API calling.
 	 *
-	 * @return An initialized AccelaMobile instance.
 	 *
 	 * @since 4.0
 	 */
@@ -314,7 +312,6 @@ public class AccelaMobile {
 	 *
 	 * @param isOn true or false.
 	 *
-	 * @return Void.
 	 *
 	 * @since 4.0
 	 */

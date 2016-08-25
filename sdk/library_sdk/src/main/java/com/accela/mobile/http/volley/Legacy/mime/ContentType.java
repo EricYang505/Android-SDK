@@ -333,8 +333,7 @@ public final class ContentType implements Serializable {
     /**
      * Creates a new instance of {@link com.accela.mobile.http.volley.Legacy.mime.ContentType}.
      *
-     * @param mimeType MIME type. It may not be <code>null</code> or empty. It may not contain
-     *        characters <">, <;>, <,> reserved by the HTTP specification.
+     * @param mimeType MIME type. It may not be <code>null</code> or empty.
      * @param charset charset.
      * @return content type
      */
@@ -347,8 +346,7 @@ public final class ContentType implements Serializable {
     /**
      * Creates a new instance of {@link com.accela.mobile.http.volley.Legacy.mime.ContentType} without a charset.
      *
-     * @param mimeType MIME type. It may not be <code>null</code> or empty. It may not contain
-     *        characters <">, <;>, <,> reserved by the HTTP specification.
+     * @param mimeType MIME type. It may not be <code>null</code> or empty.
      * @return content type
      */
     public static ContentType create(final String mimeType) {
@@ -358,10 +356,8 @@ public final class ContentType implements Serializable {
     /**
      * Creates a new instance of {@link com.accela.mobile.http.volley.Legacy.mime.ContentType}.
      *
-     * @param mimeType MIME type. It may not be <code>null</code> or empty. It may not contain
-     *        characters <">, <;>, <,> reserved by the HTTP specification.
-     * @param charset charset. It may not contain characters <">, <;>, <,> reserved by the HTTP
-     *        specification. This parameter is optional.
+     * @param mimeType MIME type. It may not be <code>null</code> or empty.
+     * @param charset charset. This parameter is optional.
      * @return content type
      * @throws java.nio.charset.UnsupportedCharsetException Thrown when the named charset is not available in
      * this instance of the Java virtual machine
@@ -382,10 +378,6 @@ public final class ContentType implements Serializable {
      *
      * @param s text
      * @return content type
-     * @throws org.apache.http.ParseException if the given text does not represent a valid
-     * <code>Content-Type</code> value.
-     * @throws java.nio.charset.UnsupportedCharsetException Thrown when the named charset is not available in
-     * this instance of the Java virtual machine
      */
     public static ContentType parse(
             final String s) throws ParseException, UnsupportedCharsetException {
@@ -402,13 +394,12 @@ public final class ContentType implements Serializable {
     }
 
     /**
-     * Extracts <code>Content-Type</code> value from {@link org.apache.http.HttpEntity} exactly as
+     * Extracts <code>Content-Type</code> value from exactly as
      * specified by the <code>Content-Type</code> header of the entity. Returns <code>null</code>
      * if not specified.
      *
      * @param entity HTTP entity
      * @return content type
-     * @throws org.apache.http.ParseException if the given text does not represent a valid
      * <code>Content-Type</code> value.
      * @throws java.nio.charset.UnsupportedCharsetException Thrown when the named charset is not available in
      * this instance of the Java virtual machine
@@ -429,12 +420,12 @@ public final class ContentType implements Serializable {
     }
 
     /**
-     * Extracts <code>Content-Type</code> value from {@link org.apache.http.HttpEntity} or returns the default value
+     * Extracts <code>Content-Type</code> value from or returns the default value
      * {@link #DEFAULT_TEXT} if not explicitly specified.
      *
      * @param entity HTTP entity
      * @return content type
-     * @throws org.apache.http.ParseException if the given text does not represent a valid
+     * @throws ParseException if the given text does not represent a valid
      * <code>Content-Type</code> value.
      * @throws java.nio.charset.UnsupportedCharsetException Thrown when the named charset is not available in
      * this instance of the Java virtual machine

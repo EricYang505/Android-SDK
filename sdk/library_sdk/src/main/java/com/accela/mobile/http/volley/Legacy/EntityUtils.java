@@ -138,7 +138,7 @@ public final class EntityUtils {
      * @throws ParseException if header elements cannot be parsed
      * @throws IllegalArgumentException if entity is null
      *
-     * @deprecated (4.1.3) use {@link ContentType#getOrDefault(HttpEntity)}
+     * @deprecated (4.1.3) use ContentType#getOrDefault(HttpEntity)
      */
     @Deprecated
     public static String getContentCharSet(final HttpEntity entity) throws ParseException {
@@ -166,7 +166,7 @@ public final class EntityUtils {
      *
      * @since 4.1
      *
-     * @deprecated (4.1.3) use {@link ContentType#getOrDefault(HttpEntity)}
+     * @deprecated (4.1.3) use ContentType#getOrDefault(HttpEntity)
      */
     @Deprecated
     public static String getContentMimeType(final HttpEntity entity) throws ParseException {
