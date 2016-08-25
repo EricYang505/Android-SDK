@@ -27,10 +27,11 @@
 
 package com.accela.mobile.http.volley.Legacy;
 
+import com.accela.mobile.http.volley.Legacy.mime.Immutable;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-import com.accela.mobile.http.volley.Legacy.mime.Immutable;
 
 
 /**
@@ -249,7 +250,7 @@ public class BasicHeaderValueParser implements HeaderValueParser {
     }
 
     /**
-     * @deprecated (4.4) use {@link org.apache.http.message.TokenParser}
+     * @deprecated (4.4)
      */
     @Deprecated
     public NameValuePair parseNameValuePair(final CharArrayBuffer buffer,

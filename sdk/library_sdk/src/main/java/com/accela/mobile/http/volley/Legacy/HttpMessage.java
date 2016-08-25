@@ -188,7 +188,6 @@ public interface HttpMessage {
 
     /**
      * Returns the parameters effective for this message as set by
-     * {@link #setParams(org.apache.http.params.HttpParams)}.
      *
      * @deprecated (4.3) use configuration classes provided 'org.apache.http.config'
      *  and 'org.apache.http.client.config'

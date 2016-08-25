@@ -17,14 +17,14 @@
   */
 package com.accela.mobile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.accela.mobile.AMRequest.HTTPMethod;
+import com.accela.mobile.http.RequestParams;
 
 import org.json.JSONArray;
 
-import com.accela.mobile.AMRequest.HTTPMethod;
-import com.accela.mobile.http.RequestParams;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  *  Session manager of batch request.
@@ -39,8 +39,7 @@ public class AMBatchSession {
 	/**
 	 * Constructor.
 	 * 
-	 * @return An initialized AMBatchSession instance.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public AMBatchSession() {
@@ -52,8 +51,7 @@ public class AMBatchSession {
      * 
      * @param request An instance of AMRequest.
      * 
-     * @return Void.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public void add(AMRequest request) {
@@ -78,8 +76,7 @@ public class AMBatchSession {
      * 
      * @param requestDelegate The delegate which handles the request's callbacks.
      * 
-     * @return Void.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public void executeAsync(Map<String, String> customHttpHeader, AMRequestDelegate requestDelegate) {

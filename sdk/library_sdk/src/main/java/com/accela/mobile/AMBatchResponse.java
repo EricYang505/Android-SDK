@@ -17,12 +17,12 @@
   */
 package com.accela.mobile;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Response object of batch request.
@@ -57,8 +57,7 @@ public class AMBatchResponse {
 	/**
 	 * Constructor.
 	 * 
-	 * @return An initialized AMBatchResponse instance.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public AMBatchResponse(JSONObject response){
@@ -105,7 +104,6 @@ public class AMBatchResponse {
 	 *
 	 * @param status The new status value.
 	 *
-	 * @return Void.
 	 *
 	 * @since 4.0
 	 */
@@ -131,7 +129,6 @@ public class AMBatchResponse {
 	 *
 	 * @param result The new result value.
 	 *
-	 * @return Void.
 	 *
 	 * @since 4.0
 	 */

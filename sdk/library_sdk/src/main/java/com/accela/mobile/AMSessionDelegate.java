@@ -31,8 +31,7 @@ public interface AMSessionDelegate {
 	 * 
 	 * Called when access token returns successfully.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public abstract void amDidLogin();	
@@ -43,8 +42,7 @@ public interface AMSessionDelegate {
 	 * 
 	 * @param error The AMError instance which holds the error information.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public abstract void amDidLoginFailure(AMError error);
@@ -53,8 +51,7 @@ public interface AMSessionDelegate {
 	 * 
 	 * Called when login is canceled.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public abstract void amDidCancelLogin();	
@@ -65,8 +62,7 @@ public interface AMSessionDelegate {
 	 * 
 	 * @param error The AMError instance which holds the error information.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public abstract void amDidSessionInvalid(AMError error);
@@ -75,8 +71,7 @@ public interface AMSessionDelegate {
 	 * 
 	 * Called when session logs out.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public abstract void amDidLogout();	

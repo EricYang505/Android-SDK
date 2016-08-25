@@ -131,7 +131,7 @@ public interface HttpResponse extends HttpMessage {
      *                  {@code null} to unset
      *
      * @see HttpEntity#isStreaming()
-     * @see org.apache.http.util.EntityUtils#updateEntity(com.accela.mobile.http.volley.Legacy.HttpResponse, HttpEntity)
+     *
      */
     void setEntity(HttpEntity entity);
 

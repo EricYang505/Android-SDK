@@ -31,8 +31,7 @@ public interface AMLoginViewDelegate {
 	 * 
 	 * @param loginView The login dialog view.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public abstract void amDialogFetch(AMLoginView loginView);
@@ -42,8 +41,7 @@ public interface AMLoginViewDelegate {
 	 * 
 	 * @param loginView The login dialog view.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public abstract void amDialogLogin(AMLoginView loginView);
@@ -53,8 +51,7 @@ public interface AMLoginViewDelegate {
 	 * 
 	 * @param cancelled true or false.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public abstract void amDialogNotLogin(boolean cancelled);
@@ -64,8 +61,7 @@ public interface AMLoginViewDelegate {
 	 * 
 	 * @param error The AMError object which contains error details.	
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public abstract void amDialogLoginFailure(AMError error);	

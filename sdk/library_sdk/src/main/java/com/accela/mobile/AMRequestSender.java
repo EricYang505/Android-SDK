@@ -129,7 +129,7 @@ public class AMRequestSender {
     }
 
     /**
-     * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+     * Download a resized image to a cache. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
      *
      * @param path The path to the Accela Construct API end point.
      * @param urlParams The collection of parameters associated with the specific URL.
@@ -152,7 +152,7 @@ public class AMRequestSender {
     }
 
     /**
-     * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+     * Download a resized image to a cache. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
      *
      * @param path The path to the Accela Construct API end point.
      * @param urlParams The collection of parameters associated with the specific URL.
@@ -174,7 +174,7 @@ public class AMRequestSender {
     }
 
     /**
-     * Download a resized image to a cache. See {@link com.accela.mobile.http.AMLruCache}. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
+     * Download a resized image to a cache. This is suitable to download small images which may need cache for reuse, for example: thumbnails on a list view.
      *
      * @param path The path to the Accela Construct API end point.
      * @param urlParams The collection of parameters associated with the specific URL.
@@ -250,7 +250,6 @@ public class AMRequestSender {
      * @param session The batch session instance.
      * @param batchRequestDelegate The delegate of batch session.
      *
-     * @return An initialized AccelaMobile instance.
      *
      * @since 4.0
      */

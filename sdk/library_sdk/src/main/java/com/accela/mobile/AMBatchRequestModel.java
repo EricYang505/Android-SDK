@@ -47,7 +47,6 @@ public class AMBatchRequestModel {
 	 *
 	 * Set the value of property url.
 	 *
-	 * @return Void.
 	 *
 	 * @since 4.0
 	 */
@@ -71,9 +70,8 @@ public class AMBatchRequestModel {
 	 *
 	 * Set the value of property method.
 	 *
-	 * @param status The new method value.
+	 * @param method The new method value.
 	 *
-	 * @return Void.
 	 *
 	 * @since 4.0
 	 */
@@ -97,9 +95,8 @@ public class AMBatchRequestModel {
 	 *
 	 * Set the value of property body.
 	 *
-	 * @param status The new body value.
+	 * @param body The new body value.
 	 *
-	 * @return Void.
 	 *
 	 * @since 4.0
 	 */

@@ -292,7 +292,6 @@ public class AuthorizationManager {
      *
      * Logs out the user.
      *
-     * @return Void.
      *
      * @since 1.0
      */
@@ -329,8 +328,7 @@ public class AuthorizationManager {
 	 * @param clearSessionStore
 	 *            Flag which indicates whether to clear local session store or not.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void clearAuthorizationAndToken(Boolean clearSessionStore) {
@@ -456,7 +454,6 @@ public class AuthorizationManager {
      *
      * @param remember true or false.
      *
-     * @return Void.
      *
      * @since 1.0
      */
@@ -483,8 +480,7 @@ public class AuthorizationManager {
 	 * @param isRemember
 	 *            true or false.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void setIsRememberToken(Boolean isRemember) {
@@ -498,8 +494,7 @@ public class AuthorizationManager {
 	 * @param sessionDelegate
 	 *            The session delegate to be assigned.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void setSessionDelegate(AMSessionDelegate sessionDelegate) {
@@ -515,8 +510,7 @@ public class AuthorizationManager {
 	 * @param authServer The URL of authorization server.
 	 * @param apisServer The URL of api server.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void setClientInfo(String agency, String authServer, String apisServer) {
@@ -570,8 +564,7 @@ public class AuthorizationManager {
 	 *            The array of access permissions. For example, search_records
 	 *            get_single_record create_record
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	void getAuthorizeCode4Public(Object authorizationView, String redirectUrl,
@@ -599,8 +592,7 @@ public class AuthorizationManager {
 	 *            The array of access permissions. For example, search_records
 	 *            get_single_record create_record
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	String getAuthorizeUrl4WebLogin(String redirectUrl, String[] permissions) {
@@ -663,8 +655,7 @@ public class AuthorizationManager {
 	 * @param webIntent
 	 *            The intent returned from authorization web view.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void handleOpenURL(Intent webIntent) {
@@ -694,8 +685,7 @@ public class AuthorizationManager {
 	 * 
 	 * Save key value pairs to the session data stored locally.
 	 * 
-	 * @return Void.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void saveUserProfile2LocalStore() {

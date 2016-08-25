@@ -34,15 +34,15 @@ import java.io.OutputStream;
 /**
  * An entity that can be sent or received with an HTTP message.
  * Entities can be found in some
- * {@link HttpEntityEnclosingRequest requests} and in
- * {@link HttpResponse responses}, where they are optional.
+ * HttpEntityEnclosingRequest requests and in
+ * HttpResponse responses, where they are optional.
  * <p>
  * There are three distinct types of entities in HttpCore,
  * depending on where their {@link #getContent content} originates:
  * <ul>
  * <li><b>streamed</b>: The content is received from a stream, or
  *     generated on the fly. In particular, this category includes
- *     entities being received from a {@link HttpConnection connection}.
+ *     entities being received from a HttpConnection connection.
  *     {@link #isStreaming Streamed} entities are generally not
  *      {@link #isRepeatable repeatable}.
  *     </li>
@@ -183,7 +183,7 @@ public interface HttpEntity {
      * delegate this call to the wrapped entity.
      * <p>
      * This method is of particular importance for entities being
-     * received from a {@link HttpConnection connection}. The entity
+     * received from a HttpConnection connection. The entity
      * needs to be consumed completely in order to re-use the connection
      * with keep-alive.
      *

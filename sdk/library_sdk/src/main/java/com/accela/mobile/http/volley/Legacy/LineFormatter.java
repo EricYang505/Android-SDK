@@ -30,7 +30,7 @@ package com.accela.mobile.http.volley.Legacy;
 
 /**
  * Interface for formatting elements of the HEAD section of an HTTP message.
- * This is the complement to {@link LineParser}.
+ * This is the complement to LineParser.
  * There are individual methods for formatting a request line, a
  * status line, or a header line. The formatting does <i>not</i> include the
  * trailing line break sequence CR-LF.
@@ -96,7 +96,7 @@ public interface LineFormatter {
      *
      * @return  the formatted status line
      *
-     * @throws org.apache.http.ParseException        in case of a parse error
+     * @throws ParseException        in case of a parse error
      */
     CharArrayBuffer formatStatusLine(CharArrayBuffer buffer,
                                      StatusLine statline);
@@ -119,7 +119,7 @@ public interface LineFormatter {
      * @return  a buffer holding the formatted header, never {@code null}.
      *          The returned buffer may be different from the argument buffer.
      *
-     * @throws org.apache.http.ParseException        in case of a parse error
+     * @throws ParseException        in case of a parse error
      */
     CharArrayBuffer formatHeader(CharArrayBuffer buffer,
                                  Header header);
