@@ -122,11 +122,11 @@ artifacts {
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
+    user = 'accela'
+    key = 'a50a9e6f637930022720b47ba38acf15983c44ef'
     configurations = ['archives']
     pkg {
-        repo = "maven"
+        repo = "AccelaAndroidSDK"
         name = "Accela"                                                   // #CONFIG# project name in jcenter
         desc = 'A helpful library for Accela Android SDK.'
         websiteUrl = siteUrl
