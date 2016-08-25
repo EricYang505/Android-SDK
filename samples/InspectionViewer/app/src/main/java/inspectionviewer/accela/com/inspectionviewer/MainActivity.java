@@ -60,6 +60,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
 	private ProgressDialog accessTokenProgressDialog;
 	private List<HashMap<String, String>> inspectionItems;
 	private AccelaMobile accelaMobile = null;
+	private ProgressDialog progressDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -138,6 +139,17 @@ public class MainActivity extends ListActivity implements OnClickListener {
 		this.btnShow.setEnabled(enabled);
 	}
 
+	private void dismissProgressDialog() {
+		// Dismiss the process waiting view
+		if ((progressDialog != null) && (progressDialog.isShowing())) {
+			progressDialog.dismiss();
+		}
+	}
+
+	private void showProgressDialog(String message) {
+		progressDialog = ProgressDialog.show(this, null, message);
+	}
+
 	/**
 	 * Private variable, defines the request delegate used by inspection searching.
 	 */
@@ -146,17 +158,14 @@ public class MainActivity extends ListActivity implements OnClickListener {
 		public void onStart() {
 			amRequestStarted(currentRequest);
 			// Show progress waiting view
-			currentRequest.setOwnerView(MainActivity.this.mainLayout, MainActivity.this.getResources().getString(R.string.msg_search_inspections));
+			 showProgressDialog(MainActivity.this.getResources().getString(R.string.msg_search_inspections));
 		}
 
 		@Override
 		public void onSuccess(JSONObject responseJson) {
 			amRequestDidReceiveResponse(currentRequest);
 			// Dismiss the process waiting view
-			ProgressDialog progressDialog = currentRequest.getRequestWaitingView();
-			if ((progressDialog != null) && (progressDialog.isShowing())) {
-				progressDialog.dismiss();
-			}
+			dismissProgressDialog();
 			// Parse json data
 			JSONArray inspectionsArray = null;
 			try {
@@ -201,10 +210,7 @@ public class MainActivity extends ListActivity implements OnClickListener {
 		public void onFailure(AMError error) {
 			amRequestDidReceiveResponse(currentRequest);
 			// Dismiss the process waiting view
-			ProgressDialog progressDialog = currentRequest.getRequestWaitingView();
-			if ((progressDialog != null) && (progressDialog.isShowing())) {
-				progressDialog.dismiss();
-			}
+			dismissProgressDialog();
 			// Show dialog with the returned error
 			createAlertDialog(MainActivity.this.getResources().getString(R.string.error_request_title), MainActivity.this.getResources().getString(R.string.error_request_message) + ": \n" + error.getMessage());
 		}
