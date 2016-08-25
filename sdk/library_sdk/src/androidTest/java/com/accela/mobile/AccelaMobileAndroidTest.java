@@ -1,6 +1,8 @@
 package com.accela.mobile;
 
 import android.content.Context;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
@@ -162,10 +164,10 @@ public class AccelaMobileAndroidTest extends AndroidTestCase{
         requestParams.put("lang", "en_US");
 
         Map<String, String> headerParams = new HashMap<String, String>();
-        headerParams.put(AMRequest.HEADER_X_ACCELA_AGENCY, "OAKLAND-APPS");
+        headerParams.put(AMRequest.HEADER_X_ACCELA_AGENCY, "ISLANDTON");
         headerParams.put(AMRequest.HEADER_X_ACCELA_ENVIRONMENT, "PROD");
         signal = new CountDownLatch(1);
-        accelaMobile.getRequestSender().sendRequest("/v4/records/OAKLAND-15CAP-00000-07298/inspections", requestParams, headerParams, new AMRequestDelegate() {
+        accelaMobile.getRequestSender().sendRequest("/v4/records/ISLANDTON-15CAP-00000-005Z4/inspections", requestParams, headerParams, new AMRequestDelegate() {
             @Override
             public void onSuccess(JSONObject response) {
                 Log.d(TAG, "testGetInspection successfully" + response.toString());
