@@ -7,6 +7,13 @@ Accela SDK for Android allows you to build Civic apps for Android, using Civic P
 
 To get started, see <a href="https://developer.accela.com/docs/index.htm#accela_construct_api_developers_guide/android_sdk/the_accela_android_sdk.htm">Getting Started with Android</a>. or <a href="https://github.com/Accela-Inc/Android-SDK/wiki/Getting-Started-Android-SDK">Get Started</a>
 
+Import from gradle by:
+```java
+dependencies {
+    compile 'com.accela.mobile:library_sdk:4.4.0'
+}
+```
+
 To see examples of how to use the Accela Android SDK, see the sample projects in the <code>samples</code> folder.
 
 ## License
